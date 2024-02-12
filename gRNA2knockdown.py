@@ -36,3 +36,23 @@ def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride = 1) -> dict
             corpus[seq[i]] = y_trace[i]
     return corpus
 
+
+def xavier_init(n_inputs: int, n_outputs: int, uniform=True) -> tf.initializer:
+    '''Initialize weights with Xavier initialization. From Enoch's code this initialize
+    the weights with a uniform distribution to keep the scale if gradients roughly the same in all layers.
+    From originally Xavier Glorot and Yoshua Bengio (2010).
+    args:
+        n_inputs: int, number of inputs
+        n_outputs: int, number of outputs
+        uniform: bool, if True use uniform distribution, else use normal distribution
+        
+    returns:
+        tf.initializer, tensorflow initializer
+    '''
+    if uniform:
+        init_range = tf.sqrt(6.0 / (n_inputs + n_outputs))
+        return tf.random_uniform_initializer(-init_range, init_range)
+    else:
+        stddev = tf.sqrt(3.0 / (n_inputs + n_outputs))
+        return tf.truncated_normal_initializer(stddev=stddev)
+
