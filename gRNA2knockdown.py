@@ -25,7 +25,7 @@ def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride = 1) -> dict
         seq_array: np.ndarray, 2D array of sequences
         y_trace: np.ndarray, 2D array of y traces (OD values or Fluorescence)
     returns:
-        labeled_corpus: list, list of tuples (s0equence, y_trace)
+        labeled_corpus: dict, dict of data and labels (sequence, y_trace)
     '''
     corpus = {}
     if seq_array.shape[0] != y_trace.shape[0]:
