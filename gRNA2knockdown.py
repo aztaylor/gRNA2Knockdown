@@ -5,7 +5,7 @@ import numpy as np
 
 import tensorflow as tf
 
-def sequence_encoding(sequence: str):
+def sequence_encoding(sequence: str) -> np.array:
     '''Encode DNA sequence into a 1D array of floats. The encoding is mapped as to be normalized between 0 and 1.
     args:
         sequence: str, DNA sequence
@@ -19,7 +19,7 @@ def sequence_encoding(sequence: str):
         encoding.append(float(encoding_map[seq[i]]))
     return np.asarray(encoding)
 
-def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride = 1):
+def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride = 1) -> dict:
     '''Create a corpus of sequences and their corresponding labels (y_trace).
     args:
         seq_array: np.ndarray, 2D array of sequences
@@ -27,9 +27,12 @@ def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride = 1):
     returns:
         labeled_corpus: list, list of tuples (s0equence, y_trace)
     '''
-    corpus = []
+    corpus = {}
+    if seq_array.shape[0] != y_trace.shape[0]:
+        raise ValueError('seq_array and y_trace have different number of rows')
+    
     for seq in seq_array:
-        for i in range(0, len(seq)-23, stride):
-            corpus.append(sequence_encoding(seq[i:i+23]))
+        for i in range(len(seq)):
+            corpus[seq[i]] = y_trace[i]
     return corpus
 
