@@ -89,23 +89,23 @@ def bias_variable(shape) -> tf.Variable:
     return tf.Variable(tf.random.truncated_normal(shape, mean=0.0,stddev=std_dev,dtype=tf.float32))
 
 def initialize_Wblist(n_u,hv_list):
-    W_list = [];
-    b_list = [];
-    n_depth = len(hv_list);
+    W_list = []
+    b_list = []
+    n_depth = len(hv_list)
     print("Length of hv_list: " + repr(n_depth))
     #hv_list[n_depth-1] = n_y;
     for k in range(0,n_depth):
 
         if k==0:
-            W1 = weight_variable([n_u,hv_list[k]]);
-            b1 = bias_variable([hv_list[k]]);
-            W_list.append(W1);
-            b_list.append(b1);
+            W1 = weight_variable([n_u,hv_list[k]])
+            b1 = bias_variable([hv_list[k]])
+            W_list.append(W1)
+            b_list.append(b1)
         else:
-            W_list.append(weight_variable([hv_list[k-1],hv_list[k]]));
-            b_list.append(bias_variable([hv_list[k]]));
+            W_list.append(weight_variable([hv_list[k-1],hv_list[k]]))
+            b_list.append(bias_variable([hv_list[k]]))
     result = sess.run(tf.compat.v1.global_variables_initializer())
-    return W_list,b_list;
+    return W_list,b_list
 
 def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, keep_prob=1.0, activation_flag=1, res_net=0)->(tf.Variable, list):
     ''''Assemble the network with the given weights and biases. The activation function is defined by the activation_flag. The res_net
@@ -160,4 +160,22 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, keep_prob=
 
     result = sess.run(tf.compat.v1.global_variables_initializer())
     return y_out, z_temp_list
+
+if __name__ == "__main__":
+    # Load the data
+    with open('data.csv', 'r') as file:
+        reader = csv.reader(file)
+        data = list(reader)
+    data = np.array(data)
+    seq_array = data[:,0]
+    y_trace = data[:,1]
+
+    # Create the corpus
+    corpus = create_corpus(seq_array, y_trace)
+
+    # Define the model
+    n_x = 4
+    n_u = 100
+    n_y = 1
+    hv_list = [
 
