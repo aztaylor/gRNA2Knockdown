@@ -22,7 +22,7 @@ Biological Control Laboratory at the University of California, Santa Barbara.
 # Start a tensorflow session
 sess = tf.compat.v1.Session()
 
-
+# Define Auxillary Functions
 def sequence_encoding(sequence: str) -> np.array:
     '''Encode DNA sequence into a 1D array of floats. The encoding is mapped as to be normalized between 0 and 1.
     args:
@@ -128,6 +128,33 @@ def initialize_Wblist(n_u,hv_list) -> (list, list): # type: ignore
     result = sess.run(tf.compat.v1.global_Variables_initializer())
     return W_list,b_list
 
+def rvs(dim=3):
+    '''Generate a random orthogonal matrix. The matrix is generated using the Householder transformation.
+    args:
+        dim: int, dimension of the matrix
+    returns:
+        H: np.array, random orthogonal matrix
+    '''
+    random_state = np.random
+    H = np.eye(dim)
+    D = np.ones((dim,))
+    for n in range(1, dim):
+        x = random_state.normal(size=(dim-n+1,))
+        D[n-1] = np.sign(x[0])
+        x[0] -= D[n-1]*np.sqrt((x*x).sum())
+        # Householder transformation
+        Hx = (np.eye(dim-n+1) - 2.*np.outer(x, x)/(x*x).sum())
+        mat = np.eye(dim)
+        mat[n-1:, n-1:] = Hx
+        H = np.dot(H, mat)
+        # Fix the last sign such that the determinant is 1
+    D[-1] = (-1)**(1-(dim % 2))*D.prod()
+    # Equivalent to np.dot(np.diag(D), H) but faster, apparently
+    H = (D*H.T).T
+    return H
+
+
+# Define the loss functions
 def embed_loss(y_true,embed_true):
     '''Calculate the embedding loss. The embedding loss is the mean squared error between the predicted and true
         embeddings.
@@ -173,31 +200,8 @@ def customLoss(y_model:tf.Variable, y_true:tf.Variable,
         tf.Variable, custom loss'''
     return vae_loss(y_model,y_true)+embed_loss(y_true,embed_true)
 
-def rvs(dim=3):
-    '''Generate a random orthogonal matrix. The matrix is generated using the Householder transformation.
-    args:
-        dim: int, dimension of the matrix
-    returns:
-        H: np.array, random orthogonal matrix
-    '''
-    random_state = np.random
-    H = np.eye(dim)
-    D = np.ones((dim,))
-    for n in range(1, dim):
-        x = random_state.normal(size=(dim-n+1,))
-        D[n-1] = np.sign(x[0])
-        x[0] -= D[n-1]*np.sqrt((x*x).sum())
-        # Householder transformation
-        Hx = (np.eye(dim-n+1) - 2.*np.outer(x, x)/(x*x).sum())
-        mat = np.eye(dim)
-        mat[n-1:, n-1:] = Hx
-        H = np.dot(H, mat)
-        # Fix the last sign such that the determinant is 1
-    D[-1] = (-1)**(1-(dim % 2))*D.prod()
-    # Equivalent to np.dot(np.diag(D), H) but faster, apparently
-    H = (D*H.T).T
-    return H
 
+# Define the network
 def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, 
                      keep_prob=1.0, activation_flag=1, 
                      res_net=0, debug_splash=False)->(tf.Variable, list): # type: ignore
@@ -264,6 +268,7 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
     result = sess.run(tf.compat.v1.global_Variables_initializer())
     return y_out, z_temp_list
 
+#Train and test the network
 def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
               optimizer:tf.Variable, u_control_all_training=None, 
               valid_error_thres=1e-2, test_error_thres=1e-2,
@@ -371,6 +376,7 @@ def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
     plt.close()
     return all_histories, good_start
 
+# Run if not imported
 if __name__ == "__main__":
     # Load the data
     with open('data.csv', 'r') as file:
