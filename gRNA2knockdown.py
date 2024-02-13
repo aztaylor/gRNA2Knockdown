@@ -11,7 +11,7 @@ def sequence_encoding(sequence: str) -> np.array:
         sequence: str, DNA sequence
     returns:
         np.array, 1D array of floats
-        '''
+    '''
     seq = sequence.lower()
     encoding  = []
     encoding_map = {'a':'0.25', 'c':'0.5', 'g':'0.75', 't':'1'}
@@ -56,3 +56,13 @@ def xavier_init(n_inputs: int, n_outputs: int, uniform=True) -> tf.initializer:
         stddev = tf.sqrt(3.0 / (n_inputs + n_outputs))
         return tf.truncated_normal_initializer(stddev=stddev)
 
+def weight(shape: tuple, name: str, initializer: tf.initializer) -> tf.Variable:
+    '''Create a weight variable with a given shape and name.
+    args:
+        shape: tuple, shape of the weight
+        name: str, name of the weight
+        initializer: tf.initializer, initializer of the weight
+    returns:
+        tf.Variable, tensorflow variable
+    '''
+    return tf.get_variable(name, shape, initializer=initializer)
