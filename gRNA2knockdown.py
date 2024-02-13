@@ -1,9 +1,20 @@
+#!/usr/bin/env python3.11
+__author__ = "Alec Taylor, Enoch Yeung"
+__version__ = "1.0.0"
+__maintainer__ = "Alec Taylor"
+__email__ = "aztaylor76@fastmail.com"
+__status__ = "Development"
+
 import csv
 import math
 import random
 import numpy as np
 
 import tensorflow as tf
+
+'''This module contains the functions to encode DNA sequences and to use those encodeding to predict the knockdown efficiency of CRISPR 
+CasRx gRNAs. The model takes in the RNA sequence of the targeted transcript and the gRNA sequence and outputs the knockdown efficiency
+in terms of '''
 
 def sequence_encoding(sequence: str) -> np.array:
     '''Encode DNA sequence into a 1D array of floats. The encoding is mapped as to be normalized between 0 and 1.
@@ -77,9 +88,27 @@ def bias_variable(shape) -> tf.Variable:
     std_dev = math.sqrt(3.0 / shape[0])
     return tf.Variable(tf.random.truncated_normal(shape, mean=0.0,stddev=std_dev,dtype=tf.float32))
 
+def initialize_Wblist(n_u,hv_list):
+    W_list = [];
+    b_list = [];
+    n_depth = len(hv_list);
+    print("Length of hv_list: " + repr(n_depth))
+    #hv_list[n_depth-1] = n_y;
+    for k in range(0,n_depth):
+
+        if k==0:
+            W1 = weight_variable([n_u,hv_list[k]]);
+            b1 = bias_variable([hv_list[k]]);
+            W_list.append(W1);
+            b_list.append(b1);
+        else:
+            W_list.append(weight_variable([hv_list[k-1],hv_list[k]]));
+            b_list.append(bias_variable([hv_list[k]]));
+    result = sess.run(tf.compat.v1.global_variables_initializer())
+    return W_list,b_list;
+
 def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, keep_prob=1.0, activation_flag=1, res_net=0)->(tf.Variable, list):
-    ''''Assemble the network with the given weights and biases. The network is assembled as a list of layers
-    with the given weights and biases. The activation function is defined by the activation_flag. The res_net
+    ''''Assemble the network with the given weights and biases. The activation function is defined by the activation_flag. The res_net
     flag is used to define if the network is a residual network or not.
     args:
         input_var: tf.Variable, input variable
@@ -103,7 +132,7 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, keep_prob=
             b1 = b_list[0]
             if activation_flag==1:# RELU
                 z1 = tf.nn.dropout(tf.nn.relu(tf.matmul(input_var,W1)+b1),rate=1 - (keep_prob))
-            if activation_flag==2: #ELU
+            if activation_flag==2: # ELU
                 z1 = tf.nn.dropout(tf.nn.elu(tf.matmul(input_var,W1)+b1),rate=1 - (keep_prob))
             if activation_flag==3: # tanh
                 z1 = tf.nn.dropout(tf.nn.tanh(tf.matmul(input_var,W1)+b1),rate=1 - (keep_prob))
@@ -127,8 +156,8 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, keep_prob=
     if debug_splash:
         print("[DEBUG] z_list" + repr(z_list[-1]))
 
-    #y_out = tf.concat([z_list[-1],u],axis=1) # last element of activation output list is the actual NN output
     y_out = z_temp_list[-1]
 
     result = sess.run(tf.compat.v1.global_variables_initializer())
     return y_out, z_temp_list
+
