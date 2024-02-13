@@ -5,12 +5,15 @@ __maintainer__ = "Alec Taylor"
 __email__ = "aztaylor76@fastmail.com"
 __status__ = "Development"
 
+import os
 import csv
 import math
 import random
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+import platereadertools as pr
+
 
 '''This module contains the functions to encode DNA sequences and to use those encodeding to predict the knockdown 
 efficiency of CRISPR CasRx gRNAs. The model takes in the RNA sequence of the targeted transcript and the gRNA sequence
@@ -378,20 +381,15 @@ def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
 
 # Run if not imported
 if __name__ == "__main__":
-    # Load the data
-    with open('data.csv', 'r') as file:
-        reader = csv.reader(file)
-        data = list(reader)
-    data = np.array(data)
-    seq_array = data[:,0]
-    y_trace = data[:,1]
+    # First we need to load the data
+    data_fp = "./Data/"
+    spacer_fp = os.path.join(data_fp, "spacers.csv")
+    label_10mM_fp = os.path.join(data_fp,
+                                 "p2x11_80memberlib_10mMIPTG20230730.txt")
 
-    # Create the corpus
-    corpus = create_corpus(seq_array, y_trace)
-
-    # Define the model
-    n_x = 3330
-    n_u = 5000
-    n_y = 270
+    # Organize the label data using platereadertools.py
+    seqs = csv.reader(open(spaacer_fp, 'r'))
+    labels = pr.Organize(label_10mM_fp, 8, 12, 18, 3/60)
+    
 
 
