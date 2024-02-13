@@ -9,8 +9,8 @@ import csv
 import math
 import random
 import numpy as np
-
 import tensorflow as tf
+import matplotlib.pyplot as plt
 
 '''This module contains the functions to encode DNA sequences and to use those encodeding to predict the knockdown 
 efficiency of CRISPR CasRx gRNAs. The model takes in the RNA sequence of the targeted transcript and the gRNA sequence
@@ -65,10 +65,10 @@ def xavier_init(n_inputs: int, n_outputs: int, uniform=True) -> tf.initializers:
         tf.initializer, tensorflow initializer
     '''
     if uniform:
-        init_range = tf.sqrt(6.0 / (n_inputs + n_outputs))
+        init_range = tf.sqrt(6.0/(n_inputs + n_outputs))
         return tf.random_uniform_initializer(-init_range, init_range)
     else:
-        stddev = tf.sqrt(3.0 / (n_inputs + n_outputs))
+        stddev = tf.sqrt(3.0/(n_inputs + n_outputs))
         return tf.truncated_normal_initializer(stddev=stddev)
 
 def weight_Variable(shape: tuple) -> tf.Variable:
@@ -79,7 +79,7 @@ def weight_Variable(shape: tuple) -> tf.Variable:
     returns:
         tf.Variable, tensorflow Variable
     '''
-    std_dev = math.sqrt(3.0 /(shape[0] + shape[1]))
+    std_dev = math.sqrt(3.0/(shape[0] + shape[1]))
     return tf.Variable(tf.random.truncated_normal(shape, 
                                                   mean=0.0, 
                                                   stddev=std_dev,
@@ -98,7 +98,7 @@ def bias_Variable(shape) -> tf.Variable:
                                                   stddev=std_dev,
                                                   dtype=tf.float32))
 
-def initialize_Wblist(n_u,hv_list) -> (list, list):
+def initialize_Wblist(n_u,hv_list) -> (list, list): # type: ignore
     '''Initialize the weights and biases for the network. The weights are initialized using the weight_Variable function 
     and the biases are initialized using the bias_Variable function. The weights and biases are stored in lists.
     args:
@@ -197,7 +197,7 @@ def rvs(dim=3):
 
 def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, 
                      keep_prob=1.0, activation_flag=1, 
-                     res_net=0)->(tf.Variable, list):
+                     res_net=0, debug_splash=False)->(tf.Variable, list): # type: ignore
     ''''Assemble the network with the given weights and biases. The activation function is defined by the 
     activation_flag. The res_net flag is used to define if the network is a residual network or not.
     args:
@@ -207,6 +207,7 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
         keep_prob: float, dropout rate
         activation_flag: int, flag to define the activation function
         res_net: int, flag to define if the network is a residual network
+        debug_splash: bool, flag to print debug information
     returns:
         y_out: tf.Variable, output of the network
         z_temp_list: list, list of activations
