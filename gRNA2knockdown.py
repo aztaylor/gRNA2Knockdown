@@ -17,8 +17,11 @@ efficiency of CRISPR CasRx gRNAs. The model takes in the RNA sequence of the tar
 and outputs the knockdown efficiencyin terms of marker fold change. The model is a feedforward neural network with a
 Variable number of hidden layers and units. Optionally, it can be a residual network. The model is trained using the 
 Adam optimizer and the loss function is the mean squared error. The original code was developed by Enoch Yeung in the 
-Biologiccal Control Laboratory at the University of California, Santa Barbara.
+Biological Control Laboratory at the University of California, Santa Barbara.
 '''
+# Start a tensorflow session
+sess = tf.compat.v1.Session()
+
 
 def sequence_encoding(sequence: str) -> np.array:
     '''Encode DNA sequence into a 1D array of floats. The encoding is mapped as to be normalized between 0 and 1.
@@ -254,7 +257,7 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
             z_temp_list.append(prev_layer_output)
 
     if debug_splash:
-        print("[DEBUG] z_list" + repr(z_list[-1]))
+        print("[DEBUG] z_list" + repr(z_temp_list[-1]))
 
     y_out = z_temp_list[-1]
 
@@ -366,7 +369,7 @@ def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
     plt.savefig('all_error_history.pdf')
 
     plt.close()
-    return all_histories,good_start
+    return all_histories, good_start
 
 if __name__ == "__main__":
     # Load the data
@@ -381,8 +384,8 @@ if __name__ == "__main__":
     corpus = create_corpus(seq_array, y_trace)
 
     # Define the model
-    n_x = 4
-    n_u = 100
-    n_y = 1
+    n_x = 3330
+    n_u = 5000
+    n_y = 270
 
 
