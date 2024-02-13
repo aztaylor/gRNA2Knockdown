@@ -56,13 +56,79 @@ def xavier_init(n_inputs: int, n_outputs: int, uniform=True) -> tf.initializer:
         stddev = tf.sqrt(3.0 / (n_inputs + n_outputs))
         return tf.truncated_normal_initializer(stddev=stddev)
 
-def weight(shape: tuple, name: str, initializer: tf.initializer) -> tf.Variable:
-    '''Create a weight variable with a given shape and name.
+def weight_variable(shape: tuple) -> tf.Variable:
+    '''Create a weight variable with a given shape and name. Defined to be used in the standard definitiion
+    of a neuron: Wx + b, where W is the weight, x is the input and b is the bias.
     args:
         shape: tuple, shape of the weight
-        name: str, name of the weight
-        initializer: tf.initializer, initializer of the weight
     returns:
         tf.Variable, tensorflow variable
     '''
-    return tf.get_variable(name, shape, initializer=initializer)
+    std_dev = math.sqrt(3.0 /(shape[0] + shape[1]))
+    return tf.Variable(tf.random.truncated_normal(shape, mean=0.0,stddev=std_dev,dtype=tf.float32))
+
+def bias_variable(shape) -> tf.Variable:
+    '''Create a bias variable with a given shape and name. Defined to be used in the standard definitiion
+    of a neuron: Wx + b, where W is the weight, x is the input and b is the bias.
+    args:
+        shape: tuple, shape of the bias
+    returns:
+        tf.Variable, tensorflow variable'''
+    std_dev = math.sqrt(3.0 / shape[0])
+    return tf.Variable(tf.random.truncated_normal(shape, mean=0.0,stddev=std_dev,dtype=tf.float32))
+
+def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, keep_prob=1.0, activation_flag=1, res_net=0)->(tf.Variable, list):
+    ''''Assemble the network with the given weights and biases. The network is assembled as a list of layers
+    with the given weights and biases. The activation function is defined by the activation_flag. The res_net
+    flag is used to define if the network is a residual network or not.
+    args:
+        input_var: tf.Variable, input variable
+        W_list: list, list of weights
+        b_list: list, list of biases
+        keep_prob: float, dropout rate
+        activation_flag: int, flag to define the activation function
+        res_net: int, flag to define if the network is a residual network
+    returns:
+        y_out: tf.Variable, output of the network
+        z_temp_list: list, list of activations
+    '''
+    n_depth = len(W_list)
+    print("n_depth: " + repr(n_depth))
+    z_temp_list = []
+
+    for k in range(0,n_depth):
+        # form the input layer with the flag variable determining the activation function.
+        if (k==0):
+            W1 = W_list[0]
+            b1 = b_list[0]
+            if activation_flag==1:# RELU
+                z1 = tf.nn.dropout(tf.nn.relu(tf.matmul(input_var,W1)+b1),rate=1 - (keep_prob))
+            if activation_flag==2: #ELU
+                z1 = tf.nn.dropout(tf.nn.elu(tf.matmul(input_var,W1)+b1),rate=1 - (keep_prob))
+            if activation_flag==3: # tanh
+                z1 = tf.nn.dropout(tf.nn.tanh(tf.matmul(input_var,W1)+b1),rate=1 - (keep_prob))
+            z_temp_list.append(z1)
+        # form the hidden layers with the flag variable determining the activation function.
+        if not (k==0) and k < (n_depth-1):
+            prev_layer_output = tf.matmul(z_temp_list[k-1],W_list[k])+b_list[k]
+            if res_net and k==(n_depth-2):
+                prev_layer_output += tf.matmul(u,W1)+b1 #  this expression is not compatible for variable width nets (where each layer has a different width at inialization - okay with regularization and dropout afterwards though)
+            if activation_flag==1:
+                z_temp_list.append(tf.nn.dropout(tf.nn.relu(prev_layer_output),rate=1 - (keep_prob)))
+            if activation_flag==2:
+                z_temp_list.append(tf.nn.dropout(tf.nn.elu(prev_layer_output),rate=1 - (keep_prob)))
+            if activation_flag==3:
+                z_temp_list.append(tf.nn.dropout(tf.nn.tanh(prev_layer_output),rate=1 - (keep_prob)))
+        # form the output layer with the flag variable determining the activation function.
+        if not (k==0) and k == (n_depth-1):
+            prev_layer_output = tf.matmul(z_temp_list[k-1],W_list[k])+b_list[k]
+            z_temp_list.append(prev_layer_output)
+
+    if debug_splash:
+        print("[DEBUG] z_list" + repr(z_list[-1]))
+
+    #y_out = tf.concat([z_list[-1],u],axis=1) # last element of activation output list is the actual NN output
+    y_out = z_temp_list[-1]
+
+    result = sess.run(tf.compat.v1.global_variables_initializer())
+    return y_out, z_temp_list
