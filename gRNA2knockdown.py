@@ -200,7 +200,8 @@ def customLoss(y_model:tf.Variable, y_true:tf.Variable,
         y_true: tf.Variable, true y values
         embed_true: tf.Variable, true embeddings
     returns:
-        tf.Variable, custom loss'''
+        tf.Variable, custom loss
+        '''
     return vae_loss(y_model,y_true)+embed_loss(y_true,embed_true)
 
 
@@ -381,6 +382,13 @@ def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
 
 # Run if not imported
 if __name__ == "__main__":
+    '''This is the main function that runs the code. It loads the data, organizes the data, encodes the data,
+        initializes the network, trains the network and tests the network. The data is loaded from the Data directory
+        and the label data is organized using the platereadertools.py module. The data is then encoded using the
+        sequence_encoding function. The network is initialized using the initialize_Wblist function and trained using
+        the train_net function. The network is then tested using the test_net function. If not loaded as a standalone
+        script, this script willl act as a module and the functions can be imported and used in other scripts.
+    '''
     # First we need to load the data
     data_fp = "./Data/"
     spacer_fp = os.path.join(data_fp, "spacers.csv")
@@ -388,7 +396,7 @@ if __name__ == "__main__":
                                  "p2x11_80memberlib_10mMIPTG20230730.txt")
 
     # Organize the label data using platereadertools.py
-    seqs = csv.reader(open(spaacer_fp, 'r'))
+    seqs = csv.reader(open(spacer_fp, 'r'))
     labels = pr.Organize(label_10mM_fp, 8, 12, 18, 3/60)
     
 
