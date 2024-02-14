@@ -18,7 +18,7 @@ import platereadertools as pr
 '''This module contains the functions to encode DNA sequences and to use those encodeding to predict the knockdown 
 efficiency of CRISPR CasRx gRNAs. The model takes in the RNA sequence of the targeted transcript and the gRNA sequence
 and outputs the knockdown efficiencyin terms of marker fold change. The model is a feedforward neural network with a
-Variable number of hidden layers and units. Optionally, it can be a residual network. The model is trained using the 
+variable number of hidden layers and units. Optionally, it can be a residual network. The model is trained using the 
 Adam optimizer and the loss function is the mean squared error. The original code was developed by Enoch Yeung in the 
 Biological Control Laboratory at the University of California, Santa Barbara.
 '''
@@ -40,6 +40,18 @@ def sequence_encoding(sequence: str) -> np.array:
         encoding.append(float(encoding_map[seq[i]]))
     return np.asarray(encoding)
 
+def make_labeled_corpus(seq_list,stride_param):
+    corpus = [];
+    labels= [];
+    for elem in seq_list:
+        this_seq = elem[0];
+        this_label = elem[1];
+        for ind in range(0,len(this_seq)-stride_param+1):
+            this_datapt = this_seq[ind:ind+stride_param];
+            corpus.append(this_datapt);
+            labels.append(this_label);
+    return corpus,labels
+
 def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride=1) -> dict:
     '''Create a corpus of sequences and their corresponding labels (y_trace).
     args:
@@ -55,13 +67,12 @@ def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride=1) -> dict:
     for seq in seq_array:
         for i in range(len(seq)):
             corpus[seq[i]] = y_trace[i]
-    return corpus
-
+    return corpus# leave as is in the original code. Optimize Later
 
 def xavier_init(n_inputs: int, n_outputs: int, uniform=True) -> tf.initializers:
-    '''Initialize weights with Xavier initialization. From Enoch's code this initialize
+    '''Initialize weights with Xavier initialization. From Enoch's code this initializes
     the weights with a uniform distribution to keep the scale if gradients roughly the same in all layers.
-    From originally Xavier Glorot and Yoshua Bengio (2010).
+    Originally from Xavier Glorot and Yoshua Bengio (2010).
     args:
         n_inputs: int, number of inputs
         n_outputs: int, number of outputs
@@ -132,7 +143,8 @@ def initialize_Wblist(n_u,hv_list) -> (list, list): # type: ignore
     return W_list,b_list
 
 def rvs(dim=3):
-    '''Generate a random orthogonal matrix. The matrix is generated using the Householder transformation.
+    '''Generate a random orthogonal matrix. The matrix is generated using the Householder transformation. This should 
+    scrabble the 4-hot encoding to project into random input space. This improves performance for reason I do not yet know.
     args:
         dim: int, dimension of the matrix
     returns:
@@ -166,7 +178,7 @@ def embed_loss(y_true,embed_true):
             embed_true: tf.Variable, true embeddings
         returns:
             tf.Variable, embedding loss
-        '''
+    '''
     #y_true is (batch_size_param) x (dim of stride) tensor
     IP_Matrix_y = tf.matmul(y_true,tf.transpose(y_true))
     IP_Matrix_e = tf.matmul(embed_true,tf.transpose(embed_true))
@@ -383,21 +395,47 @@ def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
 # Run if not imported
 if __name__ == "__main__":
     '''This is the main function that runs the code. It loads the data, organizes the data, encodes the data,
-        initializes the network, trains the network and tests the network. The data is loaded from the Data directory
-        and the label data is organized using the platereadertools.py module. The data is then encoded using the
-        sequence_encoding function. The network is initialized using the initialize_Wblist function and trained using
-        the train_net function. The network is then tested using the test_net function. If not loaded as a standalone
-        script, this script willl act as a module and the functions can be imported and used in other scripts.
+       initializes the network, trains the network and tests the network. The data is loaded from the Data directory
+       and the label data is organized using the platereadertools.py module. The data is then encoded using the
+       sequence_encoding function. The network is initialized using the initialize_Wblist function and trained using
+       the train_net function. The network is then tested using the test_net function. If not loaded as a standalone
+       script, this script will act as a module and the functions can be imported and used in other scripts.
     '''
     # First we need to load the data
-    data_fp = "./Data/"
-    spacer_fp = os.path.join(data_fp, "spacers.csv")
-    label_10mM_fp = os.path.join(data_fp,
-                                 "p2x11_80memberlib_10mMIPTG20230730.txt")
+    data_fp = "Data/"
+    spacer_fp = os.path.join(data_fp, "GFP_spacers.gbk")
+    data_0nM_fp = os.path.join(data_fp,
+                                "p2x11_80memberlibrary_0mMIPTG20230730.txt")
+    data_10mM_fp = os.path.join(data_fp,
+                                "p2x11_80memberlib_10mMIPTG20230730.txt")
 
-    # Organize the label data using platereadertools.py
-    seqs = csv.reader(open(spacer_fp, 'r'))
-    labels = pr.Organize(label_10mM_fp, 8, 12, 18, 3/60)
-    
+    # Organize the label, sequence data from platereadertools and the csv standard module.
+    seqs = csv.reader(open("Data/GFP_spacers.csv"))
+    allseqs = [seq for seq in seqs]
+    data0, time0 = pr.Organize(data_0nM_fp, 8, 12, 18, 3/60)
+    data1, time1 = pr.Organize(data_10mM_fp, 8, 12, 18, 3/60)
+
+    # Based off of the timeseries data, we can see that the greatest change in flourescence occurs at timepoint 165 
+    # (~8hours). We will use this timepoint to calculate the fold change between the 0mM and 10mM data.
+    reads = list(data0.keys())
+    data_pt0 = data0[reads[1]][:,:,165]
+    data_pt1 = data1[reads[1]][:,:,165]
+
+
+    # Calculate the fold change between the 0mM and 10mM data.
+    fold_change = data_pt1/data_pt0
+    data = np.reshape(fold_change,(96))
+
+    # Visualize the foldchange to see if there are any trends.
+    explore = False
+    if explore == True:
+        fig, ax = plt.subplots(1,1)
+        ax.bar(range(len(data)), data)
+        ax.set_xlabel("gRNA position with tilling equal to 3bp")
+        ax.set_ylabel('Fold Change in RFU')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.set_title("Fold Change in RFU for each gRNA position at 8 hours")
+        plt.savefig("./Figures/foldchange.png")
 
 
