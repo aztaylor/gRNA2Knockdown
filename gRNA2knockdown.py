@@ -14,13 +14,21 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import platereadertools as pr
 
+from sklearn.preprocessing import MinMaxScaler
 
-'''This module contains the functions to encode DNA sequences and to use those encodeding to predict the knockdown 
-efficiency of CRISPR CasRx gRNAs. The model takes in the RNA sequence of the targeted transcript and the gRNA sequence
-and outputs the knockdown efficiencyin terms of marker fold change. The model is a feedforward neural network with a
-variable number of hidden layers and units. Optionally, it can be a residual network. The model is trained using the 
-Adam optimizer and the loss function is the mean squared error. The original code was developed by Enoch Yeung in the 
-Biological Control Laboratory at the University of California, Santa Barbara.
+'''This module contains the functions to encode DNA sequences and to use those encodedingds to predict the knockdown 
+efficiency of CRISPR CasRx gRNAs effectors. The model takes in the RNA sequence of the targeted transcript and the gRNA 
+sequence and outputs the knockdown efficiency in terms of marker fold change. The model is a feedforward neural network 
+with a variable number of hidden layers and units. Optionally, it can act as a residual network. The model is trained
+using  the Adam optimizer and a custom VAE embbed loss function to determine the mean squared error.
+The original code was developed by Enoch Yeung in the Biological Control Laboratory at the University of California, 
+Santa Barbara. Some things to note about the code:
+ - The code is written in Python 3.11 and uses the TensorFlow 2.x library.
+ - The code is written in a modular fashion and can be used as a module in other scripts.
+ - The code is written in a functional programming style and uses type hints to define the types of the arguments and
+ outputs.
+ - The module contiains a __main__ function that runs the code when the module is run as a standalone script.
+ - To run the code as a module, a tensorflow session must be defined and the code must be run in a tensorflow session.
 '''
 
 # Define Auxillary Functions
@@ -39,15 +47,15 @@ def sequence_encoding(sequence: str) -> np.array:
     return np.asarray(encoding)
 
 def make_labeled_corpus(seq_list,stride_param):
-    corpus = [];
-    labels= [];
+    corpus = []
+    labels= []
     for elem in seq_list:
-        this_seq = elem[0];
-        this_label = elem[1];
+        this_seq = elem[0]
+        this_label = elem[1]
         for ind in range(0,len(this_seq)-stride_param+1):
-            this_datapt = this_seq[ind:ind+stride_param];
-            corpus.append(this_datapt);
-            labels.append(this_label);
+            this_datapt = this_seq[ind:ind+stride_param]
+            corpus.append(this_datapt)
+            labels.append(this_label)
     return corpus,labels
 
 def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride=1) -> dict:
@@ -216,7 +224,7 @@ def customLoss(y_model:tf.Variable, y_true:tf.Variable,
 
 
 # Define the network
-def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, 
+def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, u:tf.Variable, 
                      keep_prob=1.0, activation_flag=1, 
                      res_net=0, debug_splash=False)->(tf.Variable, list): # type: ignore
     ''''Assemble the network with the given weights and biases. The activation function is defined by the 
@@ -258,9 +266,9 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
             if res_net and k==(n_depth-2):
             # this expression is not compatible for Variable width nets (where each layer has a different width at 
             # inialization - okay with regularization and dropout afterwards though)
-                prev_layer_output += tf.matmul(u,W1)+b1
+                prev_layer_output += tf.matmul(u, W1)+b1
             if activation_flag==1:
-                prev_layer_output += tf.matmul(u,W1)+b1 
+                prev_layer_output += tf.matmul(u, W1)+b1 
                 z_temp_list.append(tf.nn.dropout(tf.nn.relu(prev_layer_output),
                                                  rate=1 - (keep_prob)))
             if activation_flag==2:
@@ -284,10 +292,10 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
 
 #Train and test the network
 def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
-              optimizer:tf.Variable, u_control_all_training=None, 
-              valid_error_thres=1e-2, test_error_thres=1e-2,
-              max_iters=100000, step_size_val=0.01, batchsize=10, 
-              samplerate=5000, good_start=1, val_error=100.0, 
+              optimizer:tf.Variable, this_u: tf.Variable,
+              u_control_all_training=None, valid_error_thres=1e-2, 
+              test_error_thres=1e-2, max_iters=100000, step_size_val=0.01,
+              batchsize=10, samplerate=5000, good_start=1, val_error=100.0, 
               test_error=100.0) -> list:
     '''Train the network using the Adam optimizer. The training is done in batches and the error is calculated for the
     training, validation and test sets. The training stops when the validation and test errors are below the threshold.
@@ -465,13 +473,32 @@ if __name__ == "__main__":
     batch_size_parameter=300 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
     this_step_size_val = 0.25
+    this_corpus,this_labels = make_labeled_corpus(seqs, stride_parameter)
 
-    hidden_vars_list = [embedding_dim,stride_parameter]
+    # Define the random transformation householder matrix.
+    Rand_Transform = rvs(dim=stride_parameter)
 
+    # Define the corpus for the model.
+    this_corpus_vec = []
+    for this_corpus_elem in this_corpus:
+        vec_value = sequence_encoding(this_corpus_elem)
+        vec_value = np.dot(Rand_Transform,vec_value)
+
+        this_corpus_vec.append(vec_value)
+
+    this_corpus_vec = np.asarray(this_corpus_vec)
+    this_labels = np.expand_dims(this_labels,axis=1)
+    print(len(this_labels))
+    hidden_vars_list = [embedding_dim, stride_parameter]
+    this_u = tf.compat.v1.placeholder(tf.float32, 
+                                      shape=[None,stride_parameter])
+
+    # Define the tensorflow session
+    sess = tf.compat.v1.Session()
     with tf.device('/cpu:0'):
         this_W_list,this_b_list = initialize_Wblist(stride_parameter,
                                                     hidden_vars_list)
-        his_y_out,all_layers = network_assemble(this_u,this_W_list,this_b_list
+        this_y_out,all_layers = network_assemble(this_u,this_W_list,this_b_list
                                                 ,keep_prob=1.0,
                                                 activation_flag=2,res_net=0)
 
