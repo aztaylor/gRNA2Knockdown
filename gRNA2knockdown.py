@@ -22,8 +22,6 @@ variable number of hidden layers and units. Optionally, it can be a residual net
 Adam optimizer and the loss function is the mean squared error. The original code was developed by Enoch Yeung in the 
 Biological Control Laboratory at the University of California, Santa Barbara.
 '''
-# Start a tensorflow session
-sess = tf.compat.v1.Session()
 
 # Define Auxillary Functions
 def sequence_encoding(sequence: str) -> np.array:
@@ -333,21 +331,12 @@ def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
         select_ind_test = list(all_ind - set(valid_ind) - 
                             set(select_ind))[0:batchsize]
 
-
         u_batch =[]
-        u_control_batch = []
-
         u_valid = []
-        u_control_valid = []
-
         u_test_train = []
-        u_control_train = []
-
-        u_control_test_train = []
-
+        
         for j in range(0,len(select_ind)):
             u_batch.append(u_all_training[select_ind[j]])
-
 
         for k in range(0,len(valid_ind)):
             u_valid.append(u_all_training[valid_ind[k]])
@@ -391,6 +380,36 @@ def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
 
     plt.close()
     return all_histories, good_start
+
+SeqMap = ['A','C','T','G']
+
+def elemback2seq(this_elem):
+    '''Convert the lattice-like vector representation/encoding to a DNA sequence. The encoding is mapped as to be
+        normalized between 0 and 1.
+        args:
+            this_elem: float, lattice-like vector representation/encoding
+        returns:
+            str, DNA sequence
+    '''
+    this_elem = this_elem[0]
+    seq_dist_list = list(np.abs(np.array([this_elem]*4) - np.array([0.25,0.5,0.75,1.0])))
+    opt_index = seq_dist_list.index(np.min(np.array(seq_dist_list)))
+    return(SeqMap[opt_index])
+
+def vecback2seq(untransformed_vec):
+    '''Convert the lattice-like vector representation/encoding to a DNA sequence. The encoding is mapped as to be
+        normalized between 0 and 1.
+        args:
+            untransformed_vec: np.array, lattice-like vector representation/encoding
+        returns:
+            list, list of DNA sequences
+    '''
+    # untransformed_vec is computed using the inverse of Rand_Transform to recover lattice-like vector representation/encoding
+    seq_out = [elemback2seq(elem) for elem in untransformed_vec]
+    return seq_out;
+
+def num_mismatch(seq_model,seq_true):
+    return np.sum(1*([not(seq_model[ind]==seq_true[ind]) for ind in range(0,len(seq_true))]))
 
 # Run if not imported
 if __name__ == "__main__":
@@ -438,4 +457,55 @@ if __name__ == "__main__":
         ax.set_title("Fold Change in RFU for each gRNA position at 8 hours")
         plt.savefig("./Figures/foldchange.png")
 
+    # Define the model parameters.
+    stride_parameter = 20
+    label_dim = 1
+    embedding_dim = 18
+    intermediate_dim = 50
+    batch_size_parameter=300 #4000 for howard's e. coli dataset (from Enoch's code)
+    debug_splash = 0
+    this_step_size_val = 0.25
 
+    hidden_vars_list = [embedding_dim,stride_parameter]
+
+    with tf.device('/cpu:0'):
+        this_W_list,this_b_list = initialize_Wblist(stride_parameter,
+                                                    hidden_vars_list)
+        his_y_out,all_layers = network_assemble(this_u,this_W_list,this_b_list
+                                                ,keep_prob=1.0,
+                                                activation_flag=2,res_net=0)
+
+    this_embedding = all_layers[-2]
+    regress_list = [intermediate_dim]*1+[label_dim]
+    with tf.device('/cpu:0'):
+        this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
+                                                                  regress_list)
+
+        HybridLoss = customLoss(this_y_out,this_u,this_embedding)
+        result = sess.run(tf.compat.v1.global_variables_initializer())
+        this_optim = tf.compat.v1.train.AdagradOptimizer(
+            learning_rate=this_step_size_val).minimize(HybridLoss)
+        step_size = tf.compat.v1.placeholder(tf.float32,shape=[])
+        result = sess.run(tf.compat.v1.global_variables_initializer())
+        this_vae_loss = vae_loss(this_y_out,this_u)
+        this_embed_loss = embed_loss(this_u,this_embedding)
+
+        # Train the network
+        train_net(this_corpus_vec,this_u,HybridLoss,
+                  this_optim,batchsize = batch_size_parameter,
+                  step_size_val = this_step_size_val*10.0,max_iters=5e4)
+        train_net(this_corpus_vec,this_u,HybridLoss,
+                  this_optim,batchsize = batch_size_parameter,
+                  step_size_val = this_step_size_val,max_iters=5e4)
+        train_net(this_corpus_vec,this_u,HybridLoss,this_optim,
+                  batchsize = batch_size_parameter,
+                  step_size_val = this_step_size_val*.5,max_iters=3e4)
+        train_net(this_corpus_vec,this_u,HybridLoss,
+                  this_optim,batchsize = batch_size_parameter,
+                  step_size_val = this_step_size_val*.1,max_iters=3e4)
+        train_net(this_corpus_vec,this_u,HybridLoss,
+                  this_optim,batchsize = batch_size_parameter,
+                  step_size_val = this_step_size_val*.05,max_iters=3e4)
+        train_net(this_corpus_vec,this_u,HybridLoss,this_optim,
+                  batchsize = batch_size_parameter,
+                  step_size_val = this_step_size_val*.01,max_iters=3e4)
