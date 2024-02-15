@@ -18,11 +18,14 @@ from sklearn.preprocessing import MinMaxScaler
 
 '''This module contains the functions to encode DNA sequences and to use those encodedingds to predict the knockdown 
 efficiency of CRISPR CasRx gRNAs effectors. The model takes in the RNA sequence of the targeted transcript and the gRNA 
-sequence and outputs the knockdown efficiency in terms of marker fold change. The model is a feedforward neural network 
-with a variable number of hidden layers and units. Optionally, it can act as a residual network. The model is trained
-using  the Adam optimizer and a custom VAE embbed loss function to determine the mean squared error.
+sequence and outputs the knockdown efficiency in terms of marker fold change. The model is an adaptable neural network 
+with a variable number of hidden layers and units. It is meant to be able to construct autoencoders, feedforward NN and 
+residual networks.
+
+The model is trained using  the Adam optimizer and a custom VAE embbed loss function to determine the mean squared error.
 The original code was developed by Enoch Yeung in the Biological Control Laboratory at the University of California, 
 Santa Barbara. Some things to note about the code:
+
  - The code is written in Python 3.11 and uses the TensorFlow 2.x library.
  - The code is written in a modular fashion and can be used as a module in other scripts.
  - The code is written in a functional programming style and uses type hints to define the types of the arguments and
