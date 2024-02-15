@@ -29,6 +29,9 @@ Santa Barbara. Some things to note about the code:
  outputs.
  - The module contiains a __main__ function that runs the code when the module is run as a standalone script.
  - To run the code as a module, a tensorflow session must be defined and the code must be run in a tensorflow session.
+ - Becuase this script uses placeholder variabeles, which are incompatible with the eager execution mode, the eager
+    execution mode must be disabled before running the code. This can be done by running the following code:
+    tf.compat.v1.disable_eager_execution()
 '''
 
 # Define Auxillary Functions
@@ -46,12 +49,21 @@ def sequence_encoding(sequence: str) -> np.array:
         encoding.append(float(encoding_map[seq[i]]))
     return np.asarray(encoding)
 
-def make_labeled_corpus(seq_list,stride_param):
+def make_labeled_corpus(seq_list, label_list, stride_param):
+    '''Create a corpus of sequences and their corresponding labels. The corpus is created by taking a sequence and
+    sliding a window of size stride_param over the sequence. The labels are the same for each window.
+    args:
+        seq_list: list, list of where the first index is the sequence and the second index is the label.
+        stride_param: int, stride parameter
+    returns:
+        corpus: list, list of sequences
+        labels: list, list of labels
+    '''
     corpus = []
     labels= []
-    for elem in seq_list:
-        this_seq = elem[0]
-        this_label = elem[1]
+    for i, this_seq in enumerate(seq_list):
+        this_seq = this_seq[0]
+        this_label = label_list[i]
         for ind in range(0,len(this_seq)-stride_param+1):
             this_datapt = this_seq[ind:ind+stride_param]
             corpus.append(this_datapt)
@@ -61,7 +73,7 @@ def make_labeled_corpus(seq_list,stride_param):
 def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride=1) -> dict:
     '''Create a corpus of sequences and their corresponding labels (y_trace).
     args:
-        seq_array: np.ndarray, 2D array of sequences
+        seq_array: np.ndarray, 2D array of 
         y_trace: np.ndarray, 2D array of y traces (OD values or Fluorescence)
     returns:
         labeled_corpus: dict, dict of data and labels (sequence, y_trace)
@@ -145,7 +157,7 @@ def initialize_Wblist(n_u,hv_list) -> (list, list): # type: ignore
         else:
             W_list.append(weight_Variable([hv_list[k-1],hv_list[k]]))
             b_list.append(bias_Variable([hv_list[k]]))
-    result = sess.run(tf.compat.v1.global_Variables_initializer())
+    result = sess.run(tf.compat.v1.global_variables_initializer())
     return W_list,b_list
 
 def rvs(dim=3):
@@ -224,12 +236,13 @@ def customLoss(y_model:tf.Variable, y_true:tf.Variable,
 
 
 # Define the network
-def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, u:tf.Variable, 
+def network_assemble(sess, input_var:tf.Variable, W_list:list, b_list:list, 
                      keep_prob=1.0, activation_flag=1, 
                      res_net=0, debug_splash=False)->(tf.Variable, list): # type: ignore
     ''''Assemble the network with the given weights and biases. The activation function is defined by the 
     activation_flag. The res_net flag is used to define if the network is a residual network or not.
     args:
+        sess: tf.Session, tensorflow session
         input_var: tf.Variable, input Variable
         W_list: list, list of weights
         b_list: list, list of biases
@@ -287,12 +300,12 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, u:tf.Varia
 
     y_out = z_temp_list[-1]
 
-    result = sess.run(tf.compat.v1.global_Variables_initializer())
+    result = sess.run(tf.compat.v1.global_variables_initializer())
     return y_out, z_temp_list
 
 #Train and test the network
-def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
-              optimizer:tf.Variable, this_u: tf.Variable,
+def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
+              optimizer:tf.Variable,
               u_control_all_training=None, valid_error_thres=1e-2, 
               test_error_thres=1e-2, max_iters=100000, step_size_val=0.01,
               batchsize=10, samplerate=5000, good_start=1, val_error=100.0, 
@@ -300,6 +313,7 @@ def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
     '''Train the network using the Adam optimizer. The training is done in batches and the error is calculated for the
     training, validation and test sets. The training stops when the validation and test errors are below the threshold.
     args:
+        sess: tf.Session, tensorflow session
         u_all_training: np.array, training data
         u_feed: tf.Variable, input Variable
         obj_func: tf.Variable, objective function
@@ -334,6 +348,7 @@ def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
         iter+=1
 
         all_ind = set(np.arange(0,len(u_all_training)))
+        #print(len(u_all_training))
         select_ind = np.random.randint(0,len(u_all_training),size=batchsize)
         valid_ind = list(all_ind -set(select_ind))[0:batchsize]
         select_ind_test = list(all_ind - set(valid_ind) - 
@@ -352,40 +367,47 @@ def train_net(u_all_training:np.array, u_feed:tf.Variable, obj_func:tf.Variable,
         for k in range(0,len(select_ind_test)):
             u_test_train.append(u_all_training[select_ind_test[k]])
 
-        optimizer.run(feed_dict={u_feed:u_batch}) # embed_feed:,step_size:step_size_val});
-        valid_error = obj_func.eval(feed_dict={u_feed:u_valid}) # embed_feed:y_valid});
-        test_error = obj_func.eval(feed_dict={u_feed:u_test_train}) # embed_feed:y_test_train});
+        optimizer.run(feed_dict={u_feed:u_batch}, session=sess) # embed_feed:,step_size:step_size_val});
+        valid_error = obj_func.eval(feed_dict={u_feed:u_valid}, session=sess) # embed_feed:y_valid});
+        test_error = obj_func.eval(feed_dict={u_feed:u_test_train}, 
+                                   session=sess) # embed_feed:y_test_train});
 
 
         if iter%samplerate==0:
             training_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_batch}))#,embed_feed:y_batch}));
+                feed_dict={u_feed:u_batch}, session=sess))#,embed_feed:y_batch}));
             validation_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_valid}))#,embed_feed:y_valid}));
+                feed_dict={u_feed:u_valid}, session=sess))#,embed_feed:y_valid}));
             test_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_test_train}))#,embed_feed:y_test_train}));
+                feed_dict={u_feed:u_test_train}, session=sess))#,embed_feed:y_test_train}));
 
 
         if (iter%10==0) or (iter==1):
-            print ("step %d , validation error %g"%(iter, obj_func.eval(
-                    feed_dict={u_feed:u_valid})))#,embed_feed:y_valid})));
-            print ("step %d , test error %g"%(iter, obj_func.eval(
-                    feed_dict={u_feed:u_test_train})));#,embed_feed:y_test_train})));
+            print("step %d , validation error %g"%(iter, obj_func.eval(
+                    feed_dict={u_feed:u_valid}, session=sess)))#,embed_feed:y_valid})));
+            print("step %d , test error %g"%(iter, obj_func.eval(
+                    feed_dict={u_feed:u_test_train}, session=sess)));#,embed_feed:y_test_train})));
             print("Reconstruction Loss: " + repr(this_vae_loss.eval(
-                    feed_dict={this_u:this_corpus_vec})))
+                    feed_dict={this_u:this_corpus_vec},session=sess)))
             print("Embedding Loss: " + repr(this_embed_loss.eval(
-                    feed_dict={this_u:this_corpus_vec})) )
+                    feed_dict={this_u:this_corpus_vec}, session=sess)))
 
     all_histories = [training_error_history_nocovar, 
                     validation_error_history_nocovar,test_error_history_nocovar]
 
-    plt.close()
+    fig, ax = plt.subplots(1,1)
     x = np.arange(0,len(validation_error_history_nocovar),1)
-    plt.plot(x,training_error_history_nocovar,label='train. err.')
-    plt.plot(x,validation_error_history_nocovar,label='valid. err.')
-    plt.plot(x,test_error_history_nocovar,label='test err.')
-    plt.savefig('all_error_history.pdf')
-
+    ax.plot(x,training_error_history_nocovar,label='train. err.')
+    ax.plot(x,validation_error_history_nocovar,label='valid. err.')
+    ax.plot(x,test_error_history_nocovar,label='test err.')
+    ax.legend()
+    ax.set_xlabel('Iterations')
+    ax.set_ylabel('Error')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.set_title('Error History')
+    
+    plt.savefig('./Figures/all_error_history.png')
     plt.close()
     return all_histories, good_start
 
@@ -428,6 +450,7 @@ if __name__ == "__main__":
        the train_net function. The network is then tested using the test_net function. If not loaded as a standalone
        script, this script will act as a module and the functions can be imported and used in other scripts.
     '''
+    
     # First we need to load the data
     data_fp = "Data/"
     spacer_fp = os.path.join(data_fp, "GFP_spacers.gbk")
@@ -473,11 +496,11 @@ if __name__ == "__main__":
     batch_size_parameter=300 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
     this_step_size_val = 0.25
-    this_corpus,this_labels = make_labeled_corpus(seqs, stride_parameter)
+    this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
 
     # Define the random transformation householder matrix.
     Rand_Transform = rvs(dim=stride_parameter)
-
+    
     # Define the corpus for the model.
     this_corpus_vec = []
     for this_corpus_elem in this_corpus:
@@ -490,15 +513,19 @@ if __name__ == "__main__":
     this_labels = np.expand_dims(this_labels,axis=1)
     print(len(this_labels))
     hidden_vars_list = [embedding_dim, stride_parameter]
-    this_u = tf.compat.v1.placeholder(tf.float32, 
-                                      shape=[None,stride_parameter])
+
 
     # Define the tensorflow session
     sess = tf.compat.v1.Session()
+    tf.compat.v1.disable_eager_execution() # needed because of placeholder variables
+    
+    this_u = tf.compat.v1.placeholder(tf.float32, 
+                                      shape=[None,stride_parameter])
+
     with tf.device('/cpu:0'):
         this_W_list,this_b_list = initialize_Wblist(stride_parameter,
                                                     hidden_vars_list)
-        this_y_out,all_layers = network_assemble(this_u,this_W_list,this_b_list
+        this_y_out,all_layers = network_assemble(sess, this_u,this_W_list,this_b_list
                                                 ,keep_prob=1.0,
                                                 activation_flag=2,res_net=0)
 
@@ -518,21 +545,21 @@ if __name__ == "__main__":
         this_embed_loss = embed_loss(this_u,this_embedding)
 
         # Train the network
-        train_net(this_corpus_vec,this_u,HybridLoss,
+        train_net(sess, this_corpus_vec,this_u,HybridLoss,
                   this_optim,batchsize = batch_size_parameter,
                   step_size_val = this_step_size_val*10.0,max_iters=5e4)
-        train_net(this_corpus_vec,this_u,HybridLoss,
+        train_net(sess, this_corpus_vec,this_u,HybridLoss,
                   this_optim,batchsize = batch_size_parameter,
                   step_size_val = this_step_size_val,max_iters=5e4)
-        train_net(this_corpus_vec,this_u,HybridLoss,this_optim,
+        train_net(sess, this_corpus_vec,this_u,HybridLoss,this_optim,
                   batchsize = batch_size_parameter,
                   step_size_val = this_step_size_val*.5,max_iters=3e4)
-        train_net(this_corpus_vec,this_u,HybridLoss,
+        train_net(sess, this_corpus_vec,this_u,HybridLoss,
                   this_optim,batchsize = batch_size_parameter,
                   step_size_val = this_step_size_val*.1,max_iters=3e4)
-        train_net(this_corpus_vec,this_u,HybridLoss,
+        train_net(sess, this_corpus_vec,this_u,HybridLoss,
                   this_optim,batchsize = batch_size_parameter,
                   step_size_val = this_step_size_val*.05,max_iters=3e4)
-        train_net(this_corpus_vec,this_u,HybridLoss,this_optim,
+        train_net(sess, this_corpus_vec,this_u,HybridLoss,this_optim,
                   batchsize = batch_size_parameter,
                   step_size_val = this_step_size_val*.01,max_iters=3e4)
