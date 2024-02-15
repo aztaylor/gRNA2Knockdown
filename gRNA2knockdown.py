@@ -16,15 +16,15 @@ import platereadertools as pr
 
 from sklearn.preprocessing import MinMaxScaler
 
-'''This module contains the functions to encode DNA sequences and to use those encodedingds to predict the knockdown 
-efficiency of CRISPR CasRx gRNAs effectors. The model takes in the RNA sequence of the targeted transcript and the gRNA 
-sequence and outputs the knockdown efficiency in terms of marker fold change. The model is an adaptable neural network 
-with a variable number of hidden layers and units. It is meant to be able to construct autoencoders, feedforward NN and 
-residual networks.
+'''This module contains the functions to encode DNA sequences and for use in predicting  the knockdown 
+efficiency of CRISPR dCasRx-gRNAs effectors. The model takes in the RNA sequence of the targeted transcript 
+embedds the sequence using an autoencoder. Subsequently, the model takes the embedded sequence and the mRNA of the target
+to predict the knockdown efficiency. The base design is adaptable with a variable number of hidden layers and units and
+is meant to be able to construct autoencoders, feedforward NNs and residual networks.
 
 The model is trained using  the Adam optimizer and a custom VAE embbed loss function to determine the mean squared error.
 The original code was developed by Enoch Yeung in the Biological Control Laboratory at the University of California, 
-Santa Barbara. Some things to note about the code:
+Santa Barbara. Some things to note:
 
  - The code is written in Python 3.11 and uses the TensorFlow 2.x library.
  - The code is written in a modular fashion and can be used as a module in other scripts.
