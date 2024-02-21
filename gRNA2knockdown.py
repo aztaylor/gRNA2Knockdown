@@ -124,7 +124,7 @@ def weight_Variable(shape: tuple) -> tf.Variable:
                                                   stddev=std_dev,
                                                   dtype=tf.float32))
 
-def bias_Variable(shape) -> tf.Variable:
+def bias_Variable(shape: tuple) -> tf.Variable:
     '''Create a bias Variable with a given shape and name. Defined to be used in the standard definitiion
     of a neuron: Wx + b, where W is the weight, x is the input and b is the bias.
     args:
@@ -132,6 +132,7 @@ def bias_Variable(shape) -> tf.Variable:
     returns:
         tf.Variable, tensorflow Variable
     '''
+    print("shape: ".format(shape))
     std_dev = math.sqrt(3.0 / shape[0])
     return tf.Variable(tf.random.truncated_normal(shape, mean=0.0,
                                                   stddev=std_dev,
@@ -151,6 +152,7 @@ def initialize_Wblist(n_u, hv_list) -> (list, list): # type: ignore
     b_list = []
     n_depth = len(hv_list)
     print("Length of hv_list: " + repr(n_depth))
+    
     #hv_list[n_depth-1] = n_y;
     for k in range(0,n_depth):
         if k==0:
@@ -306,9 +308,10 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
 
 #Train and test the network
 def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, 
-              obj_func:tf.Variable, optimizer:tf.compat.v1.Optimizers, 
+              obj_func:tf.Variable, optimizer:tf.compat.v1.train.Optimizer,
+              this_vae_loss:tf.Variable, this_embed_loss:tf.Variable, 
               valid_error_thres=1e-2, test_error_thres=1e-2, max_iters=100000, 
-              batchsize=10, samplerate=5000, good_start=1, 
+              step_size_val=0.01, batchsize=10, samplerate=5000, good_start=1, 
               test_error=100.0, save_fig=None) -> list:
     '''Train the network using the Adam optimizer. The training is done in batches and the error is calculated for the
     training, validation and test sets. The training stops when the validation and test errors are below the threshold.
@@ -382,9 +385,9 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable,
             print("\r step %d , test error %g"%(iter, obj_func.eval(
                     feed_dict={u_feed:u_test_train}, session=sess)));#,embed_feed:y_test_train})));
             print("\r Reconstruction Loss: " + repr(this_vae_loss.eval(
-                    feed_dict={this_u:this_corpus_vec},session=sess)))
+                    feed_dict={u_feed:u_all_training},session=sess)))
             print("\r Embedding Loss: " + repr(this_embed_loss.eval(
-                    feed_dict={this_u:this_corpus_vec}, session=sess)))
+                    feed_dict={u_feed:u_all_training}, session=sess)))
     all_histories = [training_error_history_nocovar, 
                     validation_error_history_nocovar,test_error_history_nocovar]
 
@@ -504,7 +507,6 @@ if __name__ == "__main__":
 
     this_corpus_vec = np.asarray(this_corpus_vec)
     this_labels = np.expand_dims(this_labels,axis=1)
-    print(len(this_labels))
     hidden_vars_list = [embedding_dim, stride_parameter]
 
 
@@ -541,20 +543,7 @@ if __name__ == "__main__":
         if True:
             # Train the network
             train_net(sess, this_corpus_vec,this_u,HybridLoss,
-                    this_optim,batchsize=batch_size_parameter,
-                    step_size_val=this_step_size_val*10.0,max_iters=5e4)
-            train_net(sess, this_corpus_vec,this_u,HybridLoss,
-                    this_optim,batchsize = batch_size_parameter,
-                    step_size_val=this_step_size_val,max_iters=5e4)
-            train_net(sess, this_corpus_vec,this_u,HybridLoss,this_optim,
+                    this_optim,this_vae_loss=this_vae_loss,
+                    this_embed_loss=this_embed_loss,  
                     batchsize=batch_size_parameter,
-                    step_size_val=this_step_size_val*.5,max_iters=3e4)
-            train_net(sess, this_corpus_vec,this_u,HybridLoss,
-                    this_optim,batchsize = batch_size_parameter,
-                    step_size_val = this_step_size_val*.1,max_iters=3e4)
-            train_net(sess, this_corpus_vec,this_u,HybridLoss,
-                    this_optim,batchsize = batch_size_parameter,
-                    step_size_val = this_step_size_val*.05,max_iters=3e4)
-            train_net(sess, this_corpus_vec,this_u,HybridLoss,this_optim,
-                    batchsize = batch_size_parameter,
-                    step_size_val = this_step_size_val*.01,max_iters=3e4)
+                    step_size_val=this_step_size_val*10.0,max_iters=5e4)
