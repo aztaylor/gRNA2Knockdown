@@ -193,7 +193,8 @@ def rvs(dim=3):
 
 # Define the loss functions
 def embed_loss(y_true,embed_true):
-    '''Calculate the embedding loss. The embedding loss accounts for the covarariance between the embeddings.
+    '''Calculate the embedding loss. The embedding loss is the mean squared error between the predicted and true
+        embeddings.
         args:
             y_true: tf.Variable, true y values
             embed_true: tf.Variable, true embeddings
@@ -239,173 +240,24 @@ def customLoss(y_model:tf.Variable, y_true:tf.Variable,
 
 
 # Define the network
-def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, 
-                     keep_prob=1.0, activation_flag=1, 
-                     res_net=0, debug_splash=False)->(tf.Variable, list): # type: ignore
-    ''''Assemble the network with the given weights and biases. The activation function is defined by the 
-    activation_flag. The res_net flag is used to define if the network is a residual network or not.
-    args:
-        sess: tf.Session, tensorflow session
-        input_var: tf.Variable, input Variable
-        W_list: list, list of weights
-        b_list: list, list of biases
-        keep_prob: float, dropout rate
-        activation_flag: int, flag to define the activation function
-        res_net: int, flag to define if the network is a residual network
-        debug_splash: bool, flag to print debug information
-    returns:
-        y_out: tf.Variable, output of the network
-        z_temp_list: list, list of activations
-    '''
-    n_depth = len(W_list)
-    print("n_depth: " + repr(n_depth))
-    z_temp_list = []
-
-    for k in range(0,n_depth):
-        # form the input layer with the flag Variable determining the activation function.
-        if (k==0):
-            W1 = W_list[0]
-            b1 = b_list[0]
-            if activation_flag==1:# RELU
-                z1 = tf.nn.dropout(tf.nn.relu(tf.matmul(input_var,W1)+b1)
-                                   ,rate=1 - (keep_prob))
-            if activation_flag==2: # ELU
-                z1 = tf.nn.dropout(tf.nn.elu(tf.matmul(input_var,W1)+b1),
-                                   rate=1 - (keep_prob))
-            if activation_flag==3: # tanh
-                z1 = tf.nn.dropout(tf.nn.tanh(tf.matmul(input_var,W1)+b1),
-                                   rate=1 - (keep_prob))
-            z_temp_list.append(z1)
-        # form the hidden layers with the flag Variable determining the activation function.
-        if not (k==0) and k < (n_depth-1):
-            prev_layer_output = tf.matmul(z_temp_list[k-1],W_list[k])+b_list[k]
-            if res_net and k==(n_depth-2):
-                # this expression is not compatible for Variable width nets (where each layer has a different width at 
-                # inialization - okay with regularization and dropout afterwards though)
-                prev_layer_output += tf.matmul(u, W1)+b1
-
-            if activation_flag==1:
-                prev_layer_output += tf.matmul(u, W1)+b1 
-                z_temp_list.append(tf.nn.dropout(tf.nn.relu(prev_layer_output),
-                                                 rate=1 - (keep_prob)))
-            if activation_flag==2:
-                z_temp_list.append(tf.nn.dropout(tf.nn.elu(prev_layer_output),
-                                                 rate=1 - (keep_prob)))
-            if activation_flag==3:
-                z_temp_list.append(tf.nn.dropout(tf.nn.tanh(prev_layer_output),
-                                                 rate=1 - (keep_prob)))
-        # form the output layer with the flag Variable determining the activation function.
-        if not (k==0) and k == (n_depth-1):
-            prev_layer_output = tf.matmul(z_temp_list[k-1],W_list[k])+b_list[k]
-            z_temp_list.append(prev_layer_output)
-
-    if debug_splash:
-        print("[DEBUG] z_list" + repr(z_temp_list[-1]))
-
-    y_out = z_temp_list[-1]
-    return y_out, z_temp_list
+def create_model(input_shape, embedding_dim, intermediate_dim, label_dim):
+    model = tf.keras.Sequential([
+        tf.keras.layers.Dense(intermediate_dim, activation='elu', input_shape=input_shape),
+        tf.keras.layers.Dense(embedding_dim, activation='elu', input_shape=intermediate_dim),
+        tf.keras.layers.Dense(intermediate_dim, activation='elu',input_shape= embedding_dim),
+        tf.keras.laters.Dense(label_dim, activation='elu', input_shape=intermediate_dim)
+        ])
+    return model
 
 #Train and test the network
-def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, 
-              obj_func:tf.Variable, optimizer:tf.compat.v1.train.Optimizer,
-              this_vae_loss:tf.Variable, this_embed_loss:tf.Variable, 
-              valid_error_thres=1e-2, test_error_thres=1e-2, max_iters=100000, 
-              step_size_val=0.01, batchsize=10, samplerate=5000, good_start=1, 
-              test_error=100.0, save_fig=None) -> list:
-    '''Train the network using the Adam optimizer. The training is done in batches and the error is calculated for the
-    training, validation and test sets. The training stops when the validation and test errors are below the threshold.
-    args:
-        sess: tf.Session, tensorflow session
-        u_all_training: np.array, training data
-        u_feed: tf.Variable, input Variable
-        obj_func: tf.Variable, objective function
-        optimizer: tf.Variable, optimizer
-        u_control_all_training: np.array, control training data
-        valid_error_thres: float, validation error threshold
-        test_error_thres: float, test error threshold
-        max_iters: int, maximum number of iterations
-        step_size_val: float, step size value
-        batchsize: int, batch size
-        samplerate: int, sample rate
-        good_start: int, flag to determine if the training has a good start
-        val_error: float, validation error
-        test_error: float, test error
-    returns:
-        all_histories: list, list of error histories
-        good_start: int, flag to determine if the training has a good start
-    '''
-
-    iter = 0
-    training_error_history_nocovar = []
-    validation_error_history_nocovar = []
-    test_error_history_nocovar = []
-
-    while (((test_error>test_error_thres) or (valid_error > valid_error_thres)) 
-            and iter < max_iters):
-        iter+=1
-
-        all_ind = set(np.arange(0,len(u_all_training)))
-        select_ind = np.random.randint(0,len(u_all_training),size=batchsize)
-        valid_ind = list(all_ind -set(select_ind))[0:batchsize]
-        select_ind_test = list(all_ind - set(valid_ind) - 
-                            set(select_ind))[0:batchsize]
-
-        u_batch =[]
-        u_valid = []
-        u_test_train = []
-        
-        for j in range(0,len(select_ind)):
-            u_batch.append(u_all_training[select_ind[j]])
-
-        for k in range(0,len(valid_ind)):
-            u_valid.append(u_all_training[valid_ind[k]])
-
-        for k in range(0,len(select_ind_test)):
-            u_test_train.append(u_all_training[select_ind_test[k]])
-
-        optimizer.run(feed_dict={u_feed:u_batch}, session=sess) # embed_feed:,step_size:step_size_val});
-        valid_error = obj_func.eval(feed_dict={u_feed:u_valid}, session=sess) # embed_feed:y_valid});
-        test_error = obj_func.eval(feed_dict={u_feed:u_test_train}, 
-                                   session=sess) # embed_feed:y_test_train});
-
-
-        if iter%samplerate==0:
-            training_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_batch}, session=sess))#,embed_feed:y_batch}));
-            validation_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_valid}, session=sess))#,embed_feed:y_valid}));
-            test_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_test_train}, session=sess))#,embed_feed:y_test_train}));
-
-
-        if (iter%10==0) or (iter==1):
-            print("\r step %d , validation error %g"%(iter, obj_func.eval(
-                    feed_dict={u_feed:u_valid}, session=sess)))#,embed_feed:y_valid})));
-            print("\r step %d , test error %g"%(iter, obj_func.eval(
-                    feed_dict={u_feed:u_test_train}, session=sess)));#,embed_feed:y_test_train})));
-            print("\r Reconstruction Loss: " + repr(this_vae_loss.eval(
-                    feed_dict={u_feed:u_all_training},session=sess)))
-            print("\r Embedding Loss: " + repr(this_embed_loss.eval(
-                    feed_dict={u_feed:u_all_training}, session=sess)))
-    all_histories = [training_error_history_nocovar, 
-                    validation_error_history_nocovar,test_error_history_nocovar]
-
-    if save_fig is not None:
-        fig, ax = plt.subplots(1,1)
-        x = np.arange(0,len(validation_error_history_nocovar),1)
-        ax.plot(x,training_error_history_nocovar,label='train. err.')
-        ax.plot(x,validation_error_history_nocovar,label='valid. err.')
-        ax.plot(x,test_error_history_nocovar,label='test err.')
-        ax.legend()
-        ax.set_xlabel('Iterations')
-        ax.set_ylabel('Error')
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        ax.set_title('Error History')
-        
-        plt.savefig(save_fig)
-        plt.close()
-    return all_histories, good_start
+def train_model(model, X_train, y_train, X_valid, y_valid, batch_size,
+                max_epochs, loss=customLoss):
+    model.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=0.25),
+                  loss=loss)
+    history = model.fit(X_train, y_train, epochs=max_epochs, batch_size=batch_size,
+                        validation_data=(X_valid, y_valid), verbose=1)
+    return history
+t
 
 SeqMap = ['A','C','T','G']
 
@@ -510,39 +362,5 @@ if __name__ == "__main__":
 
 
     # Define the tensorflow session
-    sess = tf.compat.v1.Session()
-    tf.compat.v1.disable_eager_execution() # needed because of placeholder variables
-    
-    this_u = tf.compat.v1.placeholder(tf.float32, 
-                                      shape=[None,stride_parameter])
-
-    with tf.device('/cpu:0'):
-        this_W_list,this_b_list = initialize_Wblist(stride_parameter,
-                                                    hidden_vars_list)
-        this_y_out,all_layers = network_assemble(this_u,this_W_list,this_b_list
-                                                ,keep_prob=1.0,
-                                                activation_flag=2,res_net=0)
-
-    this_embedding = all_layers[-2]
-    regress_list = [intermediate_dim]*1+[label_dim]
-    with tf.device('/cpu:0'):
-        this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
-                                                                  regress_list)
-
-        HybridLoss = customLoss(this_y_out,this_u,this_embedding)
-
-        #result = sess.run(tf.compat.v1.global_variables_initializer())
-        this_optim = tf.compat.v1.train.AdagradOptimizer(
-            learning_rate=this_step_size_val).minimize(HybridLoss)
-        step_size = tf.compat.v1.placeholder(tf.float32,shape=[])
-        result = sess.run(tf.compat.v1.global_variables_initializer())
-        this_vae_loss = vae_loss(this_y_out,this_u)
-        this_embed_loss = embed_loss(this_u,this_embedding)
-
-        if True:
-            # Train the network
-            train_net(sess, this_corpus_vec,this_u,HybridLoss,
-                    this_optim,this_vae_loss=this_vae_loss,
-                    this_embed_loss=this_embed_loss,  
-                    batchsize=batch_size_parameter,
-                    step_size_val=this_step_size_val*10.0,max_iters=5e4)
+    model = create_model(input_shape=(stride_parameter,), embedding_dim=embedding_dim,
+                         intermediate_dim=intermediate_dim, label_dim=label_dim)
