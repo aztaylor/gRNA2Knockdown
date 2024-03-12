@@ -282,10 +282,9 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
             if res_net and k==(n_depth-2):
                 # this expression is not compatible for Variable width nets (where each layer has a different width at 
                 # inialization - okay with regularization and dropout afterwards though)
-                prev_layer_output += tf.matmul(u, W1)+b1
+                prev_layer_output += tf.matmul(z_temp_list[-1], W1)+b1
 
             if activation_flag==1:
-                prev_layer_output += tf.matmul(u, W1)+b1 
                 z_temp_list.append(tf.nn.dropout(tf.nn.relu(prev_layer_output),
                                                  rate=1 - (keep_prob)))
             if activation_flag==2:
@@ -515,6 +514,7 @@ if __name__ == "__main__":
     
     this_u = tf.compat.v1.placeholder(tf.float32, 
                                       shape=[None,stride_parameter])
+    
 
     with tf.device('/cpu:0'):
         this_W_list,this_b_list = initialize_Wblist(stride_parameter,
@@ -531,7 +531,7 @@ if __name__ == "__main__":
 
         HybridLoss = customLoss(this_y_out,this_u,this_embedding)
 
-        #result = sess.run(tf.compat.v1.global_variables_initializer())
+        result = sess.run(tf.compat.v1.global_variables_initializer())
         this_optim = tf.compat.v1.train.AdagradOptimizer(
             learning_rate=this_step_size_val).minimize(HybridLoss)
         step_size = tf.compat.v1.placeholder(tf.float32,shape=[])
