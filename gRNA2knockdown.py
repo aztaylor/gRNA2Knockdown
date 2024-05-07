@@ -560,3 +560,10 @@ if __name__ == "__main__":
     mismatch_process[mismatch_process<=2.0] = 1.0;
     mismatch_process[mismatch_process>2.0] = 0.0;
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)    
+
+    import os
+
+    os.path.abspath("/home/yeunglab/Repos/gRNA2knockown"
+    os.system('git add; git commit -m "update"; git push')
+
+
