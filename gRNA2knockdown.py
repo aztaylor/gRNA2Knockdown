@@ -563,7 +563,7 @@ if __name__ == "__main__":
 
     import os
 
-    os.path.abspath("/home/yeunglab/Repos/gRNA2knockown"
+    os.path.abspath("/home/yeunglab/Repos/gRNA2knockown")
     os.system('git add; git commit -m "update"; git push')
 
 
