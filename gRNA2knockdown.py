@@ -546,15 +546,16 @@ if __name__ == "__main__":
                     this_optim,this_vae_loss=this_vae_loss,
                     this_embed_loss=this_embed_loss,  
                     batchsize=batch_size_parameter,
-                    step_size_val=this_step_size_val*10.0,max_iters=5e4)
+                    step_size_val=this_step_size_val*10.0,max_iters=5e2)
 
     import seaborn as sns;
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
         z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]}, session=sess)
         this_seq_out = vecback2seq(np.dot(np.linalg.inv(Rand_Transform),z_ind.T))
-        print(vecback2seq(np.dot(np.linalg.inv(Rand_Transform),z_ind.T)))
-        print(this_corpus[ind])
+        print("Predicted:"+repr(vecback2seq(np.dot(np.linalg.inv(Rand_Transform),z_ind.T))[0:10].join(""))
+        print("Ground Truth:"+repr(this_corpus[ind][0:10].join("")))
+        print("\n")
         this_seq_out = ''.join(this_seq_out)
         all_mismatches.append(num_mismatch(this_seq_out,this_corpus[ind]))
     hist_data = sns.displot(all_mismatches)
