@@ -209,8 +209,8 @@ def embed_loss(y_true,embed_true):
                                                    ,axis=1))
     Ky = tf.matmul(tf.matmul(Scale_Matrix_y,IP_Matrix_y),Scale_Matrix_y)
     Ke = tf.matmul(tf.matmul(Scale_Matrix_e,IP_Matrix_e),Scale_Matrix_e)
-    return tf.norm(IP_Matrix_y-IP_Matrix_e,axis=[0,1],ord='fro')/tf.norm(
-                    IP_Matrix_y,axis=[0,1],ord='fro')
+    return tf.norm(IP_Matrix_y-IP_Matrix_e,axis=[0,1],ord='fro')#/tf.norm(
+                    #IP_Matrix_y,axis=[0,1],ord='fro')
 
 def vae_loss(y_model,y_true):
     '''Calculate the VAE loss. The VAE loss is the mean squared error between the predicted and true y values.
@@ -380,6 +380,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable,
         if (iter%1000==0) or (iter==1):
             print("\r step %d , validation error %g"%(iter, obj_func.eval(
                     feed_dict={u_feed:u_valid}, session=sess)))#,embed_feed:y_valid})));
+            
             print("\r step %d , test error %g"%(iter, obj_func.eval(
                     feed_dict={u_feed:u_test_train}, session=sess)));#,embed_feed:y_test_train})));
             print("\r Reconstruction Loss: " + repr(this_vae_loss.eval(
@@ -553,6 +554,7 @@ if __name__ == "__main__":
         z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]}, session=sess)
         this_seq_out = vecback2seq(np.dot(np.linalg.inv(Rand_Transform),z_ind.T))
         print(vecback2seq(np.dot(np.linalg.inv(Rand_Transform),z_ind.T)))
+        print(this_corpus[ind])
         this_seq_out = ''.join(this_seq_out)
         all_mismatches.append(num_mismatch(this_seq_out,this_corpus[ind]))
     hist_data = sns.displot(all_mismatches)
