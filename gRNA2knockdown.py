@@ -220,8 +220,8 @@ def vae_loss(y_model,y_true):
     returns:
         tf.Variable, VAE loss
     '''
-    return tf.norm(y_true - y_model,axis=[0,1],ord=2)/tf.norm(y_true,axis=[0,1]
-                                                              ,ord=2)
+    return tf.norm(y_true - y_model,axis=[0,1],ord=2)#/tf.norm(y_true,axis=[0,1]
+                                                              #,ord=2)
     
 def customLoss(y_model:tf.Variable, y_true:tf.Variable,
                embed_true:tf.Variable) -> tf.Variable:
