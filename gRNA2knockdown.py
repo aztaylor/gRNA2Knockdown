@@ -516,7 +516,7 @@ if __name__ == "__main__":
                                       shape=[None,stride_parameter])
     
 
-    with tf.device('/cpu:0'):
+    with tf.device('/gpu:0'):
         this_W_list,this_b_list = initialize_Wblist(stride_parameter,
                                                     hidden_vars_list)
         this_y_out,all_layers = network_assemble(this_u,this_W_list,this_b_list
@@ -525,7 +525,7 @@ if __name__ == "__main__":
 
     this_embedding = all_layers[-2]
     regress_list = [intermediate_dim]*1+[label_dim]
-    with tf.device('/cpu:0'):
+    with tf.device('/gpu:0'):
         this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
                                                                   regress_list)
 
