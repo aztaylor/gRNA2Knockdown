@@ -485,7 +485,7 @@ if __name__ == "__main__":
     # Define the model parameters.
     stride_parameter = 30
     label_dim = 1
-    embedding_dim = 28
+    embedding_dim = 29
     intermediate_dim = 50
     batch_size_parameter=27 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
