@@ -257,7 +257,6 @@ def train_model(model, X_train, y_train, X_valid, y_valid, batch_size,
     history = model.fit(X_train, y_train, epochs=max_epochs, batch_size=batch_size,
                         validation_data=(X_valid, y_valid), verbose=1)
     return history
-t
 
 SeqMap = ['A','C','T','G']
 
