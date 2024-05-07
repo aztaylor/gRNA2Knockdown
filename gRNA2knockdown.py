@@ -377,7 +377,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable,
                 feed_dict={u_feed:u_test_train}, session=sess))#,embed_feed:y_test_train}));
 
 
-        if (iter%10==0) or (iter==1):
+        if (iter%1000==0) or (iter==1):
             print("\r step %d , validation error %g"%(iter, obj_func.eval(
                     feed_dict={u_feed:u_valid}, session=sess)))#,embed_feed:y_valid})));
             print("\r step %d , test error %g"%(iter, obj_func.eval(
