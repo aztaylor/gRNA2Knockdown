@@ -483,9 +483,9 @@ if __name__ == "__main__":
         plt.savefig("./Figures/foldchange.png")
 
     # Define the model parameters.
-    stride_parameter = 20
+    stride_parameter = 30
     label_dim = 1
-    embedding_dim = 18
+    embedding_dim = 28
     intermediate_dim = 50
     batch_size_parameter=300 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
