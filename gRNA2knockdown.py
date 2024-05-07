@@ -553,7 +553,7 @@ if __name__ == "__main__":
     for ind in range(0,len(this_corpus_vec)):
         z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]}, session=sess)
         this_seq_out = vecback2seq(np.dot(np.linalg.inv(Rand_Transform),z_ind.T))
-        print("Predicted:"+repr(vecback2seq(np.dot(np.linalg.inv(Rand_Transform),z_ind.T))[0:10].join(""))
+        print("Predicted:"+repr(vecback2seq(np.dot(np.linalg.inv(Rand_Transform),z_ind.T))[0:10].join("")))
         print("Ground Truth:"+repr(this_corpus[ind][0:10].join("")))
         print("\n")
         this_seq_out = ''.join(this_seq_out)
