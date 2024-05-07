@@ -209,8 +209,8 @@ def embed_loss(y_true,embed_true):
                                                    ,axis=1))
     Ky = tf.matmul(tf.matmul(Scale_Matrix_y,IP_Matrix_y),Scale_Matrix_y)
     Ke = tf.matmul(tf.matmul(Scale_Matrix_e,IP_Matrix_e),Scale_Matrix_e)
-    return tf.norm(IP_Matrix_y-IP_Matrix_e,axis=[0,1],ord='fro')#/tf.norm(
-                    #IP_Matrix_y,axis=[0,1],ord='fro')
+    return tf.norm(IP_Matrix_y-IP_Matrix_e,axis=[0,1],ord='fro')/tf.norm(
+                    IP_Matrix_y,axis=[0,1],ord='fro')
 
 def vae_loss(y_model,y_true):
     '''Calculate the VAE loss. The VAE loss is the mean squared error between the predicted and true y values.
@@ -220,8 +220,8 @@ def vae_loss(y_model,y_true):
     returns:
         tf.Variable, VAE loss
     '''
-    return tf.norm(y_true - y_model,axis=[0,1],ord=2)#/tf.norm(y_true,axis=[0,1]
-                                                              #,ord=2)
+    return tf.norm(y_true - y_model,axis=[0,1],ord=2)/tf.norm(y_true,axis=[0,1]
+                                                               ,ord=2)
     
 def customLoss(y_model:tf.Variable, y_true:tf.Variable,
                embed_true:tf.Variable) -> tf.Variable:
