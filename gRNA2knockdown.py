@@ -308,7 +308,7 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
 def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, 
               obj_func:tf.Variable, optimizer:tf.compat.v1.train.Optimizer,
               this_vae_loss:tf.Variable, this_embed_loss:tf.Variable, 
-              valid_error_thres=1e-2, test_error_thres=1e-2, max_iters=100000, 
+              valid_error_thres=1e-2, test_error_thres=1e-2, max_iters=1e6, 
               step_size_val=0.01, batchsize=10, samplerate=5000, good_start=1, 
               test_error=100.0, save_fig=None) -> list:
     '''Train the network using the Adam optimizer. The training is done in batches and the error is calculated for the
@@ -488,9 +488,9 @@ if __name__ == "__main__":
     label_dim = 1
     embedding_dim = 50
     intermediate_dim = 50
-    batch_size_parameter=27 #4000 for howard's e. coli dataset (from Enoch's code)
+    batch_size_parameter=10 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
-    this_step_size_val = 1
+    this_step_size_val = 0.001
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
 
     # Define the random transformation householder matrix.
