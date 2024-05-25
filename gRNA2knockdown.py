@@ -486,11 +486,11 @@ if __name__ == "__main__":
     # Define the model parameters.
     stride_parameter = 30
     label_dim = 1
-    embedding_dim = 29
+    embedding_dim = 50
     intermediate_dim = 50
     batch_size_parameter=27 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
-    this_step_size_val = 0.1
+    this_step_size_val = 0.01
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
 
     # Define the random transformation householder matrix.
