@@ -506,7 +506,7 @@ if __name__ == "__main__":
 
     this_corpus_vec = np.asarray(this_corpus_vec)
     this_labels = np.expand_dims(this_labels,axis=1)
-    hidden_vars_list = [embedding_dim, stride_parameter]
+    hidden_vars_list = [20*embedding_dim, 20*stride_parameter]
 
 
     # Define the tensorflow session
@@ -564,6 +564,6 @@ if __name__ == "__main__":
     mismatch_process[mismatch_process>2.0] = 0.0
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)    
 
-
+# This code shou
 
 
