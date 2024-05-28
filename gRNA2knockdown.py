@@ -492,7 +492,7 @@ if __name__ == "__main__":
     batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
     this_step_size_val = 0.005
-    max_iters = 1e7
+    max_iters = 1e5
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
 
     # Define the random transformation householder matrix.
