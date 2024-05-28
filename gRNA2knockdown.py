@@ -552,7 +552,7 @@ if __name__ == "__main__":
                     batchsize=batch_size_parameter,
                     step_size_val=this_step_size_val,max_iters=max_iters)
 
-    importmatplotlib.pyplot as plt
+    import matplotlib.pyplot as plt
     import seaborn as sns
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
