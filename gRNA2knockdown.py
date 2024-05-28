@@ -563,11 +563,12 @@ if __name__ == "__main__":
         print("\n")
         this_seq_out = ''.join(this_seq_out)
         all_mismatches.append(num_mismatch(this_seq_out,this_corpus[ind]))
-    hist_data = sns.displot(all_mismatches)
+    
     mismatch_process = np.array(all_mismatches)
     mismatch_process[mismatch_process<=2.0] = 1.0
     mismatch_process[mismatch_process>2.0] = 0.0
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)
+    hist_data = sns.displot(all_mismatches)
     plt.savefig("Figures/mismatches.png")
       
 
