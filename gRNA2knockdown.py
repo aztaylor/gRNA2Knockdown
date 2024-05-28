@@ -508,7 +508,7 @@ if __name__ == "__main__":
 
     this_corpus_vec = np.asarray(this_corpus_vec)
     this_labels = np.expand_dims(this_labels,axis=1)
-    hidden_vars_list = [1*embedding_dim, stride_parameter]
+    hidden_vars_list = [intermediate_dim, embedding_dim, intermediate_dim, stride_parameter]
 
 
     # Define the tensorflow session
