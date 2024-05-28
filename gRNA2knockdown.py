@@ -566,7 +566,10 @@ if __name__ == "__main__":
     mismatch_process = np.array(all_mismatches)
     mismatch_process[mismatch_process<=2.0] = 1.0
     mismatch_process[mismatch_process>2.0] = 0.0
-    np.sum(mismatch_process)/(len(mismatch_process)*1.0)    
+    np.sum(mismatch_process)/(len(mismatch_process)*1.0)
+    fig = hist_data.get_figure()
+    fig.savefig("Figures/mismatches.png")
+      
 
 # This code shou
 
