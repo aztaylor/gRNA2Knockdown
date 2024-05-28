@@ -487,11 +487,11 @@ if __name__ == "__main__":
     # Define the model parameters.
     stride_parameter = 30
     label_dim = 1
-    embedding_dim = 10
-    intermediate_dim = 500
+    embedding_dim = 15
+    intermediate_dim = 100
     batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
-    this_step_size_val = 0.005
+    this_step_size_val = 0.001
     max_iters = 1e4
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
 
