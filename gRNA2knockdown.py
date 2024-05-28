@@ -552,7 +552,8 @@ if __name__ == "__main__":
                     batchsize=batch_size_parameter,
                     step_size_val=this_step_size_val,max_iters=max_iters)
 
-    import seaborn as sns;
+    importmatplotlib.pyplot as plt
+    import seaborn as sns
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
         z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]}, session=sess)
@@ -567,8 +568,7 @@ if __name__ == "__main__":
     mismatch_process[mismatch_process<=2.0] = 1.0
     mismatch_process[mismatch_process>2.0] = 0.0
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)
-    fig = hist_data.get_figure()
-    fig.savefig("Figures/mismatches.png")
+    plt.savefig("Figures/mismatches.png")
       
 
 # This code shou
