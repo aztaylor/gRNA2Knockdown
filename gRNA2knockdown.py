@@ -407,7 +407,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable,
         plt.close()
     return all_histories, good_start
 
-SeqMap = ['A','C','T','G']
+SeqMap = ['A','C','G','T']
 
 def elemback2seq(this_elem):
     '''Convert the lattice-like vector representation/encoding to a DNA sequence. The encoding is mapped as to be
@@ -420,6 +420,7 @@ def elemback2seq(this_elem):
     this_elem = this_elem[0]
     seq_dist_list = list(np.abs(np.array([this_elem]*4) - np.array([0.25,0.5,0.75,1.0])))
     opt_index = seq_dist_list.index(np.min(np.array(seq_dist_list)))
+    #opt_index = np.argmin(np.array(seq_dist_list))
     return(SeqMap[opt_index])
 
 def vecback2seq(untransformed_vec):
@@ -490,7 +491,7 @@ if __name__ == "__main__":
     intermediate_dim = 30
     batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
-    this_step_size_val = 0.001
+    this_step_size_val = 0.005
     max_iters = 1e7
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
 
