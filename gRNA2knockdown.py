@@ -509,7 +509,8 @@ if __name__ == "__main__":
     this_corpus_vec = np.asarray(this_corpus_vec)
     this_labels = np.expand_dims(this_labels,axis=1)
     n_pre_post_layers = 10; 
-    hidden_vars_list = [intermediate_dim]*n_pre_post_layers +  [embedding_dim] + [intermediate_dim]*n_pre_post_layers + [stride_parameter]
+    hidden_vars_list = [intermediate_dim]*n_pre_post_layers+[embedding_dim]+\
+        [intermediate_dim]*n_pre_post_layers + [stride_parameter]
     print(hidden_vars_list)
 
 
@@ -565,8 +566,8 @@ if __name__ == "__main__":
         all_mismatches.append(num_mismatch(this_seq_out,this_corpus[ind]))
     
     mismatch_process = np.array(all_mismatches)
-    #mismatch_process[mismatch_process<=2.0] = 1.0
-    #mismatch_process[mismatch_process>2.0] = 0.0
+    mismatch_process = mismatch_process[mismatch_process <= 0.0] = 0.0
+    mismatchprocess = mismatch_process[mismatch_process >=30] = 0.0
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)
     hist_data = sns.displot(all_mismatches)
-    plt.savefig("Figures/mismatches.png")
+    plt.savefig("Figures/mismatches20240529.png")
