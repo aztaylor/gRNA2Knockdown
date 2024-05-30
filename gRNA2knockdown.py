@@ -494,7 +494,7 @@ if __name__ == "__main__":
     intermediate_dim = 100
     batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
-    this_step_size_val = 0.01
+    this_step_size_val = 0.001
     max_iters = 1e5
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
 
@@ -561,7 +561,6 @@ if __name__ == "__main__":
                     save_fig= train_figure_name)
 
     import matplotlib.pyplot as plt
-    import seaborn as sns
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
         z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]},session=sess)
@@ -573,8 +572,6 @@ if __name__ == "__main__":
         all_mismatches.append(num_mismatch(this_seq_out,this_corpus[ind]))
     
     mismatch_process = np.array(all_mismatches)
-    mismatch_process = mismatch_process[mismatch_process <= 0] = 0
-    mismatchprocess = mismatch_process[mismatch_process >=30] = 0
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)
-    hist_data = sns.displot(all_mismatches)
+    plt.hist(mismatch_process, bins=range(0,31,1))
     plt.savefig("Figures/mismatches20240529.png")
