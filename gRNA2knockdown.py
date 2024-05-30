@@ -550,14 +550,15 @@ if __name__ == "__main__":
 
         if True:
             # Train the network
-            train_figure_neme = "Figures/Training{0}_{1}_{2}_{3}.png".format(
+            train_figure_name = "Figures/Training{0}_{1}_{2}_{3}.png".format(
                 embedding_dim,intermediate_dim,stride_parameter,
                     n_pre_post_layers)
             train_net(sess, this_corpus_vec,this_u,HybridLoss,
                     this_optim,this_vae_loss=this_vae_loss,
                     this_embed_loss=this_embed_loss,  
                     batchsize=batch_size_parameter,
-                    step_size_val=this_step_size_val,max_iters=max_iters)
+                    step_size_val=this_step_size_val,max_iters=max_iters
+                    save_fig=train_figure_name)
 
     import matplotlib.pyplot as plt
     import seaborn as sns
