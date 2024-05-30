@@ -557,8 +557,8 @@ if __name__ == "__main__":
                     this_optim,this_vae_loss=this_vae_loss,
                     this_embed_loss=this_embed_loss,  
                     batchsize=batch_size_parameter,
-                    step_size_val=this_step_size_val,max_iters=max_iters
-                    save_fig=train_figure_name)
+                    step_size_val=this_step_size_val,max_iters=max_iters,
+                    save_fig= train_figure_name)
 
     import matplotlib.pyplot as plt
     import seaborn as sns
@@ -573,8 +573,8 @@ if __name__ == "__main__":
         all_mismatches.append(num_mismatch(this_seq_out,this_corpus[ind]))
     
     mismatch_process = np.array(all_mismatches)
-    mismatch_process = mismatch_process[mismatch_process <= 0.0] = 0.0
-    mismatchprocess = mismatch_process[mismatch_process >=30] = 0.0
+    mismatch_process = mismatch_process[mismatch_process <= 0] = 0
+    mismatchprocess = mismatch_process[mismatch_process >=30] = 0
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)
     hist_data = sns.displot(all_mismatches)
     plt.savefig("Figures/mismatches20240529.png")
