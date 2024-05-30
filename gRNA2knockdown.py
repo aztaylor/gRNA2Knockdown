@@ -573,5 +573,11 @@ if __name__ == "__main__":
     
     mismatch_process = np.array(all_mismatches)
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)
-    plt.hist(mismatch_process, bins=range(0,31,1))
+    fig, ax = plt.subplots(1,1)
+    ax.hist(mismatch_process, bins=range(0,31,1))
+    ax.set_xlabel("Number of Mismatches")
+    ax.set_ylabel("Frequency")
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
+    ax.set_title("Number of Mismatches in Predicted Sequences")
     plt.savefig("Figures/mismatches20240529.png")
