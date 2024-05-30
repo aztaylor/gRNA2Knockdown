@@ -388,7 +388,9 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable,
             print("\r Embedding Loss: " + repr(this_embed_loss.eval(
                     feed_dict={u_feed:u_all_training}, session=sess)))
     all_histories = [training_error_history_nocovar, 
-                    validation_error_history_nocovar,test_error_history_nocovar]
+                    validation_error_history_nocovar,
+                    test_error_history_nocovar,
+                    u_all_training]
 
     if save_fig is not None:
         fig, ax = plt.subplots(1,1)
