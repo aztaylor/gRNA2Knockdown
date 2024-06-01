@@ -581,3 +581,54 @@ if __name__ == "__main__":
     ax.spines['right'].set_visible(False)
     ax.set_title("Number of Mismatches in Predicted Sequences")
     plt.savefig("Figures/mismatches20240529.png")
+
+    subset_embeddings = this_embedding.eval(feed_dict={this_u:this_corpus_vec})
+
+    from sklearn.decomposition import PCA
+    X = subset_embeddings
+    pca = PCA(n_components=3)
+    pca.fit(X)
+    PCA(copy=True, iterated_power='auto', n_components=3, random_state=None,
+    svd_solver='auto', tol=0.0, whiten=False)
+    print(pca.explained_variance_ratio_)
+    print(pca.singular_values_)
+    X_transformed = pca.transform(X)
+    X_transformed = X_transformed[0:]
+
+    X_transformed.shape
+
+    from mpl_toolkits.mplot3d import Axes3D
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    # Fixing random state for reproducibility
+
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    this_colors = 0.0*np.random.rand(len(X_transformed),3)
+
+    # For each set of style and range settings, plot n random points in the box
+    # defined by x in [23, 32], y in [0, 100], z in [zlow, zhigh].
+    for x_ind in range(0,len(X_transformed)):
+        x= X_transformed[x_ind][0]
+        y= X_transformed[x_ind][1]
+        z= X_transformed[x_ind][2]
+        if this_labels[x_ind]>0.66:
+            this_colors[x_ind][0] = this_labels[x_ind]
+        if 0.66>this_labels[x_ind]>0.33:
+            this_colors[x_ind][1] = this_labels[x_ind]
+        if 0.33>this_labels[x_ind]>-10.0:
+            this_colors[x_ind][2] = this_labels[x_ind]
+
+
+    ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2], c=this_colors, marker='o',alpha=0.25)
+
+    ax.view_init(30, azim=240)
+
+    ax.set_xlabel('Principal Component One')
+    ax.set_ylabel('Principal Component Two')
+    ax.set_zlabel('Principal Component Three')
+    plt.tight_layout()
+    fig.savefig("Figures/PCA3D20240529.png")
