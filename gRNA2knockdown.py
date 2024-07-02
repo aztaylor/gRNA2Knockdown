@@ -608,7 +608,7 @@ if __name__ == "__main__":
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    this_colors = 0*np.random.rand(len(X_transformed),3)
+    this_colors = 0*np.random.rand(len(X_transformed),3, dtype=np.int64)
     print(this_colors)
 
     # For each set of style and range settings, plot n random points in the box
