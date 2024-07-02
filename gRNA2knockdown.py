@@ -495,7 +495,7 @@ if __name__ == "__main__":
     batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
     this_step_size_val = 0.01
-    max_iters = 1e4
+    max_iters = 1e3
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
 
     # Define the random transformation householder matrix.
@@ -608,7 +608,7 @@ if __name__ == "__main__":
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    this_colors = 0.0*np.random.rand(len(X_transformed),3)
+    this_colors = 0*np.random.rand(len(X_transformed),3)
     print(this_colors)
 
     # For each set of style and range settings, plot n random points in the box
