@@ -618,11 +618,11 @@ if __name__ == "__main__":
         y= X_transformed[x_ind][1]
         z= X_transformed[x_ind][2]
         if this_labels[x_ind]>0.66:
-            this_colors[x_ind][0] = this_labels[x_ind]
+            this_colors[x_ind][0] = this_labels[x_ind]/np.max(this_labels)
         if 0.66>this_labels[x_ind]>0.33:
-            this_colors[x_ind][1] = this_labels[x_ind]
+            this_colors[x_ind][1] = this_labels[x_ind]/np.max(this_labels)
         if 0.33>this_labels[x_ind]>-10.0:
-            this_colors[x_ind][2] = this_labels[x_ind]
+            this_colors[x_ind][2] = this_labels[x_ind]/np.max(this_labels)
 
 
     ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2], c=this_colors, marker='o',alpha=0.25)
