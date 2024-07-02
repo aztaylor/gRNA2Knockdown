@@ -582,7 +582,7 @@ if __name__ == "__main__":
     ax.set_title("Number of Mismatches in Predicted Sequences")
     plt.savefig("Figures/mismatches20240529.png")
 
-    subset_embeddings = this_embedding.eval(feed_dict={this_u:this_corpus_vec})
+    subset_embeddings = this_embedding.eval(sess, feed_dict={this_u:this_corpus_vec})
 
     from sklearn.decomposition import PCA
     X = subset_embeddings
