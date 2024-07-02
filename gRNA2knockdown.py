@@ -609,7 +609,7 @@ if __name__ == "__main__":
     ax = fig.add_subplot(111, projection='3d')
 
     this_colors = np.random.rand(len(X_transformed),3)
-    print(this_colors)
+    print(this_labels)
 
     # For each set of style and range settings, plot n random points in the box
     # defined by x in [23, 32], y in [0, 100], z in [zlow, zhigh].
