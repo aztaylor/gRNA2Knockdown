@@ -208,10 +208,10 @@ def embed_loss(y_true,embed_true):
                                                    ,axis=1))
     Scale_Matrix_e = tf.linalg.tensor_diag(tf.norm(embed_true,ord='euclidean'
                                                    ,axis=1))
-    Ky = tf.matmul(tf.matmul(Scale_Matrix_y,IP_Matrix_y),Scale_Matrix_y)
-    Ke = tf.matmul(tf.matmul(Scale_Matrix_e,IP_Matrix_e),Scale_Matrix_e)
-    return tf.norm(IP_Matrix_y-IP_Matrix_e,axis=[0,1],ord='fro')/tf.norm(
-                    IP_Matrix_y,axis=[0,1],ord='fro')
+    Ky = tf.matmul(tf.matmul(Scale_Matrix_y, IP_Matrix_y), Scale_Matrix_y)
+    Ke = tf.matmul(tf.matmul(Scale_Matrix_e, IP_Matrix_e), Scale_Matrix_e)
+    return tf.norm(IP_Matrix_y-IP_Matrix_e,axis=[0,1], ord='fro')/tf.norm(
+                    IP_Matrix_y, axis=[0,1], ord='fro')
 
 def vae_loss(y_model,y_true):
     '''Calculate the VAE loss. The VAE loss is the mean squared error between the predicted and true y values.
@@ -323,7 +323,7 @@ if __name__ == "__main__":
     data = np.reshape(fold_change,(96))
 
     # Visualize the foldchange to see if there are any trends.
-    explore = True
+    explore = False
     if explore:
         fig, ax = plt.subplots(1,1)
         ax.bar(range(len(data)), data)
