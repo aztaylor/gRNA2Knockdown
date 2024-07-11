@@ -323,8 +323,8 @@ if __name__ == "__main__":
     data = np.reshape(fold_change,(96))
 
     # Visualize the foldchange to see if there are any trends.
-    explore = False
-    if explore == True:
+    explore = True
+    if explore:
         fig, ax = plt.subplots(1,1)
         ax.bar(range(len(data)), data)
         ax.set_xlabel("gRNA position with tilling equal to 3bp")
