@@ -473,11 +473,11 @@ if __name__ == "__main__":
     this_fig = plt.figure()
     for key in data0.keys():
         for row in range(0,8):
-            
             for col in range(0,12):
                 this_data = data0[key]
                 this_time = time0[key]
                 print(this_data.shape)
+                print(this_time.shape)
                 plt.scatter(this_time[row][col],this_data[row][col])
     plt.savefig(this_fig,'QualityDatafromAlec.eps')
     
