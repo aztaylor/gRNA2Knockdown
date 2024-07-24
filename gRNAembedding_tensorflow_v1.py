@@ -593,9 +593,10 @@ if __name__ == "__main__":
     PCA(copy=True, iterated_power='auto', n_components=3, random_state=None,
     svd_solver='auto', tol=0.0, whiten=False)
 
-    print("Explained Variance Ratio: \n " + repr(pca.explained_variance_ratio))
-    print("PCA Singular Values: \n" + repr(pca.singular_values_))
+    print("PCA Explained Variance Ratio: " + repr(pca.explained_variance_ratio_))
+    print("PCA Singular Values: " + repr(pca.singular_values_))
 
+    
     X_transformed = pca.transform(X)
     X_transformed = X_transformed[0:]
 
