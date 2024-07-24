@@ -471,7 +471,10 @@ if __name__ == "__main__":
     data1, time1 = pr.Organize(data_10mM_fp,NumRowsonPlate,NumColumnsonPlate,HourHorizon,SamplingRate)
 
     this_fig = plt.figure()
-    plt.scatter(time0,data0)
+    for key in data0.keys():
+        this_data = data0[key]
+        this_time = time0[key]
+        plt.scatter(this_time,this_data)
     plt.savefig(this_fig,'QualityDatafromAlec.eps')
     
     # Based off of the timeseries data, we can see that the greatest change in flourescence occurs at timepoint 165 
