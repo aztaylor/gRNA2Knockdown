@@ -478,7 +478,7 @@ if __name__ == "__main__":
                 this_data = data0[key]
                 this_time = time0[key]
                 print(this_data.shape)
-                plt.scatter(this_time[row][col][0:50],this_data[row][col][0:50])
+                plt.scatter(this_time[row][col],this_data[row][col])
     plt.savefig(this_fig,'QualityDatafromAlec.eps')
     
     # Based off of the timeseries data, we can see that the greatest change in flourescence occurs at timepoint 165 
