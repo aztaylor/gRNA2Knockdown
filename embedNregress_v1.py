@@ -470,6 +470,10 @@ if __name__ == "__main__":
     data0, time0 = pr.Organize(data_0nM_fp,NumRowsonPlate,NumColumnsonPlate,HourHorizon,SamplingRate)
     data1, time1 = pr.Organize(data_10mM_fp,NumRowsonPlate,NumColumnsonPlate,HourHorizon,SamplingRate)
 
+    this_fig = plt.figure()
+    plt.scatter(data0)
+    plt.savefig(this_fig,'QualityDatafromAlec.eps')
+    
     # Based off of the timeseries data, we can see that the greatest change in flourescence occurs at timepoint 165 
     # (~8hours). We will use this timepoint to calculate the fold change between the 0mM and 10mM data.
     reads = list(data0.keys())
