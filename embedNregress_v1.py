@@ -528,7 +528,7 @@ if __name__ == "__main__":
 
             plt.scatter(this_time,this_foldchange)
             
-    this_fig.savefig('~/AlecOutputData/FoldChangeofPlateReader.eps')
+    this_fig.savefig('/home/yeunglab/AlecOutputData/FoldChangeofPlateReader.eps')
 
     listed_foldchangedata = foldchangedata.reshape(int(foldchangedata.shape[0]*foldchangedata.shape[1]),foldchangedata.shape[2])
     
@@ -557,7 +557,7 @@ if __name__ == "__main__":
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.set_title("Fold Change in RFU for each gRNA position at 8 hours")
-        plt.savefig(f"~/AlecOutputData/foldchange{date}_{time}.png")
+        plt.savefig(f"/home/yeunglab/AlecOutputData/foldchange.png")
 
     # Define the model parameters.
     stride_parameter = 30
