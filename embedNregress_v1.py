@@ -41,10 +41,8 @@ Santa Barbara. Some things to note:
     tf.compat.v1.disable_eager_execution()
 '''
 
-date = dt.datetime.now()
-date = date[0].replace("-","")
-time = date[1].replace(":","")
-print(date)
+date = dt.datetime.today().strftime('%Y%m%d')
+
 
 # Define Auxillary Functions
 def sequence_encoding(sequence: str) -> np.array:
@@ -412,7 +410,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable,
         ax.set_ylabel('Error')
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
-        ax.set_title(f'ErrorHistory{date}_{time}')
+        ax.set_title(f'ErrorHistory{date}')
         
         plt.savefig(save_fig)
         plt.close()
@@ -487,7 +485,7 @@ if __name__ == "__main__":
                 print(this_data.shape)
                 print(this_time.shape)
                 plt.scatter(this_time,this_data[row][col])
-    this_fig.savefig(f'QualityDatafromAlec{date}_{time}.eps')
+    this_fig.savefig(f'QualityDatafromAlec{date}.eps')
     
     # Based off of the timeseries data, we can see that the greatest change in flourescence occurs at timepoint 165 
     # (~8hours). We will use this timepoint to calculate the fold change between the 0mM and 10mM data.
@@ -509,7 +507,7 @@ if __name__ == "__main__":
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.set_title("Fold Change in RFU for each gRNA position at 8 hours")
-        plt.savefig(f"./Figures/foldchange{date}_{time}.png")
+        plt.savefig(f"./Figures/foldchange{date}.png")
 
     # Define the model parameters.
     stride_parameter = 30
@@ -604,7 +602,7 @@ if __name__ == "__main__":
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.set_title("Number of Mismatches in Predicted Sequences")
-    plt.savefig(f"Figures/mismatches{date}_{time}.png")
+    plt.savefig(f"Figures/mismatches{date}.png")
 
     subset_embeddings = this_embedding.eval(feed_dict={this_u:this_corpus_vec},
                                             session=sess)
