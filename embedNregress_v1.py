@@ -137,7 +137,7 @@ def bias_Variable(shape: tuple) -> tf.Variable:
     returns:
         tf.Variable, tensorflow Variable
     '''
-    print("shape: ".format(shape))
+    
     std_dev = math.sqrt(3.0 / shape[0])
     return tf.Variable(tf.random.truncated_normal(shape, mean=0.0,
                                                   stddev=std_dev,
@@ -156,7 +156,7 @@ def initialize_Wblist(n_u, hv_list) -> (list, list): # type: ignore
     W_list = []
     b_list = []
     n_depth = len(hv_list)
-    print("Length of hv_list: " + repr(n_depth))
+    #print("Length of hv_list: " + repr(n_depth))
     
     #hv_list[n_depth-1] = n_y;
     for k in range(0,n_depth):
