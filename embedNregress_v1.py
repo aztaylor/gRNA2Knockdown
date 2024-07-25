@@ -507,8 +507,8 @@ if __name__ == "__main__":
     data1, time1 = pr.Organize(data_10mM_fp,NumRowsonPlate,NumColumnsonPlate,HourHorizon,SamplingRate)
 
     this_fig = plt.figure()
-    OD_key = data0.keys()[0]
-    FL_key = data0.keys()[1]
+    OD_key = list(data0.keys())[0]
+    FL_key = list(data0.keys())[1]
 
     this_baseline_od_data = data0[OD_key]
     this_baseline_fl_data = data0[FL_key]
