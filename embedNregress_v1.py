@@ -509,7 +509,7 @@ if __name__ == "__main__":
     this_fig = plt.figure()
     OD_key = list(data0.keys())[0]
     FL_key = list(data0.keys())[1]
-
+    odfloor = 0.01;
     this_baseline_od_data = data0[OD_key]
     this_baseline_fl_data = data0[FL_key]
     this_induced_od_data = data1[OD_key]
@@ -521,14 +521,14 @@ if __name__ == "__main__":
         for col in range(0,12):
             print(this_induced_fl_data.shape)
             print(this_time.shape)
-            odnormfl_induced = this_induced_fl_data[row][col][0:360]/this_induced_od_data[row][col][0:360]
-            odnormfl_baseline = this_baseline_fl_data[row][col][0:360]/this_baseline_od_data[row][col][0:360]
+            odnormfl_induced = this_induced_fl_data[row][col][0:360]/(this_induced_od_data[row][col][0:360]+odfloor)
+            odnormfl_baseline = this_baseline_fl_data[row][col][0:360]/(this_baseline_od_data[row][col][0:360]+odfloor)
             this_foldchange = odnormfl_induced/odnormfl_baseline
             foldchangedata[row,col,:] = this_foldchange
 
             plt.scatter(this_time,this_foldchange)
             
-    this_fig.savefig(f'QualityDatafromAlec{date}_{time}.eps')
+    this_fig.savefig('~/AlecOutputData/FoldChangeofPlateReader.eps')
 
     listed_foldchangedata = foldchangedata.reshape(int(foldchangedata.shape[0]*foldchangedata.shape[1]),foldchangedata.shape[2])
     
@@ -557,7 +557,7 @@ if __name__ == "__main__":
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.set_title("Fold Change in RFU for each gRNA position at 8 hours")
-        plt.savefig(f"./Figures/foldchange{date}_{time}.png")
+        plt.savefig(f"~/AlecOutputData/foldchange{date}_{time}.png")
 
     # Define the model parameters.
     stride_parameter = 30
@@ -569,8 +569,8 @@ if __name__ == "__main__":
     intermediate_dim = 100
     batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
-    this_step_size_val = 0.01
-    max_iters = 1e6
+    this_step_size_val = 0.02
+    max_iters = 5e4
     this_corpus,this_labels = make_labeled_corpus(allseqs, data,
                                                   stride_parameter)
 
