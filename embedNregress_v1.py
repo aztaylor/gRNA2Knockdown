@@ -621,7 +621,7 @@ if __name__ == "__main__":
     with tf.device('/gpu:0'):
         this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
                                                                   regress_list)
-        print(this_embedding.tf_shape())
+        print(this_embedding.shape())
         this_regress_y,all_regress_layers = network_assemble(this_embedding,this_Wregress_list,this_bregress_list)
         
         HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
