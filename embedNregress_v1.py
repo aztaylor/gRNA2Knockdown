@@ -519,7 +519,7 @@ if __name__ == "__main__":
     batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
     this_step_size_val = 0.01
-    max_iters = 1e5
+    max_iters = 1e3
     this_corpus,this_labels = make_labeled_corpus(allseqs, data,
                                                   stride_parameter)
 
