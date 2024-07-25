@@ -15,7 +15,8 @@ import matplotlib.pyplot as plt
 import platereadertools as pr
 import datetime as dt
 
-date = dt.datetime.now().strftime("%Y%m%d")
+date = dt.datetime.now()
+date = date[0].replace("-","")
 print(date)
 
 from sklearn.preprocessing import MinMaxScaler
