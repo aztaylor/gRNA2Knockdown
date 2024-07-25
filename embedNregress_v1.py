@@ -530,7 +530,7 @@ if __name__ == "__main__":
             
     this_fig.savefig(f'QualityDatafromAlec{date}_{time}.eps')
 
-    listed_foldchangedata = foldchangedata.reshape(np.int(foldchangedata.shape[0]*foldchangedata.shape[1]),foldchangedata.shape[2])
+    listed_foldchangedata = foldchangedata.reshape(int(foldchangedata.shape[0]*foldchangedata.shape[1]),foldchangedata.shape[2])
     
     print("listed fold change data shape: " + repr(listed_foldchangedata.shape))
     
