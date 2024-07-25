@@ -513,6 +513,7 @@ if __name__ == "__main__":
     stride_parameter = 30
     label_dim = 1
     embedding_dim = 15
+    outpuDim = 
     intermediate_dim = 100
     batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
