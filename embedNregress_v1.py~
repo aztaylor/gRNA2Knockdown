@@ -636,4 +636,4 @@ if __name__ == "__main__":
     ax.set_ylabel('Principal Component Two')
     ax.set_zlabel('Principal Component Three')
     plt.tight_layout()
-    fig.savefig("Figures/PCA3D2072524.png")
+    fig.savefig("Figures/PCA3D20240725.png")
