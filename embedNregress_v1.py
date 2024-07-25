@@ -13,12 +13,11 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import platereadertools as pr
-import datetime as dt
 
 from sklearn.decomposition import PCA    
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import MinMaxScaler
-
+from datetime import datetime
 
 '''This module contains the functions to encode DNA sequences and for use in predicting  the knockdown 
 efficiency of CRISPR dCasRx-gRNAs effectors. The model takes in the RNA sequence of the targeted transcript 
@@ -40,8 +39,9 @@ Santa Barbara. Some things to note:
     execution mode must be disabled before running the code. This can be done by running the following code:
     tf.compat.v1.disable_eager_execution()
 '''
-
-date = dt.datetime.today().strftime('%Y%m%d')
+now = datetime.now()
+date = now.strftime('%Y%m%d')
+time = now.strftime('%H%M%S')
 
 
 # Define Auxillary Functions
@@ -410,7 +410,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable,
         ax.set_ylabel('Error')
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
-        ax.set_title(f'ErrorHistory{date}')
+        ax.set_title(f'ErrorHistory{date}_{time}')
         
         plt.savefig(save_fig)
         plt.close()
@@ -485,7 +485,7 @@ if __name__ == "__main__":
                 print(this_data.shape)
                 print(this_time.shape)
                 plt.scatter(this_time,this_data[row][col])
-    this_fig.savefig(f'QualityDatafromAlec{date}.eps')
+    this_fig.savefig(f'QualityDatafromAlec{date}_{time}.eps')
     
     # Based off of the timeseries data, we can see that the greatest change in flourescence occurs at timepoint 165 
     # (~8hours). We will use this timepoint to calculate the fold change between the 0mM and 10mM data.
@@ -507,13 +507,13 @@ if __name__ == "__main__":
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.set_title("Fold Change in RFU for each gRNA position at 8 hours")
-        plt.savefig(f"./Figures/foldchange{date}.png")
+        plt.savefig(f"./Figures/foldchange{date}_{time}.png")
 
     # Define the model parameters.
     stride_parameter = 30
     label_dim = 1
     embedding_dim = 15
-    outpuDim = 
+    outpuDim = HourHorizon*1/SamplingRate
     intermediate_dim = 100
     batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
@@ -560,7 +560,8 @@ if __name__ == "__main__":
     regress_list = [intermediate_dim]*1+[label_dim]
     with tf.device('/gpu:0'):
         this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
-                                                                  regress_list)
+                                                                  outpuDim)
+        
 
         HybridLoss = customLoss(this_y_out,this_u,this_embedding)
 
@@ -584,6 +585,10 @@ if __name__ == "__main__":
                     step_size_val=this_step_size_val,max_iters=max_iters,
                     save_fig= train_figure_name)
 
+    with tf.device('/gpu:0'):
+        Wfeedforward, bfeedforward = initialize_Wblist(embedding_dim,
+                                                        regress_dim)
+
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
         z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]},session=sess)
@@ -603,7 +608,7 @@ if __name__ == "__main__":
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.set_title("Number of Mismatches in Predicted Sequences")
-    plt.savefig(f"Figures/mismatches{date}.png")
+    plt.savefig(f"Figures/mismatches{date}_{time}.png")
 
     subset_embeddings = this_embedding.eval(feed_dict={this_u:this_corpus_vec},
                                             session=sess)
@@ -650,4 +655,4 @@ if __name__ == "__main__":
     ax.set_ylabel('Principal Component Two')
     ax.set_zlabel('Principal Component Three')
     plt.tight_layout()
-    fig.savefig(f"Figures/PCA{date}.png")
+    fig.savefig(f"Figures/PCA{date}_{time}.png")
