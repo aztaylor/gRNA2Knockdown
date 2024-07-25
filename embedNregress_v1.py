@@ -514,7 +514,7 @@ if __name__ == "__main__":
     stride_parameter = 30
     label_dim = 1
     embedding_dim = 15
-    outpuDim = HourHorizon*1/SamplingRate
+    outpuDim = int(HourHorizon*1/SamplingRate)
     feedforwardDepth = 2
     feedforwardDim = 100
     intermediate_dim = 100
@@ -593,7 +593,8 @@ if __name__ == "__main__":
 
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
-        z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]},session=sess)
+        z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]},\
+            session=sess)
         this_seq_out = vecback2seq(np.dot(np.linalg.inv(Rand_Transform),z_ind.T))
         print("Predicted:"+repr("".join(this_seq_out))[0:11])
         print("Ground Truth:"+repr("".join(this_corpus[ind][0:10])))
