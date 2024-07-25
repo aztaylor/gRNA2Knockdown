@@ -521,8 +521,8 @@ if __name__ == "__main__":
         for col in range(0,12):
             print(this_induced_fl_data.shape)
             print(this_time.shape)
-            odnormfl_induced = this_induced_fl_data[row][col]/this_induced_od_data[row][col]
-            odnormfl_baseline = this_baseline_fl_data[row][col]/this_baseline_od_data[row][col]
+            odnormfl_induced = this_induced_fl_data[row][col][0:360]/this_induced_od_data[row][col][0:360]
+            odnormfl_baseline = this_baseline_fl_data[row][col][0:360]/this_baseline_od_data[row][col][0:360]
             this_foldchange = odnormfl_induced/odnormfl_baseline
             foldchangedata[row,col,:] = this_foldchange
 
