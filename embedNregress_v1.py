@@ -560,7 +560,7 @@ if __name__ == "__main__":
     regress_list = [intermediate_dim]*1+[label_dim]
     with tf.device('/gpu:0'):
         this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
-                                                                  outpuDim)
+                                                                  regress_list)
         
         HybridLoss = customLoss(this_y_out,this_u,this_embedding)
 
