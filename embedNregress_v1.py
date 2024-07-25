@@ -21,14 +21,13 @@ from datetime import datetime
 
 '''This module contains the functions to encode DNA sequences and for use in predicting  the knockdown 
 efficiency of CRISPR dCasRx-gRNAs effectors. The model takes in the RNA sequence of the targeted transcript 
-embedds the sequence using an autoencoder. Subsequently, the model takes the embedded sequence and the mRNA of the target
-to predict the knockdown efficiency. The base design is adaptable with a variable number of hidden layers and units and
-is meant to be able to construct autoencoders, feedforward NNs and residual networks.
+embedds the sequence using an autoencoder. Subsequently, the model takes the embedded sequence and the mRNA of the 
+targetto predict the knockdown efficiency. The base design is adaptable with a variable number of hidden layers and 
+units andis meant to be able to construct autoencoders, feedforward NNs and residual networks.
 
-The model is trained using  the Adam optimizer and a custom VAE embbed loss function to determine the mean squared error.
-The original code was developed by Enoch Yeung in the Biological Control Laboratory at the University of California, 
-Santa Barbara. Some things to note:
-
+The model is trained using  the Adam optimizer and a custom VAE embbed loss function to determine the mean squared 
+error.The original code was developed by Enoch Yeung in the Biological Control Laboratory at the University of 
+California, Santa Barbara. Some things to note:
  - The code is written in Python 3.11 and uses the TensorFlow 2.x library.
  - The code is written in a modular fashion and can be used as a module in other scripts.
  - The code is written in a functional programming style and uses type hints to define the types of the arguments and
@@ -173,7 +172,8 @@ def initialize_Wblist(n_u, hv_list) -> (list, list): # type: ignore
 
 def rvs(dim=3):
     '''Generate a random orthogonal matrix. The matrix is generated using the Householder transformation. This should 
-    scrabble the 4-hot encoding to project into random input space. This improves performance for reason I do not yet know.
+    scrabble the 4-hot encoding to project into random input space. This improves performance for reason I do not yet
+    know.
     args:
         dim: int, dimension of the matrix
     returns:
@@ -440,7 +440,8 @@ def vecback2seq(untransformed_vec):
         returns:
             list, list of DNA sequences
     '''
-    # untransformed_vec is computed using the inverse of Rand_Transform to recover lattice-like vector representation/encoding
+    #untransformed_vec is computed using the inverse of Rand_Transform to recover lattice-like vector representation/
+    #encoding
     seq_out = [elemback2seq(elem) for elem in untransformed_vec]
     return seq_out
 
@@ -538,8 +539,8 @@ if __name__ == "__main__":
     n_pre_post_layers = 10; 
     hidden_vars_list = [intermediate_dim]*n_pre_post_layers+[embedding_dim]+\
         [intermediate_dim]*n_pre_post_layers + [stride_parameter]
-    print(hidden_vars_list)
-
+    if False:
+        print(hidden_vars_list)
 
     # Define the tensorflow session
     sess = tf.compat.v1.Session()
@@ -548,7 +549,6 @@ if __name__ == "__main__":
     this_u = tf.compat.v1.placeholder(tf.float32, 
                                       shape=[None,stride_parameter])
     
-
     with tf.device('/gpu:0'):
         this_W_list,this_b_list = initialize_Wblist(stride_parameter,
                                                     hidden_vars_list)
@@ -562,7 +562,6 @@ if __name__ == "__main__":
         this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
                                                                   outpuDim)
         
-
         HybridLoss = customLoss(this_y_out,this_u,this_embedding)
 
         result = sess.run(tf.compat.v1.global_variables_initializer())
@@ -587,7 +586,7 @@ if __name__ == "__main__":
 
     with tf.device('/gpu:0'):
         Wfeedforward, bfeedforward = initialize_Wblist(embedding_dim,
-                                                        regress_dim)
+                                                        outpuDim)
 
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
