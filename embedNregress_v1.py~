@@ -13,6 +13,10 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import platereadertools as pr
+import datetime as dt
+
+date = dt.datetime.now().strftime("%Y%m%d")
+print(date)
 
 from sklearn.preprocessing import MinMaxScaler
 import numpy as np
