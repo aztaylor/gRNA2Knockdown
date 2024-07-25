@@ -604,8 +604,7 @@ if __name__ == "__main__":
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.set_title("Number of Mismatches in Predicted Sequences")
-    plt.savefig(f"Figures/mismatches{date}_{
-        time}.png")
+    plt.savefig(f"Figures/mismatches{date}_{time}.png")
 
     subset_embeddings = this_embedding.eval(feed_dict={this_u:this_corpus_vec},
                                             session=sess)
