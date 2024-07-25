@@ -560,6 +560,7 @@ if __name__ == "__main__":
 
     this_embedding = all_layers[-2]
     regress_list = [intermediate_dim]*1+[label_dim]
+    # I believe this is the regression part of the network
     with tf.device('/gpu:0'):
         this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
                                                                   regress_list)
@@ -585,11 +586,16 @@ if __name__ == "__main__":
                     batchsize=batch_size_parameter,
                     step_size_val=this_step_size_val,max_iters=max_iters,
                     save_fig= train_figure_name)
+    # This is likely redudent code that can be removed.
     feedforwardList = [embedding_dim]+[feedforwardDim]*feedforwardDepth+\
         [outpuDim]
     with tf.device('/gpu:0'):
         Wfeedforward, bfeedforward = initialize_Wblist(embedding_dim,
                                                         feedforwardList)
+        y_out,all_layers = network_assemble(this_embedding,Wfeedforward,bfeedforward)
+        this_vae_loss = vae_loss(y_out,this_embedding)
+        
+        
 
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
