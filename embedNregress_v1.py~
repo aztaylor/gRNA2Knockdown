@@ -490,7 +490,7 @@ if __name__ == "__main__":
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.set_title("Fold Change in RFU for each gRNA position at 8 hours")
-        plt.savefig("./Figures/foldchange.png")
+        plt.savefig(f"./Figures/foldchange{date}.png")
 
     # Define the model parameters.
     stride_parameter = 30
@@ -585,7 +585,7 @@ if __name__ == "__main__":
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.set_title("Number of Mismatches in Predicted Sequences")
-    plt.savefig("Figures/mismatches20240529.png")
+    plt.savefig(f"Figures/mismatches{date}.png")
 
     subset_embeddings = this_embedding.eval(feed_dict={this_u:this_corpus_vec},
                                             session=sess)
@@ -641,4 +641,4 @@ if __name__ == "__main__":
     ax.set_ylabel('Principal Component Two')
     ax.set_zlabel('Principal Component Three')
     plt.tight_layout()
-    fig.savefig("Figures/PCA3D20240725.png")
+    fig.savefig(f"Figures/PCA3D{date}.png")
