@@ -561,7 +561,6 @@ if __name__ == "__main__":
                     step_size_val=this_step_size_val,max_iters=max_iters,
                     save_fig= train_figure_name)
 
-    import matplotlib.pyplot as plt
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
         z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]},session=sess)
