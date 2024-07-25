@@ -243,6 +243,25 @@ def customLoss(y_model:tf.Variable, y_true:tf.Variable,
         '''
     return vae_loss(y_model,y_true)+embed_loss(y_true,embed_true)
 
+#HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
+def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,
+               embed_true:tf.Variable,regress_y_model:tf.Variable,regress_y_true:tf.Variable) -> tf.Variable:
+    '''Custom loss function that combines the VAE loss and the embedding loss. The VAE loss is the mean squared error
+    between the predicted and true y values. The embedding loss is the mean squared error between the predicted and true
+    embeddings. .... needs more 
+    args:
+        y_model: tf.Variable, predicted y values
+        y_true: tf.Variable, true y values
+        embed_true: tf.Variable, true embeddings
+        
+    returns:
+        tf.Variable, custom loss
+        '''
+    regression_loss = tf.norm(this_regress_y-this_regress_y_labels,axis=[0,1],ord=2)/tf.norm(this_regress_y_labels,axis=[0,1],ord=2)
+    lambda_regression = 0.01
+    return vae_loss(y_model,y_true)+embed_loss(y_true,embed_true) + lambda_regression*regression_loss
+
+
 
 # Define the network
 def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, 
@@ -311,7 +330,7 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
     return y_out, z_temp_list
 
 #Train and test the network
-def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, 
+def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:np.array,y_feed:tf.Variable, 
               obj_func:tf.Variable, optimizer:tf.compat.v1.train.Optimizer,
               this_vae_loss:tf.Variable, this_embed_loss:tf.Variable, 
               valid_error_thres=1e-2, test_error_thres=1e-2, max_iters=1e6, 
@@ -323,6 +342,8 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable,
         sess: tf.Session, tensorflow session
         u_all_training: np.array, training data
         u_feed: tf.Variable, input Variable
+        y_all_training: np.array, training data from plate reader 
+        y_feed: tf.Variable, the placeholder variable that will store the training data from the plate reader (slices of y_all_training)
         obj_func: tf.Variable, objective function
         optimizer: tf.Variable, optimizer
         u_control_all_training: np.array, control training data
@@ -358,41 +379,49 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable,
         u_batch =[]
         u_valid = []
         u_test_train = []
+
+        y_batch = []
+        y_valid = []
+        y_test_train = []
         
         for j in range(0,len(select_ind)):
             u_batch.append(u_all_training[select_ind[j]])
+            y_batch.append(y_all_training[select_ind[j]])
 
         for k in range(0,len(valid_ind)):
             u_valid.append(u_all_training[valid_ind[k]])
+            y_valid.append(y_all_training[valid_ind[k]])
 
         for k in range(0,len(select_ind_test)):
             u_test_train.append(u_all_training[select_ind_test[k]])
+            y_test_train.append(y_all_training[select_ind_test[k]])
 
-        optimizer.run(feed_dict={u_feed:u_batch}, session=sess) # embed_feed:,step_size:step_size_val});
-        valid_error = obj_func.eval(feed_dict={u_feed:u_valid}, session=sess) # embed_feed:y_valid});
-        test_error = obj_func.eval(feed_dict={u_feed:u_test_train}, 
+        optimizer.run(feed_dict={u_feed:u_batch,y_feed:y_batch}, session=sess) # embed_feed:,step_size:step_size_val});
+        valid_error = obj_func.eval(feed_dict={u_feed:u_valid,y_feed:y_valid}, session=sess) # embed_feed:y_valid});
+
+        test_error = obj_func.eval(feed_dict={u_feed:u_test_train,y_feed:y_test_train}, 
                                    session=sess) # embed_feed:y_test_train});
 
 
         if iter%samplerate==0:
             training_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_batch}, session=sess))#,embed_feed:y_batch}));
+                feed_dict={u_feed:u_batch, y_feed:y_batch}, session=sess));
             validation_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_valid}, session=sess))#,embed_feed:y_valid}));
+                feed_dict={u_feed:u_valid, y_feed:y_valid}, session=sess));
             test_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_test_train}, session=sess))#,embed_feed:y_test_train}));
+                feed_dict={u_feed:u_test_train, y_feed:y_test_train}, session=sess));
 
 
         if (iter%1000==0) or (iter==1):
             print("\r step %d , validation error %g"%(iter, obj_func.eval(
-                    feed_dict={u_feed:u_valid}, session=sess)))#,embed_feed:y_valid})));
+                    feed_dict={u_feed:u_valid, y_feed:y_batch}, session=sess)) );
             
             print("\r step %d , test error %g"%(iter, obj_func.eval(
-                    feed_dict={u_feed:u_test_train}, session=sess)));#,embed_feed:y_test_train})));
+                    feed_dict={u_feed:u_test_train, y_feed:y_test_train}, session=sess)) );
             print("\r Reconstruction Loss: " + repr(this_vae_loss.eval(
-                    feed_dict={u_feed:u_all_training},session=sess)))
+                    feed_dict={u_feed:u_all_training, y_feed:y_all_training}, session=sess)) );
             print("\r Embedding Loss: " + repr(this_embed_loss.eval(
-                    feed_dict={u_feed:u_all_training}, session=sess)))
+                    feed_dict={u_feed:u_all_training, y_feed:y_all_training}, session=sess)) );
     all_histories = [training_error_history_nocovar, 
                     validation_error_history_nocovar,
                     test_error_history_nocovar,
@@ -478,15 +507,34 @@ if __name__ == "__main__":
     data1, time1 = pr.Organize(data_10mM_fp,NumRowsonPlate,NumColumnsonPlate,HourHorizon,SamplingRate)
 
     this_fig = plt.figure()
-    for key in data0.keys():
-        for row in range(0,8):
-            for col in range(0,12):
-                this_data = data0[key]
-                this_time = time0[key]
-                print(this_data.shape)
-                print(this_time.shape)
-                plt.scatter(this_time,this_data[row][col])
+    OD_key = data0.keys()[0]
+    FL_key = data0.keys()[1]
+
+    this_baseline_od_data = data0[OD_key]
+    this_baseline_fl_data = data0[FL_key]
+    this_induced_od_data = data1[OD_key]
+    this_induced_fl_data = data1[FL_key]
+    
+    this_time = time0[FL_key]
+    foldchangedata = data0[FL_key]-data0[FL_key] # makes a zeros matrix with the right dimensions for storing fold change data 
+    for row in range(0,8):
+        for col in range(0,12):
+            print(this_induced_fl_data.shape)
+            print(this_time.shape)
+            odnormfl_induced = this_induced_fl_data[row][col]/this_induced_od_data[row][col]
+            odnormfl_baseline = this_baseline_fl_data[row][col]/this_baseline_od_data[row][col]
+            this_foldchange = odnormfl_induced/odnormfl_baseline
+            foldchangedata[row,col,:] = this_foldchange
+
+            plt.scatter(this_time,this_foldchange)
+            
     this_fig.savefig(f'QualityDatafromAlec{date}_{time}.eps')
+
+    listed_foldchangedata = np.flatten(foldchangedata,axis=[0,1])
+    print("listed fold change data shape: " + repr(listed_foldchangedata.shape))
+    
+
+
     
     # Based off of the timeseries data, we can see that the greatest change in flourescence occurs at timepoint 165 
     # (~8hours). We will use this timepoint to calculate the fold change between the 0mM and 10mM data.
@@ -547,10 +595,16 @@ if __name__ == "__main__":
     # Define the tensorflow session
     sess = tf.compat.v1.Session()
     tf.compat.v1.disable_eager_execution() # needed because of placeholder variables
-    
+
+
+
+    # Define the placeholders for the input sequences
     this_u = tf.compat.v1.placeholder(tf.float32, 
                                       shape=[None,stride_parameter])
-    
+    # Define placeholder for regression label (vectors made from time-series traces of plate reader data)
+    this_regress_y_labels = tf.compat.v1.placeholder(tf.float32,shape=[None,outpuDim])
+
+    # Instantiate the autoencoder network 
     with tf.device('/gpu:0'):
         this_W_list,this_b_list = initialize_Wblist(stride_parameter,
                                                     hidden_vars_list)
@@ -558,14 +612,17 @@ if __name__ == "__main__":
                                                 ,keep_prob=1.0,
                                                 activation_flag=2,res_net=0)
 
-    this_embedding = all_layers[-2]
-    regress_list = [intermediate_dim]*1+[label_dim]
+    # Define a handle that accesses the embedding layer 
+    this_embedding = all_layers[n_pre_post_layers+1]
+    # Define the regression network depth, width, and output dimension:     
+    regress_list = [feedforwardDim]*feedforwardDepth+[outpuDim]
     # I believe this is the regression part of the network
     with tf.device('/gpu:0'):
         this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
                                                                   regress_list)
+        this_regress_y,all_regress_layers = network_assemble(this_embedding,this_Wregress_list,this_bregress_list)
         
-        HybridLoss = customLoss(this_y_out,this_u,this_embedding)
+        HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
 
         result = sess.run(tf.compat.v1.global_variables_initializer())
         this_optim = tf.compat.v1.train.AdagradOptimizer(
@@ -580,7 +637,7 @@ if __name__ == "__main__":
             train_figure_name = f"Figures/Training{embedding_dim}_\
                 {intermediate_dim}_{stride_parameter}_{n_pre_post_layers}.png"
                 
-            train_net(sess, this_corpus_vec,this_u,HybridLoss,
+            train_net(sess, this_corpus_vec,this_u,listed_foldchangedata,this_regress_y_labels,HybridLoss,
                     this_optim,
                     this_vae_loss=this_vae_loss,
                     this_embed_loss=this_embed_loss,  
@@ -660,7 +717,8 @@ if __name__ == "__main__":
             this_colors[x_ind][2] = this_labels[x_ind]/np.max(this_labels)
 
 
-    ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2], c=this_colors, marker='o',alpha=0.25)
+    ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2],
+               c=this_colors, marker='o',alpha=0.25)
     ax.view_init(30, azim=240)
     ax.set_xlabel('Principal Component One')
     ax.set_ylabel('Principal Component Two')
