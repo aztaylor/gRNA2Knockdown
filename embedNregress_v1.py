@@ -516,7 +516,7 @@ if __name__ == "__main__":
     this_induced_fl_data = data1[FL_key]
     
     this_time = time0[FL_key][0:360]
-    foldchangedata = data0[FL_key]-data0[FL_key] # makes a zeros matrix with the right dimensions for storing fold change data 
+    foldchangedata = np.zeros((8*12,360))
     for row in range(0,8):
         for col in range(0,12):
             print(this_induced_fl_data.shape)
