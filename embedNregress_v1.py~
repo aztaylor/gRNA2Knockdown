@@ -15,12 +15,14 @@ import matplotlib.pyplot as plt
 import platereadertools as pr
 import datetime as dt
 
+from mpl_toolkits.mplot3d import Axes3D
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.decomposition import PCA
+
 date = dt.datetime.now()
 date = date[0].replace("-","")
 print(date)
 
-from sklearn.preprocessing import MinMaxScaler
-import numpy as np
 
 '''This module contains the functions to encode DNA sequences and for use in predicting  the knockdown 
 efficiency of CRISPR dCasRx-gRNAs effectors. The model takes in the RNA sequence of the targeted transcript 
@@ -490,7 +492,7 @@ if __name__ == "__main__":
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.set_title("Fold Change in RFU for each gRNA position at 8 hours")
-        plt.savefig("./Figures/foldchange.png")
+        plt.savefig(f"./Figures/foldchange{date}.png")
 
     # Define the model parameters.
     stride_parameter = 30
@@ -585,12 +587,11 @@ if __name__ == "__main__":
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.set_title("Number of Mismatches in Predicted Sequences")
-    plt.savefig("Figures/mismatches20240529.png")
+    plt.savefig(f"Figures/mismatches{date}.png")
 
     subset_embeddings = this_embedding.eval(feed_dict={this_u:this_corpus_vec},
                                             session=sess)
 
-    from sklearn.decomposition import PCA
     X = subset_embeddings
     pca = PCA(n_components=3)
     pca.fit(X)
@@ -605,11 +606,6 @@ if __name__ == "__main__":
     X_transformed = X_transformed[0:]
 
     X_transformed.shape
-
-    from mpl_toolkits.mplot3d import Axes3D
-    import matplotlib.pyplot as plt
-    import numpy as np
-
     # Fixing random state for reproducibility
 
 
@@ -641,4 +637,4 @@ if __name__ == "__main__":
     ax.set_ylabel('Principal Component Two')
     ax.set_zlabel('Principal Component Three')
     plt.tight_layout()
-    fig.savefig("Figures/PCA3D20240725.png")
+    fig.savefig(f"Figures/PCA3D{date}.png")
