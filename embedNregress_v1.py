@@ -614,7 +614,7 @@ if __name__ == "__main__":
                                                 activation_flag=2,res_net=0)
 
     # Define a handle that accesses the embedding layer 
-    this_embedding = all_layers[n_pre_post_layers+1]
+    this_embedding = all_layers[n_pre_post_layers]
     # Define the regression network depth, width, and output dimension:     
     regress_list = [feedforwardDim]*feedforwardDepth+[outpuDim]
     # I believe this is the regression part of the network
