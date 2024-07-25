@@ -577,7 +577,9 @@ if __name__ == "__main__":
 
         if True:
             # Train the network
-            train_figure_name = f"Figures/Training{embedding_dim}_{intermediate_dim}_{stride_parameter}_{n_pre_post_layers}.png"
+            train_figure_name = f"Figures/Training{embedding_dim}_\
+                {intermediate_dim}_{stride_parameter}_{n_pre_post_layers}.png"
+                
             train_net(sess, this_corpus_vec,this_u,HybridLoss,
                     this_optim,
                     this_vae_loss=this_vae_loss,
@@ -597,8 +599,6 @@ if __name__ == "__main__":
             y_out,all_layers = network_assemble(this_embedding,Wfeedforward,bfeedforward)
             this_vae_loss = vae_loss(y_out,this_embedding)
         
-        
-
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
         z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]},\
