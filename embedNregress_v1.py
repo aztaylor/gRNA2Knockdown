@@ -631,7 +631,7 @@ if __name__ == "__main__":
         this_optim = tf.compat.v1.train.AdagradOptimizer(
             learning_rate=this_step_size_val).minimize(HybridLoss)
         step_size = tf.compat.v1.placeholder(tf.float32,shape=[])
-        #result = sess.run(tf.compat.v1.global_variables_initializer())
+        result = sess.run(tf.compat.v1.global_variables_initializer())
         this_vae_loss = vae_loss(this_y_out,this_u)
         this_embed_loss = embed_loss(this_u,this_embedding)
 
