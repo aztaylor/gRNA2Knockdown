@@ -538,7 +538,7 @@ if __name__ == "__main__":
     this_labels = np.expand_dims(this_labels,axis=1)
     n_pre_post_layers = 10; 
     hidden_vars_list = [intermediate_dim]*n_pre_post_layers+[embedding_dim]+\
-        [intermediate_dim]*n_pre_post_layers + [stride_parameter]
+        [intermediate_dim]*n_pre_post_layers+[stride_parameter]
     if False:
         print(hidden_vars_list)
 
