@@ -515,6 +515,8 @@ if __name__ == "__main__":
     label_dim = 1
     embedding_dim = 15
     outpuDim = HourHorizon*1/SamplingRate
+    feedforwardDepth = 2
+    feedforwardDim = 100
     intermediate_dim = 100
     batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
@@ -583,10 +585,11 @@ if __name__ == "__main__":
                     batchsize=batch_size_parameter,
                     step_size_val=this_step_size_val,max_iters=max_iters,
                     save_fig= train_figure_name)
-
+    feedforwardList = [embedding_dim]+[feedforwardDim]*feedForwardDepth+\
+        [outpuDim]
     with tf.device('/gpu:0'):
         Wfeedforward, bfeedforward = initialize_Wblist(embedding_dim,
-                                                        outpuDim)
+                                                        feedforwardList)
 
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
