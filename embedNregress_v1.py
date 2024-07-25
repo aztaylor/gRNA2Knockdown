@@ -13,9 +13,12 @@ import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import platereadertools as pr
+import datetime as dt
 
+from sklearn.decomposition import PCA    
+from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import MinMaxScaler
-import numpy as np
+
 
 '''This module contains the functions to encode DNA sequences and for use in predicting  the knockdown 
 efficiency of CRISPR dCasRx-gRNAs effectors. The model takes in the RNA sequence of the targeted transcript 
@@ -37,6 +40,11 @@ Santa Barbara. Some things to note:
     execution mode must be disabled before running the code. This can be done by running the following code:
     tf.compat.v1.disable_eager_execution()
 '''
+
+date = dt.datetime.now()
+date = date[0].replace("-","")
+time = date[1].replace(":","")
+print(date)
 
 # Define Auxillary Functions
 def sequence_encoding(sequence: str) -> np.array:
@@ -404,7 +412,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable,
         ax.set_ylabel('Error')
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
-        ax.set_title('Error History')
+        ax.set_title(f'ErrorHistory{date}_{time}')
         
         plt.savefig(save_fig)
         plt.close()
@@ -479,7 +487,7 @@ if __name__ == "__main__":
                 print(this_data.shape)
                 print(this_time.shape)
                 plt.scatter(this_time,this_data[row][col])
-    this_fig.savefig('QualityDatafromAlec.eps')
+    this_fig.savefig(f'QualityDatafromAlec{date}_{time}.eps')
     
     # Based off of the timeseries data, we can see that the greatest change in flourescence occurs at timepoint 165 
     # (~8hours). We will use this timepoint to calculate the fold change between the 0mM and 10mM data.
@@ -501,7 +509,7 @@ if __name__ == "__main__":
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.set_title("Fold Change in RFU for each gRNA position at 8 hours")
-        plt.savefig("./Figures/foldchange.png")
+        plt.savefig(f"./Figures/foldchange{date}_{time}.png")
 
     # Define the model parameters.
     stride_parameter = 30
@@ -577,7 +585,6 @@ if __name__ == "__main__":
                     step_size_val=this_step_size_val,max_iters=max_iters,
                     save_fig= train_figure_name)
 
-    import matplotlib.pyplot as plt
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
         z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]},session=sess)
@@ -597,12 +604,12 @@ if __name__ == "__main__":
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.set_title("Number of Mismatches in Predicted Sequences")
-    plt.savefig("Figures/mismatches20240529.png")
+    plt.savefig(f"Figures/mismatches{date}_{
+        time}.png")
 
     subset_embeddings = this_embedding.eval(feed_dict={this_u:this_corpus_vec},
                                             session=sess)
 
-    from sklearn.decomposition import PCA
     X = subset_embeddings
     pca = PCA(n_components=3)
     pca.fit(X)
@@ -618,13 +625,7 @@ if __name__ == "__main__":
 
     X_transformed.shape
 
-    from mpl_toolkits.mplot3d import Axes3D
-    import matplotlib.pyplot as plt
-    import numpy as np
-
     # Fixing random state for reproducibility
-
-
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
@@ -646,11 +647,9 @@ if __name__ == "__main__":
 
 
     ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2], c=this_colors, marker='o',alpha=0.25)
-
     ax.view_init(30, azim=240)
-
     ax.set_xlabel('Principal Component One')
     ax.set_ylabel('Principal Component Two')
     ax.set_zlabel('Principal Component Three')
     plt.tight_layout()
-    fig.savefig("Figures/PCA3D20240529.png")
+    fig.savefig(f"Figures/PCA{date}.png")
