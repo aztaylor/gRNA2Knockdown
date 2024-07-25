@@ -614,13 +614,14 @@ if __name__ == "__main__":
                                                 activation_flag=2,res_net=0)
 
     # Define a handle that accesses the embedding layer 
-    this_embedding = all_layers[n_pre_post_layers-1]
+    this_embedding = all_layers[n_pre_post_layers]
     # Define the regression network depth, width, and output dimension:     
     regress_list = [feedforwardDim]*feedforwardDepth+[outpuDim]
     # I believe this is the regression part of the network
     with tf.device('/gpu:0'):
         this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
                                                                   regress_list)
+        print(this_embedding.tf_shape())
         this_regress_y,all_regress_layers = network_assemble(this_embedding,this_Wregress_list,this_bregress_list)
         
         HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
