@@ -15,12 +15,14 @@ import matplotlib.pyplot as plt
 import platereadertools as pr
 import datetime as dt
 
+from mpl_toolkits.mplot3d import Axes3D
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.decomposition import PCA
+
 date = dt.datetime.now()
 date = date[0].replace("-","")
 print(date)
 
-from sklearn.preprocessing import MinMaxScaler
-import numpy as np
 
 '''This module contains the functions to encode DNA sequences and for use in predicting  the knockdown 
 efficiency of CRISPR dCasRx-gRNAs effectors. The model takes in the RNA sequence of the targeted transcript 
@@ -590,7 +592,6 @@ if __name__ == "__main__":
     subset_embeddings = this_embedding.eval(feed_dict={this_u:this_corpus_vec},
                                             session=sess)
 
-    from sklearn.decomposition import PCA
     X = subset_embeddings
     pca = PCA(n_components=3)
     pca.fit(X)
@@ -605,11 +606,6 @@ if __name__ == "__main__":
     X_transformed = X_transformed[0:]
 
     X_transformed.shape
-
-    from mpl_toolkits.mplot3d import Axes3D
-    import matplotlib.pyplot as plt
-    import numpy as np
-
     # Fixing random state for reproducibility
 
 
