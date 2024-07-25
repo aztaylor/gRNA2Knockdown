@@ -585,7 +585,7 @@ if __name__ == "__main__":
                     batchsize=batch_size_parameter,
                     step_size_val=this_step_size_val,max_iters=max_iters,
                     save_fig= train_figure_name)
-    feedforwardList = [embedding_dim]+[feedforwardDim]*feedForwardDepth+\
+    feedforwardList = [embedding_dim]+[feedforwardDim]*feedforwardDepth+\
         [outpuDim]
     with tf.device('/gpu:0'):
         Wfeedforward, bfeedforward = initialize_Wblist(embedding_dim,
