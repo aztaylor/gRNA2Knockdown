@@ -588,14 +588,14 @@ if __name__ == "__main__":
                     save_fig= train_figure_name)
     # This is likely redudent code that can be removed.
     # I think we just need to reconsider the loss function at this point.
-
-    feedforwardList = [embedding_dim]+[feedforwardDim]*feedforwardDepth+\
-        [outpuDim]
-    with tf.device('/gpu:0'):
-        Wfeedforward, bfeedforward = initialize_Wblist(embedding_dim,
-                                                        feedforwardList)
-        y_out,all_layers = network_assemble(this_embedding,Wfeedforward,bfeedforward)
-        this_vae_loss = vae_loss(y_out,this_embedding)
+    if False:
+        feedforwardList = [embedding_dim]+[feedforwardDim]*feedforwardDepth+\
+            [outpuDim]
+        with tf.device('/gpu:0'):
+            Wfeedforward, bfeedforward = initialize_Wblist(embedding_dim,
+                                                            feedforwardList)
+            y_out,all_layers = network_assemble(this_embedding,Wfeedforward,bfeedforward)
+            this_vae_loss = vae_loss(y_out,this_embedding)
         
         
 
