@@ -209,12 +209,12 @@ def embed_loss(y_true,embed_true):
     #y_true is (batch_size_param) x (dim of stride) tensor
     IP_Matrix_y = tf.matmul(y_true,tf.transpose(y_true))
     IP_Matrix_e = tf.matmul(embed_true,tf.transpose(embed_true))
-    Scale_Matrix_y = tf.linalg.tensor_diag(tf.norm(y_true,ord='euclidean'
-                                                   ,axis=1))
-    Scale_Matrix_e = tf.linalg.tensor_diag(tf.norm(embed_true,ord='euclidean'
-                                                   ,axis=1))
-    Ky = tf.matmul(tf.matmul(Scale_Matrix_y,IP_Matrix_y),Scale_Matrix_y)
-    Ke = tf.matmul(tf.matmul(Scale_Matrix_e,IP_Matrix_e),Scale_Matrix_e)
+   #Scale_Matrix_y = tf.linalg.tensor_diag(tf.norm(y_true,ord='euclidean'
+                                                   #,axis=1))
+    #Scale_Matrix_e = tf.linalg.tensor_diag(tf.norm(embed_true,ord='euclidean'
+                                                      #,axis=1))
+    #Ky = tf.matmul(tf.matmul(Scale_Matrix_y,IP_Matrix_y),Scale_Matrix_y)
+    #Ke = tf.matmul(tf.matmul(Scale_Matrix_e,IP_Matrix_e),Scale_Matrix_e)
     return tf.norm(IP_Matrix_y-IP_Matrix_e,axis=[0,1],ord='fro')/tf.norm(
                     IP_Matrix_y,axis=[0,1],ord='fro')
 
