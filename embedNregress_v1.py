@@ -561,17 +561,9 @@ if __name__ == "__main__":
     label_dim = 1
     embedding_dim = 15
     outpuDim = int(HourHorizon*1/SamplingRate)
-    feedforwardDepth = 2
+    feedforwardDepth = 20
     feedforwardDim = 100
-    intermediate_dim = 100
-    batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
-    debug_splash = 0
-    this_step_size_val = 0.02
-    max_iters = 5e4
-    this_corpus,this_labels = make_labeled_corpus(allseqs, data,
-                                                  stride_parameter)
-
-    # Define the random transformation householder matrix.
+    intermediate_dim = 10
     Rand_Transform = rvs(dim=stride_parameter)
     
     # Define the corpus for the model.
