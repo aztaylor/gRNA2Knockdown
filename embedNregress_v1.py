@@ -700,7 +700,7 @@ if __name__ == "__main__":
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    this_colors = 0*np.random.rand(len(X_transformed),3)
+    this_colors = 0*np.random.rand(len(X_transformed), 6)
     print(this_labels)
 
     # For each set of style and range settings, plot n random points in the box
@@ -709,13 +709,19 @@ if __name__ == "__main__":
         x= X_transformed[x_ind][0]
         y= X_transformed[x_ind][1]
         z= X_transformed[x_ind][2]
-        if this_labels[x_ind]>0.66:
+        if this_labels[x_ind]>0.10:
             this_colors[x_ind][0] = this_labels[x_ind]/np.max(this_labels)
-        if 0.66>this_labels[x_ind]>0.33:
+        if 0.20>this_labels[x_ind]>0.30:
             this_colors[x_ind][1] = this_labels[x_ind]/np.max(this_labels)
-        if 0.33>this_labels[x_ind]>-10.0:
+        if 0.40>this_labels[x_ind]>50:
             this_colors[x_ind][2] = this_labels[x_ind]/np.max(this_labels)
-
+        if 0.60>this_labels[x_ind]>0.70:
+            this_colors[x_ind][3] = this_labels[x_ind]/np.max(this_labels)
+        if 0.80>this_labels[x_ind]>0.90:
+            this_colors[x_ind][4] = this_labels[x_ind]/np.max(this_labels)
+        if 0.90>this_labels[x_ind]>1.0:
+            this_colors[x_ind][5] = this_labels[x_ind]/np.max(this_labels)
+            
 
     ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2],
                c=this_colors, marker='o',alpha=0.25)
