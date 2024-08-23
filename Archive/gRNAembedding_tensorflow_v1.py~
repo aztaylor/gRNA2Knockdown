@@ -495,7 +495,7 @@ if __name__ == "__main__":
     batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
     debug_splash = 0
     this_step_size_val = 0.01
-    max_iters = 1e5
+    max_iters = 1e3
     this_corpus,this_labels = make_labeled_corpus(allseqs, data,
                                                   stride_parameter)
 
@@ -592,11 +592,8 @@ if __name__ == "__main__":
     pca.fit(X)
     PCA(copy=True, iterated_power='auto', n_components=3, random_state=None,
     svd_solver='auto', tol=0.0, whiten=False)
-
-    print("PCA Explained Variance Ratio: " + repr(pca.explained_variance_ratio_))
-    print("PCA Singular Values: " + repr(pca.singular_values_))
-
-    
+    print(pca.explained_variance_ratio_)
+    print(pca.singular_values_)
     X_transformed = pca.transform(X)
     X_transformed = X_transformed[0:]
 
@@ -607,8 +604,6 @@ if __name__ == "__main__":
     import numpy as np
 
     # Fixing random state for reproducibility
-
-
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 

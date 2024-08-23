@@ -1,0 +1,46 @@
+TensorFlow 2.0 Upgrade Script
+-----------------------------
+Converted 1 files
+Detected 0 issues that require attention
+--------------------------------------------------------------------------------
+================================================================================
+Detailed log follows:
+
+================================================================================
+--------------------------------------------------------------------------------
+Processing file 'Seq2Nbhd_MGH_Data_Flashpoint.ipynb'
+ outputting to './tensorflowupgrade_v2.py'
+--------------------------------------------------------------------------------
+
+112:15: INFO: tf.random_uniform_initializer requires manual check. Initializers no longer have the dtype argument in the constructor or partition_info argument in the __call__ method.
+The calls have been converted to compat.v1 for safety (even though they may already have been correct).
+112:15: INFO: Renamed 'tf.random_uniform_initializer' to 'tf.compat.v1.random_uniform_initializer'
+117:15: INFO: tf.truncated_normal_initializer requires manual check. Initializers no longer have the dtype argument in the constructor or partition_info argument in the __call__ method.
+The calls have been converted to compat.v1 for safety (even though they may already have been correct).
+117:15: INFO: Renamed 'tf.truncated_normal_initializer' to 'tf.compat.v1.truncated_normal_initializer'
+121:23: INFO: Renamed 'tf.truncated_normal' to 'tf.random.truncated_normal'
+125:23: INFO: Renamed 'tf.truncated_normal' to 'tf.random.truncated_normal'
+139:21: INFO: Changing keep_prob arg of tf.nn.dropout to rate, and recomputing value.
+
+141:21: INFO: Changing keep_prob arg of tf.nn.dropout to rate, and recomputing value.
+
+143:21: INFO: Changing keep_prob arg of tf.nn.dropout to rate, and recomputing value.
+
+156:35: INFO: Changing keep_prob arg of tf.nn.dropout to rate, and recomputing value.
+
+158:35: INFO: Changing keep_prob arg of tf.nn.dropout to rate, and recomputing value.
+
+160:35: INFO: Changing keep_prob arg of tf.nn.dropout to rate, and recomputing value.
+
+174:22: INFO: Renamed 'tf.global_variables_initializer' to 'tf.compat.v1.global_variables_initializer'
+194:22: INFO: Renamed 'tf.global_variables_initializer' to 'tf.compat.v1.global_variables_initializer'
+304:21: INFO: Renamed 'tf.diag' to 'tf.linalg.tensor_diag'
+305:21: INFO: Renamed 'tf.diag' to 'tf.linalg.tensor_diag'
+319:7: INFO: Renamed 'tf.InteractiveSession' to 'tf.compat.v1.InteractiveSession'
+359:9: INFO: Renamed 'tf.placeholder' to 'tf.compat.v1.placeholder'
+380:22: INFO: Renamed 'tf.global_variables_initializer' to 'tf.compat.v1.global_variables_initializer'
+381:17: INFO: Renamed 'tf.train.AdagradOptimizer' to 'tf.compat.v1.train.AdagradOptimizer'
+382:16: INFO: Renamed 'tf.placeholder' to 'tf.compat.v1.placeholder'
+383:22: INFO: Renamed 'tf.global_variables_initializer' to 'tf.compat.v1.global_variables_initializer'
+--------------------------------------------------------------------------------
+
