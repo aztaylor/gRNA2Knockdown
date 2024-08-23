@@ -631,7 +631,7 @@ if __name__ == "__main__":
             this_colors[x_ind][6] = this_labels[x_ind]/np.max(this_labels)
         if 0.80>=this_labels[x_ind]>0.90:
             this_colors[x_ind][7] = this_labels[x_ind]/np.max(this_labels)
-        if 0.90>=this_labels[x_ind]
+        if 0.90>=this_labels[x_ind]:
             this_colors[x_ind][8] = this_labels[x_ind]/np.max(this_labels)
 
 
