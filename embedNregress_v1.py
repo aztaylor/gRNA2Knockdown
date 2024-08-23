@@ -657,7 +657,7 @@ if __name__ == "__main__":
         print("Ground Truth:"+repr("".join(this_corpus[ind][0:10])))
         print("\n")
         this_seq_out = ''.join(this_seq_out)
-        all_mismatches.append(num_mismatch(this_seq_out,this_corpus[ind]))
+        all_mismatches.append(num_mismatch(this_seq_out, this_corpus[ind]))
     
     mismatch_process = np.array(all_mismatches)
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)

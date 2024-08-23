@@ -614,16 +614,23 @@ if __name__ == "__main__":
 
     # For each set of style and range settings, plot n random points in the box
     # defined by x in [23, 32], y in [0, 100], z in [zlow, zhigh].
+    # defined by x in [23, 32], y in [0, 100], z in [zlow, zhigh].
     for x_ind in range(0,len(X_transformed)):
         x= X_transformed[x_ind][0]
         y= X_transformed[x_ind][1]
         z= X_transformed[x_ind][2]
-        if this_labels[x_ind]>0.66:
+        if this_labels[x_ind]>0.10:
             this_colors[x_ind][0] = this_labels[x_ind]/np.max(this_labels)
-        if 0.66>this_labels[x_ind]>0.33:
+        if 0.20>this_labels[x_ind]>0.30:
             this_colors[x_ind][1] = this_labels[x_ind]/np.max(this_labels)
-        if 0.33>this_labels[x_ind]>-10.0:
+        if 0.40>this_labels[x_ind]>50:
             this_colors[x_ind][2] = this_labels[x_ind]/np.max(this_labels)
+        if 0.60>this_labels[x_ind]>0.70:
+            this_colors[x_ind][3] = this_labels[x_ind]/np.max(this_labels)
+        if 0.80>this_labels[x_ind]>0.90:
+            this_colors[x_ind][4] = this_labels[x_ind]/np.max(this_labels)
+        if 0.90>this_labels[x_ind]>1.0:
+            this_colors[x_ind][5] = this_labels[x_ind]/np.max(this_labels)
 
 
     ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2], c=this_colors, marker='o',alpha=0.25)
