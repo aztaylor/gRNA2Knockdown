@@ -604,8 +604,6 @@ if __name__ == "__main__":
     import numpy as np
 
     # Fixing random state for reproducibility
-
-
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
@@ -613,8 +611,6 @@ if __name__ == "__main__":
     print(this_labels)
 
     # For each set of style and range settings, plot n random points in the box
-    # defined by x in [23, 32], y in [0, 100], z in [zlow, zhigh].
-    # defined by x in [23, 32], y in [0, 100], z in [zlow, zhigh].
     for x_ind in range(0,len(X_transformed)):
         x= X_transformed[x_ind][0]
         y= X_transformed[x_ind][1]
