@@ -519,8 +519,8 @@ if __name__ == "__main__":
     foldchangedata = np.zeros((8,12,360))
     for row in range(0,8):
         for col in range(0,12):
-            print(this_induced_fl_data.shape)
-            print(this_time.shape)
+            print(induced_fl_data.shape)
+            print(time_vec.shape)
             odnormfl_induced = induced_fl_data[row][col][0:360]/(induced_od_data[row][col][0:360]+odfloor)
             odnormfl_baseline = baseline_fl_data[row][col][0:360]/(baseline_od_data[row][col][0:360]+odfloor)
             this_foldchange = odnormfl_induced/odnormfl_baseline  #fold change for a particular row, col combination 
