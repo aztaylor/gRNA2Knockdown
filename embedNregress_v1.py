@@ -568,7 +568,7 @@ if __name__ == "__main__":
     Rand_Transform = rvs(dim=stride_parameter)
     this_step_size_val = 0.01
     max_iters = 10000
-    batch_size_parameter = 10
+    batch_size_parameter = 100
     
     # Define the corpus for the model.
     this_corpus_vec = []
