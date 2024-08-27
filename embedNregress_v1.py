@@ -566,17 +566,20 @@ if __name__ == "__main__":
     feedforwardDim = 100
     intermediate_dim = 10
     Rand_Transform = rvs(dim=stride_parameter)
+    this_step_size_val = 0.01
+    max_iters = 10000
+    batch_size_parameter = 10
     
     # Define the corpus for the model.
     this_corpus_vec = []
-    for this_corpus_elem in this_corpus:
-        vec_value = sequence_encoding(this_corpus_elem)
-        vec_value = np.dot(Rand_Transform,vec_value)
+    #for this_corpus_elem in this_corpus:
+    #    vec_value = sequence_encoding(this_corpus_elem)
+    #    vec_value = np.dot(Rand_Transform,vec_value)
 
-        this_corpus_vec.append(vec_value)
+    #   this_corpus_vec.append(vec_value)
 
     this_corpus_vec = np.asarray(this_corpus_vec)
-    this_labels = np.expand_dims(this_labels,axis=1)
+    #this_labels = np.expand_dims(this_labels,axis=1)
     n_pre_post_layers = 10; 
     hidden_vars_list = [intermediate_dim]*n_pre_post_layers+[embedding_dim]+\
         [intermediate_dim]*n_pre_post_layers+[stride_parameter]
@@ -655,10 +658,10 @@ if __name__ == "__main__":
             session=sess)
         this_seq_out = vecback2seq(np.dot(np.linalg.inv(Rand_Transform),z_ind.T))
         print("Predicted:"+repr("".join(this_seq_out))[0:11])
-        print("Ground Truth:"+repr("".join(this_corpus[ind][0:10])))
+        #print("Ground Truth:"+repr("".join(this_corpus[ind][0:10])))
         print("\n")
         this_seq_out = ''.join(this_seq_out)
-        all_mismatches.append(num_mismatch(this_seq_out, this_corpus[ind]))
+        #all_mismatches.append(num_mismatch(this_seq_out, this_corpus[ind]))
     
     mismatch_process = np.array(all_mismatches)
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)
