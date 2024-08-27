@@ -510,27 +510,28 @@ if __name__ == "__main__":
     OD_key = list(data0.keys())[0]
     FL_key = list(data0.keys())[1]
     odfloor = 0.01;
-    this_baseline_od_data = data0[OD_key]
-    this_baseline_fl_data = data0[FL_key]
-    this_induced_od_data = data1[OD_key]
-    this_induced_fl_data = data1[FL_key]
+    baseline_od_data = data0[OD_key]
+    baseline_fl_data = data0[FL_key]
+    induced_od_data = data1[OD_key]
+    induced_fl_data = data1[FL_key]
     
-    this_time = time0[FL_key][0:360]
+    time_vec = time0[FL_key][0:360]
     foldchangedata = np.zeros((8,12,360))
     for row in range(0,8):
         for col in range(0,12):
             print(this_induced_fl_data.shape)
             print(this_time.shape)
-            odnormfl_induced = this_induced_fl_data[row][col][0:360]/(this_induced_od_data[row][col][0:360]+odfloor)
-            odnormfl_baseline = this_baseline_fl_data[row][col][0:360]/(this_baseline_od_data[row][col][0:360]+odfloor)
-            this_foldchange = odnormfl_induced/odnormfl_baseline
+            odnormfl_induced = induced_fl_data[row][col][0:360]/(induced_od_data[row][col][0:360]+odfloor)
+            odnormfl_baseline = baseline_fl_data[row][col][0:360]/(baseline_od_data[row][col][0:360]+odfloor)
+            this_foldchange = odnormfl_induced/odnormfl_baseline  #fold change for a particular row, col combination 
             foldchangedata[row,col,:] = this_foldchange
 
-            plt.scatter(this_time,this_foldchange)
+            plt.scatter(time_vec,this_foldchange)
             
     this_fig.savefig('/home/yeunglab/AlecOutputData/FoldChangeofPlateReader.eps')
 
     listed_foldchangedata = foldchangedata.reshape(int(foldchangedata.shape[0]*foldchangedata.shape[1]),foldchangedata.shape[2])
+    
     
     print("listed fold change data shape: " + repr(listed_foldchangedata.shape))
     
@@ -693,30 +694,37 @@ if __name__ == "__main__":
     ax = fig.add_subplot(111, projection='3d')
 
     this_colors = 0*np.random.rand(len(X_transformed), 6)
-    print(this_labels)
+    
+    foldchange_colorscale = np.sum(listed_foldchangedata,axis=1)  # sum over all the timepoints (area of the curve) but leave the row index as the URI for the sequence/embedding (this will give a 96 x 1 array) 
+    foldchange_colorscale = foldchange_colorscale/np.max(foldchange_colorscale)
 
     # For each set of style and range settings, plot n random points in the box
     # defined by x in [23, 32], y in [0, 100], z in [zlow, zhigh].
+    
+    rgb_scheme = np.zeros((len(X_transformed),3))
     for x_ind in range(0,len(X_transformed)):
-        x= X_transformed[x_ind][0]
-        y= X_transformed[x_ind][1]
-        z= X_transformed[x_ind][2]
-        if this_labels[x_ind]>0.10:
-            this_colors[x_ind][0] = this_labels[x_ind]/np.max(this_labels)
-        if 0.20>this_labels[x_ind]>0.30:
-            this_colors[x_ind][1] = this_labels[x_ind]/np.max(this_labels)
-        if 0.40>this_labels[x_ind]>50:
-            this_colors[x_ind][2] = this_labels[x_ind]/np.max(this_labels)
-        if 0.60>this_labels[x_ind]>0.70:
-            this_colors[x_ind][3] = this_labels[x_ind]/np.max(this_labels)
-        if 0.80>this_labels[x_ind]>0.90:
-            this_colors[x_ind][4] = this_labels[x_ind]/np.max(this_labels)
-        if 0.90>this_labels[x_ind]>1.0:
-            this_colors[x_ind][5] = this_labels[x_ind]/np.max(this_labels)
+        rgb_scheme[x_ind,0] = 1.0-foldchange_colorscale[x_ind]
+        rgb_scheme[x_ind,1] = foldchange_colorscale[x_ind]
+        
+        #x= X_transformed[x_ind][0]
+        #y= X_transformed[x_ind][1]
+        #z= X_transformed[x_ind][2]
+        #if this_labels[x_ind]>0.10:
+        #    this_colors[x_ind][0] = foldchange_colorscale[ind]
+        #if 0.20>this_labels[x_ind]>0.30:
+        #    this_colors[x_ind][1] = this_labels[x_ind]/np.max(this_labels)
+        #if 0.40>this_labels[x_ind]>0.50:
+        #    this_colors[x_ind][2] = this_labels[x_ind]/np.max(this_labels)
+        #if 0.60>this_labels[x_ind]>0.70:
+        #    this_colors[x_ind][3] = this_labels[x_ind]/np.max(this_labels)
+        #if 0.80>this_labels[x_ind]>0.90:
+        #    this_colors[x_ind][4] = this_labels[x_ind]/np.max(this_labels)
+        #if 0.90>this_labels[x_ind]>1.0:
+        #    this_colors[x_ind][5] = this_labels[x_ind]/np.max(this_labels)
             
 
     ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2],
-               c=this_colors, marker='o',alpha=0.25)
+               c=rgb_scheme, marker='o',alpha=0.25)
     ax.view_init(30, azim=240)
     ax.set_xlabel('Principal Component One')
     ax.set_ylabel('Principal Component Two')
