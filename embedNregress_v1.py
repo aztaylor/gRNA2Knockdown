@@ -371,7 +371,10 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         iter+=1
 
         all_ind = set(np.arange(0,len(u_all_training)))
-        select_ind = np.random.randint(0,len(u_all_training),size=batchsize)
+        try:
+            select_ind = np.random.randint(0,len(u_all_training),size=batchsize)
+        except:
+            print(len(u_all_training))
         valid_ind = list(all_ind -set(select_ind))[0:batchsize]
         select_ind_test = list(all_ind - set(valid_ind) - 
                             set(select_ind))[0:batchsize]
@@ -410,7 +413,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
                 feed_dict={u_feed:u_valid, y_feed:y_valid}, session=sess));
             test_error_history_nocovar.append(obj_func.eval(
                 feed_dict={u_feed:u_test_train, y_feed:y_test_train}, session=sess));
-        print(u_all_training.shape())
+
 
         if (iter%1000==0) or (iter==1):
             print("\r step %d , validation error %g"%(iter, obj_func.eval(
@@ -433,7 +436,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         ax.plot(x,training_error_history_nocovar,label='train. err.')
         ax.plot(x,validation_error_history_nocovar,label='valid. err.')
         ax.plot(x,test_error_history_nocovar,label='test err.')
-        ax.plot(x,u_all_training,label='Reconstruction Loss')
+        #ax.plot(x,u_all_training,label='Reconstruction Loss')
         ax.legend()
         ax.set_xlabel('Iterations')
         ax.set_ylabel('Error')
@@ -566,20 +569,17 @@ if __name__ == "__main__":
     feedforwardDim = 100
     intermediate_dim = 10
     Rand_Transform = rvs(dim=stride_parameter)
-    this_step_size_val = 0.01
-    max_iters = 10000
-    batch_size_parameter = 80
     
     # Define the corpus for the model.
     this_corpus_vec = []
-    #for this_corpus_elem in this_corpus:
-    #    vec_value = sequence_encoding(this_corpus_elem)
-    #    vec_value = np.dot(Rand_Transform,vec_value)
+    for this_corpus_elem in this_corpus:
+        vec_value = sequence_encoding(this_corpus_elem)
+        vec_value = np.dot(Rand_Transform,vec_value)
 
-    #   this_corpus_vec.append(vec_value)
+        this_corpus_vec.append(vec_value)
 
     this_corpus_vec = np.asarray(this_corpus_vec)
-    #this_labels = np.expand_dims(this_labels,axis=1)
+    this_labels = np.expand_dims(this_labels,axis=1)
     n_pre_post_layers = 10; 
     hidden_vars_list = [intermediate_dim]*n_pre_post_layers+[embedding_dim]+\
         [intermediate_dim]*n_pre_post_layers+[stride_parameter]
@@ -590,10 +590,11 @@ if __name__ == "__main__":
     sess = tf.compat.v1.Session()
     tf.compat.v1.disable_eager_execution() # needed because of placeholder variables
 
+
+
     # Define the placeholders for the input sequences
     this_u = tf.compat.v1.placeholder(tf.float32, 
                                       shape=[None,stride_parameter])
-    this_u.shape
     # Define placeholder for regression label (vectors made from time-series traces of plate reader data)
     this_regress_y_labels = tf.compat.v1.placeholder(tf.float32,shape=[None,outpuDim])
 
@@ -657,10 +658,10 @@ if __name__ == "__main__":
             session=sess)
         this_seq_out = vecback2seq(np.dot(np.linalg.inv(Rand_Transform),z_ind.T))
         print("Predicted:"+repr("".join(this_seq_out))[0:11])
-        #print("Ground Truth:"+repr("".join(this_corpus[ind][0:10])))
+        print("Ground Truth:"+repr("".join(this_corpus[ind][0:10])))
         print("\n")
         this_seq_out = ''.join(this_seq_out)
-        #all_mismatches.append(num_mismatch(this_seq_out, this_corpus[ind]))
+        all_mismatches.append(num_mismatch(this_seq_out, this_corpus[ind]))
     
     mismatch_process = np.array(all_mismatches)
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)
