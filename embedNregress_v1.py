@@ -410,7 +410,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
                 feed_dict={u_feed:u_valid, y_feed:y_valid}, session=sess));
             test_error_history_nocovar.append(obj_func.eval(
                 feed_dict={u_feed:u_test_train, y_feed:y_test_train}, session=sess));
-        print(u_all_training.shape)
+        print(u_all_training.shape())
 
         if (iter%1000==0) or (iter==1):
             print("\r step %d , validation error %g"%(iter, obj_func.eval(
