@@ -374,7 +374,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         try:
             select_ind = np.random.randint(0,len(u_all_training),size=batchsize)
         except:
-            print(len(u_all_training))
+            print("Length of u_all_training:" +  repr(len(u_all_training)))
         valid_ind = list(all_ind -set(select_ind))[0:batchsize]
         select_ind_test = list(all_ind - set(valid_ind) - 
                             set(select_ind))[0:batchsize]
@@ -501,6 +501,7 @@ if __name__ == "__main__":
     # Organize the label, sequence data from platereadertools and the csv standard module.
     seqs = csv.reader(open("Data/GFP_spacers.csv"))
     allseqs = [seq for seq in seqs]
+    #print(allseqs[0:10])
 
     NumRowsonPlate = 8
     NumColumnsonPlate = 12
@@ -522,8 +523,8 @@ if __name__ == "__main__":
     foldchangedata = np.zeros((8,12,360))
     for row in range(0,8):
         for col in range(0,12):
-            print(induced_fl_data.shape)
-            print(time_vec.shape)
+            #print(induced_fl_data.shape)
+            #print(time_vec.shape)
             odnormfl_induced = induced_fl_data[row][col][0:360]/(induced_od_data[row][col][0:360]+odfloor)
             odnormfl_baseline = baseline_fl_data[row][col][0:360]/(baseline_od_data[row][col][0:360]+odfloor)
             this_foldchange = odnormfl_induced/odnormfl_baseline  #fold change for a particular row, col combination 
@@ -569,7 +570,14 @@ if __name__ == "__main__":
     feedforwardDim = 100
     intermediate_dim = 10
     Rand_Transform = rvs(dim=stride_parameter)
-    
+    batch_size_parameter=3 #4000 for howard's e. coli dataset (from Enoch's code)
+
+    debug_splash = 0;
+    this_step_size_val = 0.01
+    this_max_iters = 1e3
+    this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
+
+    print(this_corpus)
     # Define the corpus for the model.
     this_corpus_vec = []
     for this_corpus_elem in this_corpus:
@@ -579,7 +587,7 @@ if __name__ == "__main__":
         this_corpus_vec.append(vec_value)
 
     this_corpus_vec = np.asarray(this_corpus_vec)
-    this_labels = np.expand_dims(this_labels,axis=1)
+    #this_labels = np.expand_dims(this_labels,axis=1)
     n_pre_post_layers = 10; 
     hidden_vars_list = [intermediate_dim]*n_pre_post_layers+[embedding_dim]+\
         [intermediate_dim]*n_pre_post_layers+[stride_parameter]
@@ -599,7 +607,7 @@ if __name__ == "__main__":
     this_regress_y_labels = tf.compat.v1.placeholder(tf.float32,shape=[None,outpuDim])
 
     # Instantiate the autoencoder network 
-    with tf.device('/gpu:0'):
+    with tf.device('/cpu:0'):
         this_W_list,this_b_list = initialize_Wblist(stride_parameter,
                                                     hidden_vars_list)
         this_y_out,all_layers = network_assemble(this_u,this_W_list,this_b_list
@@ -611,7 +619,7 @@ if __name__ == "__main__":
     # Define the regression network depth, width, and output dimension:     
     regress_list = [feedforwardDim]*feedforwardDepth+[outpuDim]
     # I believe this is the regression part of the network
-    with tf.device('/gpu:0'):
+    with tf.device('/cpu:0'):
         this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
                                                                   regress_list)
         try:
@@ -620,7 +628,7 @@ if __name__ == "__main__":
             print(this_embedding.shape)
         HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
 
-        result = sess.run(tf.compat.v1.global_variables_initializer())
+        #result = sess.run(tf.compat.v1.global_variables_initializer())
         this_optim = tf.compat.v1.train.AdagradOptimizer(
             learning_rate=this_step_size_val).minimize(HybridLoss)
         step_size = tf.compat.v1.placeholder(tf.float32,shape=[])
@@ -639,14 +647,14 @@ if __name__ == "__main__":
                     this_embed_loss=this_embed_loss,  
                     batchsize=batch_size_parameter,
                     step_size_val=this_step_size_val,
-                    max_iters=max_iters,
+                    max_iters=this_max_iters,
                     save_fig= train_figure_name)
     # This is likely redudent code that can be removed.
     # I think we just need to reconsider the loss function at this point.
     if False:
         feedforwardList = [embedding_dim]+[feedforwardDim]*feedforwardDepth+\
             [outpuDim]
-        with tf.device('/gpu:0'):
+        with tf.device('/cpu:0'):
             Wfeedforward, bfeedforward = initialize_Wblist(embedding_dim,
                                                             feedforwardList)
             y_out,all_layers = network_assemble(this_embedding,Wfeedforward,bfeedforward)
