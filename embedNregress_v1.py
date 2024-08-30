@@ -433,7 +433,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         ax.plot(x,training_error_history_nocovar,label='train. err.')
         ax.plot(x,validation_error_history_nocovar,label='valid. err.')
         ax.plot(x,test_error_history_nocovar,label='test err.')
-        #ax.plot(x,u_all_training,label='Reconstruction Loss')
+        ax.plot(x,u_all_training,label='Reconstruction Loss')
         ax.legend()
         ax.set_xlabel('Iterations')
         ax.set_ylabel('Error')
