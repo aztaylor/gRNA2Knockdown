@@ -590,11 +590,10 @@ if __name__ == "__main__":
     sess = tf.compat.v1.Session()
     tf.compat.v1.disable_eager_execution() # needed because of placeholder variables
 
-
-
     # Define the placeholders for the input sequences
     this_u = tf.compat.v1.placeholder(tf.float32, 
                                       shape=[None,stride_parameter])
+    this_u.shape
     # Define placeholder for regression label (vectors made from time-series traces of plate reader data)
     this_regress_y_labels = tf.compat.v1.placeholder(tf.float32,shape=[None,outpuDim])
 
