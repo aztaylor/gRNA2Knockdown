@@ -564,7 +564,7 @@ if __name__ == "__main__":
     # Define the model parameters.
     stride_parameter = 30
     label_dim = 1
-    embedding_dim = 30 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction 
+    embedding_dim = 13 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction 
     outpuDim = int(HourHorizon*1/SamplingRate)
     feedforwardDepth = 7
     feedforwardDim = 20
@@ -574,7 +574,7 @@ if __name__ == "__main__":
 
     debug_splash = 0;
     this_step_size_val = 0.01
-    this_max_iters = 4e4
+    this_max_iters = 2e4
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
 
     print(this_corpus)
@@ -588,7 +588,7 @@ if __name__ == "__main__":
 
     this_corpus_vec = np.asarray(this_corpus_vec)
     #this_labels = np.expand_dims(this_labels,axis=1)
-    n_pre_post_layers = 3; 
+    n_pre_post_layers = 2; 
     hidden_vars_list = [intermediate_dim]*n_pre_post_layers+[embedding_dim]+\
         [intermediate_dim]*n_pre_post_layers+[stride_parameter]
     if False:
