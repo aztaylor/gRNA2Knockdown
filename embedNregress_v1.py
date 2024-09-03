@@ -736,7 +736,7 @@ if __name__ == "__main__":
         #if 0.90>this_labels[x_ind]>1.0:
         #    this_colors[x_ind][5] = this_labels[x_ind]/np.max(this_labels)
             
-
+    foldchange_colorscale = foldchange_colorscale[foldchange_colorscale<0.2]
     ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2],
                c=rgb_scheme, marker='o',alpha=0.25)
     ax.view_init(30, azim=240)
