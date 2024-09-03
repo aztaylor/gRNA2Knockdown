@@ -522,7 +522,7 @@ if __name__ == "__main__":
     StartHorizon =0
     EndHorizon= 180
     time_vec = time0[FL_key][StartHorizon:EndHorizon]
-    foldchangedata = np.zeros((8,12,360))
+    foldchangedata = np.zeros((8,12,EndHorizon-StartHorizon))
     for row in range(0,8):
         for col in range(0,12):
             #print(induced_fl_data.shape)
