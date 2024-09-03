@@ -707,7 +707,7 @@ if __name__ == "__main__":
     this_colors = 0*np.random.rand(len(X_transformed), 6)
     
     foldchange_colorscale = np.sum(listed_foldchangedata,axis=1)  # sum over all the timepoints (area of the curve) but leave the row index as the URI for the sequence/embedding (this will give a 96 x 1 array) 
-    foldchange_colorscale = foldchange_colorscale/np.max(foldchange_colorscale)
+    foldchange_colorscale = (foldchange_colorscale-np.min(foldchange_colorscale))/np.max(foldchange_colorscale-np.min(foldchange_colorscale))
 
     # For each set of style and range settings, plot n random points in the box
     # defined by x in [23, 32], y in [0, 100], z in [zlow, zhigh].
