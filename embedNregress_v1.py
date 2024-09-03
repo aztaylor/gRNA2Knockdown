@@ -520,7 +520,7 @@ if __name__ == "__main__":
     induced_fl_data = data1[FL_key]
 
     StartHorizon =0
-    EndHorizon= 180
+    EndHorizon= 60
     time_vec = time0[FL_key][StartHorizon:EndHorizon]
     foldchangedata = np.zeros((8,12,EndHorizon-StartHorizon))
     for row in range(0,8):
