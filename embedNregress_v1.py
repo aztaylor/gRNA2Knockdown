@@ -747,6 +747,6 @@ if __name__ == "__main__":
     fig.savefig(f"Figures/PCA{date}_{time}.png")
 
 
-    plt.figure()
+    fig2 = plt.figure()
     plt.hist(foldchange_colorscale,bins=20)
-    fig.savefig(f"Figures/Hist{date}_{time}.png")
+    fig2.savefig(f"Figures/Hist{date}_{time}.png")
