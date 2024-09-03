@@ -14,20 +14,19 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import platereadertools as pr
 
-from sklearn.decomposition import PCA    
-from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import MinMaxScaler
-from datetime import datetime
+import numpy as np
 
 '''This module contains the functions to encode DNA sequences and for use in predicting  the knockdown 
 efficiency of CRISPR dCasRx-gRNAs effectors. The model takes in the RNA sequence of the targeted transcript 
-embedds the sequence using an autoencoder. Subsequently, the model takes the embedded sequence and the mRNA of the 
-targetto predict the knockdown efficiency. The base design is adaptable with a variable number of hidden layers and 
-units andis meant to be able to construct autoencoders, feedforward NNs and residual networks.
+embedds the sequence using an autoencoder. Subsequently, the model takes the embedded sequence and the mRNA of the target
+to predict the knockdown efficiency. The base design is adaptable with a variable number of hidden layers and units and
+is meant to be able to construct autoencoders, feedforward NNs and residual networks.
 
-The model is trained using  the Adam optimizer and a custom AE embbed loss function to determine the mean squared 
-error.The original code was developed by Enoch Yeung in the Biological Control Laboratory at the University of 
-California, Santa Barbara. Some things to note:
+The model is trained using  the Adam optimizer and a custom VAE embbed loss function to determine the mean squared error.
+The original code was developed by Enoch Yeung in the Biological Control Laboratory at the University of California, 
+Santa Barbara. Some things to note:
+
  - The code is written in Python 3.11 and uses the TensorFlow 2.x library.
  - The code is written in a modular fashion and can be used as a module in other scripts.
  - The code is written in a functional programming style and uses type hints to define the types of the arguments and
@@ -38,10 +37,6 @@ California, Santa Barbara. Some things to note:
     execution mode must be disabled before running the code. This can be done by running the following code:
     tf.compat.v1.disable_eager_execution()
 '''
-now = datetime.now()
-date = now.strftime('%Y%m%d')
-time = now.strftime('%H%M%S')
-
 
 # Define Auxillary Functions
 def sequence_encoding(sequence: str) -> np.array:
@@ -137,7 +132,7 @@ def bias_Variable(shape: tuple) -> tf.Variable:
     returns:
         tf.Variable, tensorflow Variable
     '''
-    
+    print("shape: ".format(shape))
     std_dev = math.sqrt(3.0 / shape[0])
     return tf.Variable(tf.random.truncated_normal(shape, mean=0.0,
                                                   stddev=std_dev,
@@ -156,7 +151,7 @@ def initialize_Wblist(n_u, hv_list) -> (list, list): # type: ignore
     W_list = []
     b_list = []
     n_depth = len(hv_list)
-    #print("Length of hv_list: " + repr(n_depth))
+    print("Length of hv_list: " + repr(n_depth))
     
     #hv_list[n_depth-1] = n_y;
     for k in range(0,n_depth):
@@ -172,8 +167,7 @@ def initialize_Wblist(n_u, hv_list) -> (list, list): # type: ignore
 
 def rvs(dim=3):
     '''Generate a random orthogonal matrix. The matrix is generated using the Householder transformation. This should 
-    scrabble the 4-hot encoding to project into random input space. This improves performance for reason I do not yet
-    know.
+    scrabble the 4-hot encoding to project into random input space. This improves performance for reason I do not yet know.
     args:
         dim: int, dimension of the matrix
     returns:
@@ -209,29 +203,29 @@ def embed_loss(y_true,embed_true):
     #y_true is (batch_size_param) x (dim of stride) tensor
     IP_Matrix_y = tf.matmul(y_true,tf.transpose(y_true))
     IP_Matrix_e = tf.matmul(embed_true,tf.transpose(embed_true))
-   #Scale_Matrix_y = tf.linalg.tensor_diag(tf.norm(y_true,ord='euclidean'
-                                                   #,axis=1))
-    #Scale_Matrix_e = tf.linalg.tensor_diag(tf.norm(embed_true,ord='euclidean'
-                                                      #,axis=1))
-    #Ky = tf.matmul(tf.matmul(Scale_Matrix_y,IP_Matrix_y),Scale_Matrix_y)
-    #Ke = tf.matmul(tf.matmul(Scale_Matrix_e,IP_Matrix_e),Scale_Matrix_e)
+    Scale_Matrix_y = tf.linalg.tensor_diag(tf.norm(y_true,ord='euclidean'
+                                                   ,axis=1))
+    Scale_Matrix_e = tf.linalg.tensor_diag(tf.norm(embed_true,ord='euclidean'
+                                                   ,axis=1))
+    Ky = tf.matmul(tf.matmul(Scale_Matrix_y,IP_Matrix_y),Scale_Matrix_y)
+    Ke = tf.matmul(tf.matmul(Scale_Matrix_e,IP_Matrix_e),Scale_Matrix_e)
     return tf.norm(IP_Matrix_y-IP_Matrix_e,axis=[0,1],ord='fro')/tf.norm(
                     IP_Matrix_y,axis=[0,1],ord='fro')
 
-def ae_loss(y_model,y_true):
-    '''Calculate the AE loss. The AE loss is the mean squared error between the predicted and true y values.
+def vae_loss(y_model,y_true):
+    '''Calculate the VAE loss. The VAE loss is the mean squared error between the predicted and true y values.
     args:
         y_model: tf.Variable, predicted y values
         y_true: tf.Variable, true y values
     returns:
-        tf.Variable, AE loss
+        tf.Variable, VAE loss
     '''
     return tf.norm(y_true - y_model,axis=[0,1],ord=2)/tf.norm(y_true,axis=[0,1]
                                                                ,ord=2)
     
 def customLoss(y_model:tf.Variable, y_true:tf.Variable,
                embed_true:tf.Variable) -> tf.Variable:
-    '''Custom loss function that combines the AE loss and the embedding loss. The AE loss is the mean squared error
+    '''Custom loss function that combines the VAE loss and the embedding loss. The VAE loss is the mean squared error
     between the predicted and true y values. The embedding loss is the mean squared error between the predicted and true
     embeddings.
     args:
@@ -241,26 +235,7 @@ def customLoss(y_model:tf.Variable, y_true:tf.Variable,
     returns:
         tf.Variable, custom loss
         '''
-    return ae_loss(y_model,y_true)+embed_loss(y_true,embed_true)
-
-#HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
-def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,
-               embed_true:tf.Variable,regress_y_model:tf.Variable,regress_y_true:tf.Variable) -> tf.Variable:
-    '''Custom loss function that combines the AE loss and the embedding loss. The AE loss is the mean squared error
-    between the predicted and true y values. The embedding loss is the mean squared error between the predicted and true
-    embeddings. .... needs more 
-    args:
-        y_model: tf.Variable, predicted y values
-        y_true: tf.Variable, true y values
-        embed_true: tf.Variable, true embeddings
-        
-    returns:
-        tf.Variable, custom loss
-        '''
-    regression_loss = tf.norm(this_regress_y-this_regress_y_labels,axis=[0,1],ord=2)/tf.norm(this_regress_y_labels,axis=[0,1],ord=2)
-    lambda_regression = 0.1
-    return ae_loss(y_model,y_true)+embed_loss(y_true,embed_true) + lambda_regression*regression_loss
-
+    return vae_loss(y_model,y_true)+embed_loss(y_true,embed_true)
 
 
 # Define the network
@@ -330,9 +305,9 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
     return y_out, z_temp_list
 
 #Train and test the network
-def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:np.array,y_feed:tf.Variable, 
+def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, 
               obj_func:tf.Variable, optimizer:tf.compat.v1.train.Optimizer,
-              this_ae_loss:tf.Variable, this_embed_loss:tf.Variable, 
+              this_vae_loss:tf.Variable, this_embed_loss:tf.Variable, 
               valid_error_thres=1e-2, test_error_thres=1e-2, max_iters=1e6, 
               step_size_val=0.01, batchsize=10, samplerate=5000, good_start=1, 
               test_error=100.0, save_fig=None) -> list:
@@ -342,8 +317,6 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         sess: tf.Session, tensorflow session
         u_all_training: np.array, training data
         u_feed: tf.Variable, input Variable
-        y_all_training: np.array, training data from plate reader 
-        y_feed: tf.Variable, the placeholder variable that will store the training data from the plate reader (slices of y_all_training)
         obj_func: tf.Variable, objective function
         optimizer: tf.Variable, optimizer
         u_control_all_training: np.array, control training data
@@ -371,10 +344,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         iter+=1
 
         all_ind = set(np.arange(0,len(u_all_training)))
-        try:
-            select_ind = np.random.randint(0,len(u_all_training),size=batchsize)
-        except:
-            print("Length of u_all_training:" +  repr(len(u_all_training)))
+        select_ind = np.random.randint(0,len(u_all_training),size=batchsize)
         valid_ind = list(all_ind -set(select_ind))[0:batchsize]
         select_ind_test = list(all_ind - set(valid_ind) - 
                             set(select_ind))[0:batchsize]
@@ -382,49 +352,41 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         u_batch =[]
         u_valid = []
         u_test_train = []
-
-        y_batch = []
-        y_valid = []
-        y_test_train = []
         
         for j in range(0,len(select_ind)):
             u_batch.append(u_all_training[select_ind[j]])
-            y_batch.append(y_all_training[select_ind[j]])
 
         for k in range(0,len(valid_ind)):
             u_valid.append(u_all_training[valid_ind[k]])
-            y_valid.append(y_all_training[valid_ind[k]])
 
         for k in range(0,len(select_ind_test)):
             u_test_train.append(u_all_training[select_ind_test[k]])
-            y_test_train.append(y_all_training[select_ind_test[k]])
 
-        optimizer.run(feed_dict={u_feed:u_batch,y_feed:y_batch}, session=sess) # embed_feed:,step_size:step_size_val});
-        valid_error = obj_func.eval(feed_dict={u_feed:u_valid,y_feed:y_valid}, session=sess) # embed_feed:y_valid});
-
-        test_error = obj_func.eval(feed_dict={u_feed:u_test_train,y_feed:y_test_train}, 
+        optimizer.run(feed_dict={u_feed:u_batch}, session=sess) # embed_feed:,step_size:step_size_val});
+        valid_error = obj_func.eval(feed_dict={u_feed:u_valid}, session=sess) # embed_feed:y_valid});
+        test_error = obj_func.eval(feed_dict={u_feed:u_test_train}, 
                                    session=sess) # embed_feed:y_test_train});
 
 
         if iter%samplerate==0:
             training_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_batch, y_feed:y_batch}, session=sess));
+                feed_dict={u_feed:u_batch}, session=sess))#,embed_feed:y_batch}));
             validation_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_valid, y_feed:y_valid}, session=sess));
+                feed_dict={u_feed:u_valid}, session=sess))#,embed_feed:y_valid}));
             test_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_test_train, y_feed:y_test_train}, session=sess));
+                feed_dict={u_feed:u_test_train}, session=sess))#,embed_feed:y_test_train}));
 
 
         if (iter%1000==0) or (iter==1):
             print("\r step %d , validation error %g"%(iter, obj_func.eval(
-                    feed_dict={u_feed:u_valid, y_feed:y_batch}, session=sess)) );
+                    feed_dict={u_feed:u_valid}, session=sess)))#,embed_feed:y_valid})));
             
             print("\r step %d , test error %g"%(iter, obj_func.eval(
-                    feed_dict={u_feed:u_test_train, y_feed:y_test_train}, session=sess)) );
-            print("\r Reconstruction Loss: " + repr(this_ae_loss.eval(
-                    feed_dict={u_feed:u_all_training, y_feed:y_all_training}, session=sess)) );
+                    feed_dict={u_feed:u_test_train}, session=sess)));#,embed_feed:y_test_train})));
+            print("\r Reconstruction Loss: " + repr(this_vae_loss.eval(
+                    feed_dict={u_feed:u_all_training},session=sess)))
             print("\r Embedding Loss: " + repr(this_embed_loss.eval(
-                    feed_dict={u_feed:u_all_training, y_feed:y_all_training}, session=sess)) );
+                    feed_dict={u_feed:u_all_training}, session=sess)))
     all_histories = [training_error_history_nocovar, 
                     validation_error_history_nocovar,
                     test_error_history_nocovar,
@@ -442,7 +404,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         ax.set_ylabel('Error')
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
-        ax.set_title(f'ErrorHistory{date}_{time}')
+        ax.set_title('Error History')
         
         plt.savefig(save_fig)
         plt.close()
@@ -472,8 +434,7 @@ def vecback2seq(untransformed_vec):
         returns:
             list, list of DNA sequences
     '''
-    #untransformed_vec is computed using the inverse of Rand_Transform to recover lattice-like vector representation/
-    #encoding
+    # untransformed_vec is computed using the inverse of Rand_Transform to recover lattice-like vector representation/encoding
     seq_out = [elemback2seq(elem) for elem in untransformed_vec]
     return seq_out
 
@@ -501,44 +462,9 @@ if __name__ == "__main__":
     # Organize the label, sequence data from platereadertools and the csv standard module.
     seqs = csv.reader(open("Data/GFP_spacers.csv"))
     allseqs = [seq for seq in seqs]
-    #print(allseqs[0:10])
+    data0, time0 = pr.Organize(data_0nM_fp, 8, 12, 18, 3/60)
+    data1, time1 = pr.Organize(data_10mM_fp, 8, 12, 18, 3/60)
 
-    NumRowsonPlate = 8
-    NumColumnsonPlate = 12
-    HourHorizon = 18
-    SamplingRate = 3/60; 
-    data0, time0 = pr.Organize(data_0nM_fp,NumRowsonPlate,NumColumnsonPlate,HourHorizon,SamplingRate)
-    data1, time1 = pr.Organize(data_10mM_fp,NumRowsonPlate,NumColumnsonPlate,HourHorizon,SamplingRate)
-
-    this_fig = plt.figure()
-    OD_key = list(data0.keys())[0]
-    FL_key = list(data0.keys())[1]
-    odfloor = 0.01;
-    baseline_od_data = data0[OD_key]
-    baseline_fl_data = data0[FL_key]
-    induced_od_data = data1[OD_key]
-    induced_fl_data = data1[FL_key]
-    
-    time_vec = time0[FL_key][0:360]
-    foldchangedata = np.zeros((8,12,360))
-    for row in range(0,8):
-        for col in range(0,12):
-            #print(induced_fl_data.shape)
-            #print(time_vec.shape)
-            odnormfl_induced = induced_fl_data[row][col][0:360]/(induced_od_data[row][col][0:360]+odfloor)
-            odnormfl_baseline = baseline_fl_data[row][col][0:360]/(baseline_od_data[row][col][0:360]+odfloor)
-            this_foldchange = odnormfl_induced/odnormfl_baseline  #fold change for a particular row, col combination 
-            foldchangedata[row,col,:] = this_foldchange
-
-            plt.scatter(time_vec,this_foldchange)
-            
-    this_fig.savefig('/home/yeunglab/AlecOutputData/FoldChangeofPlateReader.eps')
-
-    listed_foldchangedata = foldchangedata.reshape(int(foldchangedata.shape[0]*foldchangedata.shape[1]),foldchangedata.shape[2])
-    
-    
-    print("listed fold change data shape: " + repr(listed_foldchangedata.shape))
-    
     # Based off of the timeseries data, we can see that the greatest change in flourescence occurs at timepoint 165 
     # (~8hours). We will use this timepoint to calculate the fold change between the 0mM and 10mM data.
     reads = list(data0.keys())
@@ -559,25 +485,22 @@ if __name__ == "__main__":
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.set_title("Fold Change in RFU for each gRNA position at 8 hours")
-        plt.savefig(f"/home/yeunglab/AlecOutputData/foldchange.png")
+        plt.savefig("./Figures/foldchange.png")
 
     # Define the model parameters.
     stride_parameter = 30
     label_dim = 1
-    embedding_dim = 18
-    outpuDim = int(HourHorizon*1/SamplingRate)
-    feedforwardDepth = 7
-    feedforwardDim = 20
-    intermediate_dim = 50
-    Rand_Transform = rvs(dim=stride_parameter)
+    embedding_dim = 15
+    intermediate_dim = 100
     batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
-
-    debug_splash = 0;
+    debug_splash = 0
     this_step_size_val = 0.01
-    this_max_iters = 3e4
+    max_iters = 1e3
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
 
-    print(this_corpus)
+    # Define the random transformation householder matrix.
+    Rand_Transform = rvs(dim=stride_parameter)
+    
     # Define the corpus for the model.
     this_corpus_vec = []
     for this_corpus_elem in this_corpus:
@@ -587,89 +510,66 @@ if __name__ == "__main__":
         this_corpus_vec.append(vec_value)
 
     this_corpus_vec = np.asarray(this_corpus_vec)
-    #this_labels = np.expand_dims(this_labels,axis=1)
-    n_pre_post_layers = 3; 
+    this_labels = np.expand_dims(this_labels,axis=1)
+    n_pre_post_layers = 10; 
     hidden_vars_list = [intermediate_dim]*n_pre_post_layers+[embedding_dim]+\
-        [intermediate_dim]*n_pre_post_layers+[stride_parameter]
-    if False:
-        print(hidden_vars_list)
+        [intermediate_dim]*n_pre_post_layers + [stride_parameter]
+    print(hidden_vars_list)
+
 
     # Define the tensorflow session
     sess = tf.compat.v1.Session()
     tf.compat.v1.disable_eager_execution() # needed because of placeholder variables
-
-
-
-    # Define the placeholders for the input sequences
+    
     this_u = tf.compat.v1.placeholder(tf.float32, 
                                       shape=[None,stride_parameter])
-    # Define placeholder for regression label (vectors made from time-series traces of plate reader data)
-    this_regress_y_labels = tf.compat.v1.placeholder(tf.float32,shape=[None,outpuDim])
+    
 
-    # Instantiate the autoencoder network 
-    with tf.device('/cpu:0'):
+    with tf.device('/gpu:0'):
         this_W_list,this_b_list = initialize_Wblist(stride_parameter,
                                                     hidden_vars_list)
         this_y_out,all_layers = network_assemble(this_u,this_W_list,this_b_list
                                                 ,keep_prob=1.0,
                                                 activation_flag=2,res_net=0)
 
-    # Define a handle that accesses the embedding layer 
-    this_embedding = all_layers[n_pre_post_layers]
-    # Define the regression network depth, width, and output dimension:     
-    regress_list = [feedforwardDim]*feedforwardDepth+[outpuDim]
-    # I believe this is the regression part of the network
-    with tf.device('/cpu:0'):
+    this_embedding = all_layers[-2]
+    regress_list = [intermediate_dim]*1+[label_dim]
+    with tf.device('/gpu:0'):
         this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
                                                                   regress_list)
-        try:
-            this_regress_y,all_regress_layers = network_assemble(this_embedding,this_Wregress_list,this_bregress_list)
-        except:
-            print(this_embedding.shape)
-        HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
 
-        #result = sess.run(tf.compat.v1.global_variables_initializer())
+        HybridLoss = customLoss(this_y_out,this_u,this_embedding)
+
+        result = sess.run(tf.compat.v1.global_variables_initializer())
         this_optim = tf.compat.v1.train.AdagradOptimizer(
             learning_rate=this_step_size_val).minimize(HybridLoss)
         step_size = tf.compat.v1.placeholder(tf.float32,shape=[])
         result = sess.run(tf.compat.v1.global_variables_initializer())
-        this_ae_loss = ae_loss(this_y_out,this_u)
+        this_vae_loss = vae_loss(this_y_out,this_u)
         this_embed_loss = embed_loss(this_u,this_embedding)
 
         if True:
             # Train the network
-            train_figure_name = f"Figures/Training{embedding_dim}_\
-                {intermediate_dim}_{stride_parameter}_{n_pre_post_layers}.png"
-                
-            train_net(sess, this_corpus_vec,this_u,listed_foldchangedata,this_regress_y_labels,HybridLoss,
-                    this_optim,
-                    this_ae_loss=this_ae_loss,
+            train_figure_name = "Figures/Training{0}_{1}_{2}_{3}.png".format(
+                embedding_dim,intermediate_dim,stride_parameter,
+                    n_pre_post_layers)
+            train_net(sess, this_corpus_vec,this_u,HybridLoss,
+                    this_optim,this_vae_loss=this_vae_loss,
                     this_embed_loss=this_embed_loss,  
                     batchsize=batch_size_parameter,
-                    step_size_val=this_step_size_val,
-                    max_iters=this_max_iters,
+                    step_size_val=this_step_size_val,max_iters=max_iters,
                     save_fig= train_figure_name)
-    # This is likely redudent code that can be removed.
-    # I think we just need to reconsider the loss function at this point.
-    if False:
-        feedforwardList = [embedding_dim]+[feedforwardDim]*feedforwardDepth+\
-            [outpuDim]
-        with tf.device('/cpu:0'):
-            Wfeedforward, bfeedforward = initialize_Wblist(embedding_dim,
-                                                            feedforwardList)
-            y_out,all_layers = network_assemble(this_embedding,Wfeedforward,bfeedforward)
-            this_ae_loss = ae_loss(y_out,this_embedding)
-        
+
+    import matplotlib.pyplot as plt
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
-        z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]},\
-            session=sess)
+        z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]},session=sess)
         this_seq_out = vecback2seq(np.dot(np.linalg.inv(Rand_Transform),z_ind.T))
         print("Predicted:"+repr("".join(this_seq_out))[0:11])
         print("Ground Truth:"+repr("".join(this_corpus[ind][0:10])))
         print("\n")
         this_seq_out = ''.join(this_seq_out)
-        all_mismatches.append(num_mismatch(this_seq_out, this_corpus[ind]))
+        all_mismatches.append(num_mismatch(this_seq_out,this_corpus[ind]))
     
     mismatch_process = np.array(all_mismatches)
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)
@@ -680,65 +580,57 @@ if __name__ == "__main__":
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.set_title("Number of Mismatches in Predicted Sequences")
-    plt.savefig(f"Figures/mismatches{date}_{time}.png")
+    plt.savefig("Figures/mismatches20240529.png")
 
     subset_embeddings = this_embedding.eval(feed_dict={this_u:this_corpus_vec},
                                             session=sess)
 
+    from sklearn.decomposition import PCA
     X = subset_embeddings
     pca = PCA(n_components=3)
     pca.fit(X)
     PCA(copy=True, iterated_power='auto', n_components=3, random_state=None,
     svd_solver='auto', tol=0.0, whiten=False)
-
-    print("PCA Explained Variance Ratio: " + repr(pca.explained_variance_ratio_))
-    print("PCA Singular Values: " + repr(pca.singular_values_))
-
-    
+    print(pca.explained_variance_ratio_)
+    print(pca.singular_values_)
     X_transformed = pca.transform(X)
     X_transformed = X_transformed[0:]
 
     X_transformed.shape
 
+    from mpl_toolkits.mplot3d import Axes3D
+    import matplotlib.pyplot as plt
+    import numpy as np
+
     # Fixing random state for reproducibility
+
+
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    this_colors = 0*np.random.rand(len(X_transformed), 6)
-    
-    foldchange_colorscale = np.sum(listed_foldchangedata,axis=1)  # sum over all the timepoints (area of the curve) but leave the row index as the URI for the sequence/embedding (this will give a 96 x 1 array) 
-    foldchange_colorscale = foldchange_colorscale/np.max(foldchange_colorscale)
+    this_colors = 0*np.random.rand(len(X_transformed),3)
+    print(this_labels)
 
     # For each set of style and range settings, plot n random points in the box
     # defined by x in [23, 32], y in [0, 100], z in [zlow, zhigh].
-    
-    rgb_scheme = np.zeros((len(X_transformed),3))
     for x_ind in range(0,len(X_transformed)):
-        rgb_scheme[x_ind,0] = 1.0-foldchange_colorscale[x_ind]
-        rgb_scheme[x_ind,1] = foldchange_colorscale[x_ind]
-        
-        #x= X_transformed[x_ind][0]
-        #y= X_transformed[x_ind][1]
-        #z= X_transformed[x_ind][2]
-        #if this_labels[x_ind]>0.10:
-        #    this_colors[x_ind][0] = foldchange_colorscale[ind]
-        #if 0.20>this_labels[x_ind]>0.30:
-        #    this_colors[x_ind][1] = this_labels[x_ind]/np.max(this_labels)
-        #if 0.40>this_labels[x_ind]>0.50:
-        #    this_colors[x_ind][2] = this_labels[x_ind]/np.max(this_labels)
-        #if 0.60>this_labels[x_ind]>0.70:
-        #    this_colors[x_ind][3] = this_labels[x_ind]/np.max(this_labels)
-        #if 0.80>this_labels[x_ind]>0.90:
-        #    this_colors[x_ind][4] = this_labels[x_ind]/np.max(this_labels)
-        #if 0.90>this_labels[x_ind]>1.0:
-        #    this_colors[x_ind][5] = this_labels[x_ind]/np.max(this_labels)
-            
+        x= X_transformed[x_ind][0]
+        y= X_transformed[x_ind][1]
+        z= X_transformed[x_ind][2]
+        if this_labels[x_ind]>0.66:
+            this_colors[x_ind][0] = this_labels[x_ind]/np.max(this_labels)
+        if 0.66>this_labels[x_ind]>0.33:
+            this_colors[x_ind][1] = this_labels[x_ind]/np.max(this_labels)
+        if 0.33>this_labels[x_ind]>-10.0:
+            this_colors[x_ind][2] = this_labels[x_ind]/np.max(this_labels)
 
-    ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2],
-               c=rgb_scheme, marker='o',alpha=0.25)
+
+    ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2], c=this_colors, marker='o',alpha=0.25)
+
     ax.view_init(30, azim=240)
+
     ax.set_xlabel('Principal Component One')
     ax.set_ylabel('Principal Component Two')
     ax.set_zlabel('Principal Component Three')
     plt.tight_layout()
-    fig.savefig(f"Figures/PCA{date}_{time}.png")
+    fig.savefig("Figures/PCA3D20240529.png")

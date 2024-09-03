@@ -25,7 +25,7 @@ embedds the sequence using an autoencoder. Subsequently, the model takes the emb
 targetto predict the knockdown efficiency. The base design is adaptable with a variable number of hidden layers and 
 units andis meant to be able to construct autoencoders, feedforward NNs and residual networks.
 
-The model is trained using  the Adam optimizer and a custom AE embbed loss function to determine the mean squared 
+The model is trained using  the Adam optimizer and a custom VAE embbed loss function to determine the mean squared 
 error.The original code was developed by Enoch Yeung in the Biological Control Laboratory at the University of 
 California, Santa Barbara. Some things to note:
  - The code is written in Python 3.11 and uses the TensorFlow 2.x library.
@@ -218,20 +218,20 @@ def embed_loss(y_true,embed_true):
     return tf.norm(IP_Matrix_y-IP_Matrix_e,axis=[0,1],ord='fro')/tf.norm(
                     IP_Matrix_y,axis=[0,1],ord='fro')
 
-def ae_loss(y_model,y_true):
-    '''Calculate the AE loss. The AE loss is the mean squared error between the predicted and true y values.
+def vae_loss(y_model,y_true):
+    '''Calculate the VAE loss. The VAE loss is the mean squared error between the predicted and true y values.
     args:
         y_model: tf.Variable, predicted y values
         y_true: tf.Variable, true y values
     returns:
-        tf.Variable, AE loss
+        tf.Variable, VAE loss
     '''
     return tf.norm(y_true - y_model,axis=[0,1],ord=2)/tf.norm(y_true,axis=[0,1]
                                                                ,ord=2)
     
 def customLoss(y_model:tf.Variable, y_true:tf.Variable,
                embed_true:tf.Variable) -> tf.Variable:
-    '''Custom loss function that combines the AE loss and the embedding loss. The AE loss is the mean squared error
+    '''Custom loss function that combines the VAE loss and the embedding loss. The VAE loss is the mean squared error
     between the predicted and true y values. The embedding loss is the mean squared error between the predicted and true
     embeddings.
     args:
@@ -241,12 +241,12 @@ def customLoss(y_model:tf.Variable, y_true:tf.Variable,
     returns:
         tf.Variable, custom loss
         '''
-    return ae_loss(y_model,y_true)+embed_loss(y_true,embed_true)
+    return vae_loss(y_model,y_true)+embed_loss(y_true,embed_true)
 
 #HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
 def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,
                embed_true:tf.Variable,regress_y_model:tf.Variable,regress_y_true:tf.Variable) -> tf.Variable:
-    '''Custom loss function that combines the AE loss and the embedding loss. The AE loss is the mean squared error
+    '''Custom loss function that combines the VAE loss and the embedding loss. The VAE loss is the mean squared error
     between the predicted and true y values. The embedding loss is the mean squared error between the predicted and true
     embeddings. .... needs more 
     args:
@@ -258,8 +258,8 @@ def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,
         tf.Variable, custom loss
         '''
     regression_loss = tf.norm(this_regress_y-this_regress_y_labels,axis=[0,1],ord=2)/tf.norm(this_regress_y_labels,axis=[0,1],ord=2)
-    lambda_regression = 0.1
-    return ae_loss(y_model,y_true)+embed_loss(y_true,embed_true) + lambda_regression*regression_loss
+    lambda_regression = 0.01
+    return vae_loss(y_model,y_true)+embed_loss(y_true,embed_true) + lambda_regression*regression_loss
 
 
 
@@ -332,7 +332,7 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
 #Train and test the network
 def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:np.array,y_feed:tf.Variable, 
               obj_func:tf.Variable, optimizer:tf.compat.v1.train.Optimizer,
-              this_ae_loss:tf.Variable, this_embed_loss:tf.Variable, 
+              this_vae_loss:tf.Variable, this_embed_loss:tf.Variable, 
               valid_error_thres=1e-2, test_error_thres=1e-2, max_iters=1e6, 
               step_size_val=0.01, batchsize=10, samplerate=5000, good_start=1, 
               test_error=100.0, save_fig=None) -> list:
@@ -421,7 +421,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
             
             print("\r step %d , test error %g"%(iter, obj_func.eval(
                     feed_dict={u_feed:u_test_train, y_feed:y_test_train}, session=sess)) );
-            print("\r Reconstruction Loss: " + repr(this_ae_loss.eval(
+            print("\r Reconstruction Loss: " + repr(this_vae_loss.eval(
                     feed_dict={u_feed:u_all_training, y_feed:y_all_training}, session=sess)) );
             print("\r Embedding Loss: " + repr(this_embed_loss.eval(
                     feed_dict={u_feed:u_all_training, y_feed:y_all_training}, session=sess)) );
@@ -633,7 +633,7 @@ if __name__ == "__main__":
             learning_rate=this_step_size_val).minimize(HybridLoss)
         step_size = tf.compat.v1.placeholder(tf.float32,shape=[])
         result = sess.run(tf.compat.v1.global_variables_initializer())
-        this_ae_loss = ae_loss(this_y_out,this_u)
+        this_vae_loss = vae_loss(this_y_out,this_u)
         this_embed_loss = embed_loss(this_u,this_embedding)
 
         if True:
@@ -643,7 +643,7 @@ if __name__ == "__main__":
                 
             train_net(sess, this_corpus_vec,this_u,listed_foldchangedata,this_regress_y_labels,HybridLoss,
                     this_optim,
-                    this_ae_loss=this_ae_loss,
+                    this_vae_loss=this_vae_loss,
                     this_embed_loss=this_embed_loss,  
                     batchsize=batch_size_parameter,
                     step_size_val=this_step_size_val,
@@ -658,7 +658,7 @@ if __name__ == "__main__":
             Wfeedforward, bfeedforward = initialize_Wblist(embedding_dim,
                                                             feedforwardList)
             y_out,all_layers = network_assemble(this_embedding,Wfeedforward,bfeedforward)
-            this_ae_loss = ae_loss(y_out,this_embedding)
+            this_vae_loss = vae_loss(y_out,this_embedding)
         
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
