@@ -564,7 +564,7 @@ if __name__ == "__main__":
     # Define the model parameters.
     stride_parameter = 30
     label_dim = 1
-    embedding_dim = 13 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction 
+    embedding_dim = 18 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction 
     outpuDim = int(HourHorizon*1/SamplingRate)
     feedforwardDepth = 7
     feedforwardDim = 20
@@ -709,6 +709,7 @@ if __name__ == "__main__":
     foldchange_colorscale = np.sum(np.abs(listed_foldchangedata),axis=1)  # sum over all the timepoints (area of the curve) but leave the row index as the URI for the sequence/embedding (this will give a 96 x 1 array) 
     foldchange_colorscale = (foldchange_colorscale-np.min(foldchange_colorscale))/np.max(foldchange_colorscale-np.min(foldchange_colorscale))
 
+    
     # For each set of style and range settings, plot n random points in the box
     # defined by x in [23, 32], y in [0, 100], z in [zlow, zhigh].
     
@@ -742,3 +743,8 @@ if __name__ == "__main__":
     ax.set_zlabel('Principal Component Three')
     plt.tight_layout()
     fig.savefig(f"Figures/PCA{date}_{time}.png")
+
+
+    plt.figure()
+    plt.hist(foldchange_colorscale,nbins=20)
+    fig.savefig(f"Figures/Hist{date}_{time}.png")
