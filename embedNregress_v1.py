@@ -564,7 +564,7 @@ if __name__ == "__main__":
     # Define the model parameters.
     stride_parameter = 30
     label_dim = 1
-    embedding_dim = 10 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction 
+    embedding_dim = 30 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction 
     outpuDim = int(HourHorizon*1/SamplingRate)
     feedforwardDepth = 7
     feedforwardDim = 20
