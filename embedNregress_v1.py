@@ -518,15 +518,17 @@ if __name__ == "__main__":
     baseline_fl_data = data0[FL_key]
     induced_od_data = data1[OD_key]
     induced_fl_data = data1[FL_key]
-    
-    time_vec = time0[FL_key][0:360]
+
+    StartHorizon =0
+    EndHorizon= 360
+    time_vec = time0[FL_key][StartHorizon:EndHorizon]
     foldchangedata = np.zeros((8,12,360))
     for row in range(0,8):
         for col in range(0,12):
             #print(induced_fl_data.shape)
             #print(time_vec.shape)
-            odnormfl_induced = induced_fl_data[row][col][0:360]/(induced_od_data[row][col][0:360]+odfloor)
-            odnormfl_baseline = baseline_fl_data[row][col][0:360]/(baseline_od_data[row][col][0:360]+odfloor)
+            odnormfl_induced = induced_fl_data[row][col][StartHorizon:EndHorizon]/(induced_od_data[row][col][StartHorizon:EndHorizon]+odfloor)
+            odnormfl_baseline = baseline_fl_data[row][col][StartHorizon:EndHorizon]/(baseline_od_data[row][col][StartHorizon:EndHorizon]+odfloor)
             this_foldchange = odnormfl_induced/odnormfl_baseline  #fold change for a particular row, col combination 
             foldchangedata[row,col,:] = this_foldchange
 
@@ -746,5 +748,5 @@ if __name__ == "__main__":
 
 
     plt.figure()
-    plt.hist(foldchange_colorscale,nbins=20)
+    plt.hist(foldchange_colorscale,bins=20)
     fig.savefig(f"Figures/Hist{date}_{time}.png")
