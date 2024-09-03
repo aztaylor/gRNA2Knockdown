@@ -519,8 +519,8 @@ if __name__ == "__main__":
     induced_od_data = data1[OD_key]
     induced_fl_data = data1[FL_key]
 
-    StartHorizon =0
-    EndHorizon= 60
+    StartHorizon = 300
+    EndHorizon= 900
     time_vec = time0[FL_key][StartHorizon:EndHorizon]
     foldchangedata = np.zeros((8,12,EndHorizon-StartHorizon))
     for row in range(0,8):
@@ -572,7 +572,7 @@ if __name__ == "__main__":
     feedforwardDim = 20
     intermediate_dim = 50
     Rand_Transform = rvs(dim=stride_parameter)
-    batch_size_parameter=20 #4000 for howard's e. coli dataset (from Enoch's code)
+    batch_size_parameter = 20 #4000 for howard's e. coli dataset (from Enoch's code)
 
     debug_splash = 0;
     this_step_size_val = 0.01
