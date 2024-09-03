@@ -567,7 +567,7 @@ if __name__ == "__main__":
     stride_parameter = 30
     label_dim = 1
     embedding_dim = 18 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction 
-    outpuDim = int(HourHorizon*1/SamplingRate)
+    outpuDim = EndHorizon-StartHorizon#int(HourHorizon*1/SamplingRate)
     feedforwardDepth = 7
     feedforwardDim = 20
     intermediate_dim = 50
