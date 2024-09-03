@@ -519,8 +519,8 @@ if __name__ == "__main__":
     induced_od_data = data1[OD_key]
     induced_fl_data = data1[FL_key]
 
-    StartHorizon = 0
-    EndHorizon= 360
+    StartHorizon = 100 # these are in unit of timepoints not time
+    EndHorizon= 300
     time_vec = time0[FL_key][StartHorizon:EndHorizon]
     foldchangedata = np.zeros((8,12,EndHorizon-StartHorizon))
     for row in range(0,8):
