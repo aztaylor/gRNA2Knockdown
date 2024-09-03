@@ -1,4 +1,4 @@
-[main 497594b] Update terminology in code VAE--
+[main 11cb14b] Update terminology in code VAE--
  Committer: Enoch Yeung <enochyeung@Mac-Studio-2.local>
 Your name and email address were configured automatically based
 on your username and hostname. Please check that they are accurate.
@@ -11,6 +11,15 @@ After doing this, you may fix the identity used for this commit with:
 
     git commit --amend --reset-author
 
- 3 files changed, 62 insertions(+), 744 deletions(-)
- create mode 100644 "AE\n"
- delete mode 100644 embedNregress_v1 2.py
+ 12 files changed, 16 insertions(+), 9717 deletions(-)
+ rewrite "AE\n" (85%)
+ delete mode 100644 Archive/Experimentation 2.ipynb
+ delete mode 100644 Archive/Neural_newwork_diagram_idea 2.ai
+ delete mode 100644 Archive/gRNA2knockdown 2.code-workspace
+ delete mode 100644 Archive/gRNA2knockdown 2.py
+ delete mode 100644 Archive/gRNA2knockdown2 2.py
+ delete mode 100644 Archive/gRNA2knockdown3 2.py
+ delete mode 100644 Archive/gRNAembedding 2.py
+ delete mode 100644 Archive/gRNAembedding_tensorflow_v1 2.py
+ delete mode 100644 Archive/gRNAknockdown_v2_Keras 2.py
+ delete mode 100644 Archive/tensorflowupgrade_v2 2.ipynb
