@@ -258,7 +258,7 @@ def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,
         tf.Variable, custom loss
         '''
     regression_loss = tf.norm(this_regress_y-this_regress_y_labels,axis=[0,1],ord=2)/tf.norm(this_regress_y_labels,axis=[0,1],ord=2)
-    lambda_regression = 0.1
+    lambda_regression = 1.0
     return ae_loss(y_model,y_true)+embed_loss(y_true,embed_true) + lambda_regression*regression_loss
 
 
@@ -736,7 +736,7 @@ if __name__ == "__main__":
 
     ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2],
                c=rgb_scheme, marker='o',alpha=0.25)
-    ax.view_init(30, azim=240)
+    ax.view_init(30, azim=180)
     ax.set_xlabel('Principal Component One')
     ax.set_ylabel('Principal Component Two')
     ax.set_zlabel('Principal Component Three')
