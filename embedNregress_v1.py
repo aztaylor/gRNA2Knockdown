@@ -564,7 +564,7 @@ if __name__ == "__main__":
     # Define the model parameters.
     stride_parameter = 30
     label_dim = 1
-    embedding_dim = 18
+    embedding_dim = 6 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction 
     outpuDim = int(HourHorizon*1/SamplingRate)
     feedforwardDepth = 7
     feedforwardDim = 20
@@ -736,7 +736,7 @@ if __name__ == "__main__":
 
     ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2],
                c=rgb_scheme, marker='o',alpha=0.25)
-    ax.view_init(30, azim=180)
+    ax.view_init(30, azim=240)
     ax.set_xlabel('Principal Component One')
     ax.set_ylabel('Principal Component Two')
     ax.set_zlabel('Principal Component Three')
