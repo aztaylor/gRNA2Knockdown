@@ -567,16 +567,16 @@ if __name__ == "__main__":
     stride_parameter = 30
     label_dim = 1
     embedding_dim = 18 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction 
-    outpuDim = EndHorizon-StartHorizon#int(HourHorizon*1/SamplingRate)
+    outpuDim = EndHorizon-StartHorizon #int(HourHorizon*1/SamplingRate)
     feedforwardDepth = 2
-    feedforwardDim = 20
+    feedforwardDim = 10
     intermediate_dim = 50
     Rand_Transform = rvs(dim=stride_parameter)
     batch_size_parameter = 20 #4000 for howard's e. coli dataset (from Enoch's code)
-
-    debug_splash = 0;
+    n_pre_post_layers = 1
+    debug_splash = 0
     this_step_size_val = 0.01
-    this_max_iters = 2e6
+    this_max_iters = 2e7
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
 
     print(this_corpus)
@@ -590,7 +590,7 @@ if __name__ == "__main__":
 
     this_corpus_vec = np.asarray(this_corpus_vec)
     #this_labels = np.expand_dims(this_labels,axis=1)
-    n_pre_post_layers = 2; 
+
     hidden_vars_list = [intermediate_dim]*n_pre_post_layers+[embedding_dim]+\
         [intermediate_dim]*n_pre_post_layers+[stride_parameter]
     if False:
@@ -599,8 +599,6 @@ if __name__ == "__main__":
     # Define the tensorflow session
     sess = tf.compat.v1.Session()
     tf.compat.v1.disable_eager_execution() # needed because of placeholder variables
-
-
 
     # Define the placeholders for the input sequences
     this_u = tf.compat.v1.placeholder(tf.float32, 
