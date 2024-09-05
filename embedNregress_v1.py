@@ -549,8 +549,8 @@ if __name__ == "__main__":
     n_pre_post_layers = 10
     outpuDim = EndHorizon-StartHorizon #int(HourHorizon*1/SamplingRate
     #ff parameters
-    feedforwardDepth = 10
-    feedforwardDim = 10
+    feedforwardDepth = 5
+    feedforwardDim = 30
     intermediate_dim = 50
     #training parameters
     debug_splash = 0
