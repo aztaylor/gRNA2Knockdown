@@ -18,7 +18,6 @@ from sklearn.decomposition import PCA
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime
-
 '''This module contains the functions to encode DNA sequences and for use in predicting  the knockdown 
 efficiency of CRISPR dCasRx-gRNAs effectors. The model takes in the RNA sequence of the targeted transcript 
 embedds the sequence using an autoencoder. Subsequently, the model takes the embedded sequence and the mRNA of the 
@@ -41,8 +40,6 @@ California, Santa Barbara. Some things to note:
 now = datetime.now()
 date = now.strftime('%Y%m%d')
 time = now.strftime('%H%M%S')
-
-
 # Define Auxillary Functions
 def sequence_encoding(sequence: str) -> np.array:
     '''Encode DNA sequence into a 1D array of floats. The encoding is mapped as to be normalized between 0 and 1.
@@ -78,7 +75,6 @@ def make_labeled_corpus(seq_list, label_list, stride_param):
             corpus.append(this_datapt)
             labels.append(this_label)
     return corpus,labels
-
 def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride=1) -> dict:
     '''Create a corpus of sequences and their corresponding labels (y_trace).
     args:
@@ -95,7 +91,6 @@ def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride=1) -> dict:
         for i in range(len(seq)):
             corpus[seq[i]] = y_trace[i]
     return corpus# leave as is in the original code. Optimize Later
-
 def xavier_init(n_inputs: int, n_outputs: int, uniform=True) -> tf.initializers:
     '''Initialize weights with Xavier initialization. From Enoch's code this initializes
     the weights with a uniform distribution to keep the scale if gradients roughly the same in all layers.
@@ -114,7 +109,6 @@ def xavier_init(n_inputs: int, n_outputs: int, uniform=True) -> tf.initializers:
     else:
         stddev = tf.sqrt(3.0/(n_inputs + n_outputs))
         return tf.truncated_normal_initializer(stddev=stddev)
-
 def weight_Variable(shape: tuple) -> tf.Variable:
     '''Create a weight Variable with a given shape and name. Defined to be used in the standard definitiion
     of a neuron: Wx + b, where W is the weight, x is the input and b is the bias.
@@ -142,7 +136,6 @@ def bias_Variable(shape: tuple) -> tf.Variable:
     return tf.Variable(tf.random.truncated_normal(shape, mean=0.0,
                                                   stddev=std_dev,
                                                   dtype=tf.float32))
-
 def initialize_Wblist(n_u, hv_list) -> (list, list): # type: ignore
     '''Initialize the weights and biases for the network. The weights are initialized using the weight_Variable function 
     and the biases are initialized using the bias_Variable function. The weights and biases are stored in lists.
@@ -169,7 +162,6 @@ def initialize_Wblist(n_u, hv_list) -> (list, list): # type: ignore
             W_list.append(weight_Variable([hv_list[k-1],hv_list[k]]))
             b_list.append(bias_Variable([hv_list[k]]))
     return W_list, b_list
-
 def rvs(dim=3):
     '''Generate a random orthogonal matrix. The matrix is generated using the Householder transformation. This should 
     scrabble the 4-hot encoding to project into random input space. This improves performance for reason I do not yet
@@ -196,7 +188,6 @@ def rvs(dim=3):
     # Equivalent to np.dot(np.diag(D), H) but faster, apparently
     H = (D*H.T).T
     return H
-
 # Define the loss functions
 def embed_loss(y_true,embed_true):
     '''Calculate the embedding loss. The embedding loss accounts for the covarariance between the embeddings.
@@ -217,7 +208,6 @@ def embed_loss(y_true,embed_true):
     #Ke = tf.matmul(tf.matmul(Scale_Matrix_e,IP_Matrix_e),Scale_Matrix_e)
     return tf.norm(IP_Matrix_y-IP_Matrix_e,axis=[0,1],ord='fro')/tf.norm(
                     IP_Matrix_y,axis=[0,1],ord='fro')
-
 def ae_loss(y_model,y_true):
     '''Calculate the AE loss. The AE loss is the mean squared error between the predicted and true y values.
     args:
@@ -228,7 +218,7 @@ def ae_loss(y_model,y_true):
     '''
     return tf.norm(y_true - y_model,axis=[0,1],ord=2)/tf.norm(y_true,axis=[0,1]
                                                                ,ord=2)
-    
+
 def customLoss(y_model:tf.Variable, y_true:tf.Variable,
                embed_true:tf.Variable) -> tf.Variable:
     '''Custom loss function that combines the AE loss and the embedding loss. The AE loss is the mean squared error
@@ -242,7 +232,6 @@ def customLoss(y_model:tf.Variable, y_true:tf.Variable,
         tf.Variable, custom loss
         '''
     return ae_loss(y_model,y_true)+embed_loss(y_true,embed_true)
-
 #HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
 def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,
                embed_true:tf.Variable,regress_y_model:tf.Variable,regress_y_true:tf.Variable) -> tf.Variable:
@@ -260,9 +249,6 @@ def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,
     regression_loss = tf.norm(this_regress_y-this_regress_y_labels,axis=[0,1],ord=2)/tf.norm(this_regress_y_labels,axis=[0,1],ord=2)
     lambda_regression = 1.0
     return ae_loss(y_model,y_true)+embed_loss(y_true,embed_true) + lambda_regression*regression_loss
-
-
-
 # Define the network
 def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, 
                      keep_prob=1.0, activation_flag=1, 
@@ -285,7 +271,6 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
     n_depth = len(W_list)
     print("n_depth: " + repr(n_depth))
     z_temp_list = []
-
     for k in range(0,n_depth):
         # form the input layer with the flag Variable determining the activation function.
         if (k==0):
@@ -322,10 +307,8 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
         if not (k==0) and k == (n_depth-1):
             prev_layer_output = tf.matmul(z_temp_list[k-1],W_list[k])+b_list[k]
             z_temp_list.append(prev_layer_output)
-
     if debug_splash:
         print("[DEBUG] z_list" + repr(z_temp_list[-1]))
-
     y_out = z_temp_list[-1]
     return y_out, z_temp_list
 
@@ -378,15 +361,12 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         valid_ind = list(all_ind -set(select_ind))[0:batchsize]
         select_ind_test = list(all_ind - set(valid_ind) - 
                             set(select_ind))[0:batchsize]
-
         u_batch =[]
         u_valid = []
         u_test_train = []
-
         y_batch = []
         y_valid = []
         y_test_train = []
-        
         for j in range(0,len(select_ind)):
             u_batch.append(u_all_training[select_ind[j]])
             y_batch.append(y_all_training[select_ind[j]])
@@ -404,7 +384,6 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
 
         test_error = obj_func.eval(feed_dict={u_feed:u_test_train,y_feed:y_test_train}, 
                                    session=sess) # embed_feed:y_test_train});
-
 
         if iter%samplerate==0:
             training_error_history_nocovar.append(obj_func.eval(
@@ -429,7 +408,6 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
                     validation_error_history_nocovar,
                     test_error_history_nocovar,
                     u_all_training]
-
     if save_fig is not None:
         fig, ax = plt.subplots(1,1)
         x = np.arange(0,len(validation_error_history_nocovar),1)
@@ -447,7 +425,6 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         plt.savefig(save_fig)
         plt.close()
     return all_histories, good_start
-
 SeqMap = ['A','C','G','T']
 
 def elemback2seq(this_elem):
@@ -489,7 +466,6 @@ if __name__ == "__main__":
        the train_net function. The network is then tested using the test_net function. If not loaded as a standalone
        script, this script will act as a module and the functions can be imported and used in other scripts.
     '''
-    
     # First we need to load the data
     data_fp = "Data/"
     spacer_fp = os.path.join(data_fp, "GFP_spacers.gbk")
@@ -546,11 +522,9 @@ if __name__ == "__main__":
     reads = list(data0.keys())
     data_pt0 = data0[reads[1]][:,:,165]
     data_pt1 = data1[reads[1]][:,:,165]
-
     # Calculate the fold change between the 0mM and 10mM data.
     fold_change = data_pt1/data_pt0
     data = np.reshape(fold_change,(96))
-
     # Visualize the foldchange to see if there are any trends.
     explore = False
     if explore == True:
@@ -563,24 +537,29 @@ if __name__ == "__main__":
         ax.set_title("Fold Change in RFU for each gRNA position at 8 hours")
         plt.savefig(f"/home/yeunglab/AlecOutputData/foldchange.png")
 
-    # Define the model parameters.
-    stride_parameter = 30
-    label_dim = 1
+    #Define the model parameters.
+    #AE parameters
+    stride_parameter = 30 #Determinded by the length of the gRNA sequence
+    label_dim = EndHorizon-StartHorizon # To match the number of timepoints in the plate reader data
     embedding_dim = 18 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction 
-    outpuDim = EndHorizon-StartHorizon #int(HourHorizon*1/SamplingRate)
-    feedforwardDepth = 2
+    batch_size_parameter = 20 
+    '''
+    20 does not seem to be a good batch size for the data. The training error is not decreasing.
+    '''
+    n_pre_post_layers = 10
+    outpuDim = EndHorizon-StartHorizon #int(HourHorizon*1/SamplingRate
+    #ff parameters
+    feedforwardDepth = 1
     feedforwardDim = 10
     intermediate_dim = 50
-    Rand_Transform = rvs(dim=stride_parameter)
-    batch_size_parameter = 20 #4000 for howard's e. coli dataset (from Enoch's code)
-    n_pre_post_layers = 1
+    #training parameters
     debug_splash = 0
     this_step_size_val = 0.01
     this_max_iters = 2e7
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
-
     print(this_corpus)
     # Define the corpus for the model.
+    Rand_Transform = rvs(dim=stride_parameter)
     this_corpus_vec = []
     for this_corpus_elem in this_corpus:
         vec_value = sequence_encoding(this_corpus_elem)
@@ -595,17 +574,14 @@ if __name__ == "__main__":
         [intermediate_dim]*n_pre_post_layers+[stride_parameter]
     if False:
         print(hidden_vars_list)
-
     # Define the tensorflow session
     sess = tf.compat.v1.Session()
     tf.compat.v1.disable_eager_execution() # needed because of placeholder variables
-
     # Define the placeholders for the input sequences
     this_u = tf.compat.v1.placeholder(tf.float32, 
-                                      shape=[None,stride_parameter])
+                                      shape=[None,stride_parameter])]
     # Define placeholder for regression label (vectors made from time-series traces of plate reader data)
     this_regress_y_labels = tf.compat.v1.placeholder(tf.float32,shape=[None,outpuDim])
-
     # Instantiate the autoencoder network 
     with tf.device('/cpu:0'):
         this_W_list,this_b_list = initialize_Wblist(stride_parameter,
@@ -613,7 +589,6 @@ if __name__ == "__main__":
         this_y_out,all_layers = network_assemble(this_u,this_W_list,this_b_list
                                                 ,keep_prob=1.0,
                                                 activation_flag=2,res_net=0)
-
     # Define a handle that accesses the embedding layer 
     this_embedding = all_layers[n_pre_post_layers]
     # Define the regression network depth, width, and output dimension:     
@@ -627,7 +602,6 @@ if __name__ == "__main__":
         except:
             print(this_embedding.shape)
         HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
-
         #result = sess.run(tf.compat.v1.global_variables_initializer())
         this_optim = tf.compat.v1.train.AdagradOptimizer(
             learning_rate=this_step_size_val).minimize(HybridLoss)
@@ -670,7 +644,7 @@ if __name__ == "__main__":
         print("\n")
         this_seq_out = ''.join(this_seq_out)
         all_mismatches.append(num_mismatch(this_seq_out, this_corpus[ind]))
-    
+    # Plot the number of mismatches in the predicted sequences
     mismatch_process = np.array(all_mismatches)
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)
     fig, ax = plt.subplots(1,1)
@@ -681,10 +655,9 @@ if __name__ == "__main__":
     ax.spines['right'].set_visible(False)
     ax.set_title("Number of Mismatches in Predicted Sequences")
     plt.savefig(f"Figures/mismatches{date}_{time}.png")
-
+    # Plot the PCA of the embeddings
     subset_embeddings = this_embedding.eval(feed_dict={this_u:this_corpus_vec},
                                             session=sess)
-
     X = subset_embeddings
     pca = PCA(n_components=3)
     pca.fit(X)
@@ -694,12 +667,10 @@ if __name__ == "__main__":
     print("PCA Explained Variance Ratio: " + repr(pca.explained_variance_ratio_))
     print("PCA Singular Values: " + repr(pca.singular_values_))
 
-    
     X_transformed = pca.transform(X)
     X_transformed = X_transformed[0:]
 
     X_transformed.shape
-
     # Fixing random state for reproducibility
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -708,11 +679,8 @@ if __name__ == "__main__":
     
     foldchange_colorscale = np.sum(np.abs(listed_foldchangedata),axis=1)  # sum over all the timepoints (area of the curve) but leave the row index as the URI for the sequence/embedding (this will give a 96 x 1 array) 
     foldchange_colorscale = (foldchange_colorscale-np.min(foldchange_colorscale))/np.max(foldchange_colorscale-np.min(foldchange_colorscale))
-
-    
     # For each set of style and range settings, plot n random points in the box
     # defined by x in [23, 32], y in [0, 100], z in [zlow, zhigh].
-    
     rgb_scheme = np.zeros((len(X_transformed),3))
     for x_ind in range(0,len(X_transformed)):
         rgb_scheme[x_ind,0] = 1.0-foldchange_colorscale[x_ind]
@@ -734,7 +702,6 @@ if __name__ == "__main__":
         #if 0.90>this_labels[x_ind]>1.0:
         #    this_colors[x_ind][5] = this_labels[x_ind]/np.max(this_labels)
             
-
     ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2],
                c=rgb_scheme, marker='o',alpha=0.25)
     ax.view_init(30, azim=240)
