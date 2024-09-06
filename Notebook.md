@@ -79,4 +79,13 @@ The data that is used for training here is derived from an oligo based cloning t
     step 417000 , test error 0.029194
     Reconstruction Loss: 0.0029331816
     Embedding Loss: 0.015318816
-
+## September 6th
+### Trial one
+   feedforwardDepth = 5
+    feedforwardDim = 30
+    intermediate_dim = 50
+    debug_splash = 0
+    this_step_size_val = 0.01
+    this_max_iters = 2e6
+    this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
+  
