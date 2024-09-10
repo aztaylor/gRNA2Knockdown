@@ -23,56 +23,6 @@ The data that is used for training here is derived from an oligo based cloning t
     this_step_size_val = 0.01
     this_max_iters = 2e6
 #### Results
-    step 404000 , validation error 0.281793
-    step 404000 , test error 0.030925
-    Reconstruction Loss: 0.004284358
-    Embedding Loss: 0.0154286055
-    step 405000 , validation error 0.310379
-    step 405000 , test error 0.0298142
-    Reconstruction Loss: 0.0027975051
-    Embedding Loss: 0.015460129
-    step 406000 , validation error 0.325973
-    step 406000 , test error 0.0269577
-    Reconstruction Loss: 0.0024939657
-    Embedding Loss: 0.015397804
-    step 407000 , validation error 0.343879
-    step 407000 , test error 0.0292902
-    Reconstruction Loss: 0.0044097276
-    Embedding Loss: 0.0155791715
-    step 408000 , validation error 0.294723
-    step 408000 , test error 0.029043
-    Reconstruction Loss: 0.0028405609
-    Embedding Loss: 0.01550237
-    step 409000 , validation error 0.295991
-    step 409000 , test error 0.030089
-    Reconstruction Loss: 0.003567892
-    Embedding Loss: 0.015696166
-    step 410000 , validation error 0.289261
-    step 410000 , test error 0.0278034
-    Reconstruction Loss: 0.0022184022
-    Embedding Loss: 0.015595641
-    step 411000 , validation error 0.310479
-    step 411000 , test error 0.0292406
-    Reconstruction Loss: 0.0028185998
-    Embedding Loss: 0.015428416
-    step 412000 , validation error 0.301879
-    step 412000 , test error 0.0294907
-    Reconstruction Loss: 0.0025039
-    Embedding Loss: 0.015551361
-    step 413000 , validation error 0.302791
-    step 413000 , test error 0.0271914
-    Reconstruction Loss: 0.0033832088
-    Embedding Loss: 0.015350331
-    step 414000 , validation error 0.298497
-    step 414000 , test error 0.0279061
-    Reconstruction Loss: 0.003218405
-    Embedding Loss: 0.015468246
-    step 415000 , validation error 0.290696
-    step 415000 , test error 0.0273089
-    Reconstruction Loss: 0.0022478974
-    Embedding Loss: 0.015403614
-    step 416000 , validation error 0.300739
-    step 416000 , test error 0.0278266
     Reconstruction Loss: 0.0026666094
     Embedding Loss: 0.015375573
     step 417000 , validation error 0.393819
@@ -81,11 +31,24 @@ The data that is used for training here is derived from an oligo based cloning t
     Embedding Loss: 0.015318816
 ## September 6th
 ### Trial one
-   feedforwardDepth = 5
+### Hyperparmaters
+    StartHorizon = 100 # these are in unit of timepoints not time
+    EndHorizon= 300r
+    stride_parameter = 30 #Determinded by the length of the gRNA sequence
+    label_dim = EndHorizon-StartHorizon # To match the number of timepoints in the plate reader data
+    embedding_dim = 18 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction 
+    batch_size_parameter = 20
+    n_pre_post_layers = 10
+    outpuDim = EndHorizon-StartHorizon
+    feedforwardDepth = 5
     feedforwardDim = 30
     intermediate_dim = 50
     debug_splash = 0
     this_step_size_val = 0.01
     this_max_iters = 2e6
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
-  
+### Results 
+These hyperparameters were used last night but take a while to run due to the large max iters. 
+The next change that needs to be explored is to create a loss function which considers both the Embeddign loss and the regression loss.
+
+The results from this took alot of time and are as follows.
