@@ -685,7 +685,6 @@ if __name__ == "__main__":
     for x_ind in range(0,len(X_transformed)):
         rgb_scheme[x_ind,0] = 1.0-foldchange_colorscale[x_ind]
         rgb_scheme[x_ind,1] = foldchange_colorscale[x_ind]
-        
         #x= X_transformed[x_ind][0]
         #y= X_transformed[x_ind][1]
         #z= X_transformed[x_ind][2]
@@ -700,8 +699,7 @@ if __name__ == "__main__":
         #if 0.80>this_labels[x_ind]>0.90:
         #    this_colors[x_ind][4] = this_labels[x_ind]/np.max(this_labels)
         #if 0.90>this_labels[x_ind]>1.0:
-        #    this_colors[x_ind][5] = this_labels[x_ind]/np.max(this_labels)
-            
+        #    this_colors[x_ind][5] = this_labels[x_ind]/np.max(this_labels)  
     ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2],
                c=rgb_scheme, marker='o',alpha=0.25)
     ax.view_init(30, azim=240)
@@ -710,7 +708,6 @@ if __name__ == "__main__":
     ax.set_zlabel('Principal Component Three')
     plt.tight_layout()
     fig.savefig(f"Figures/PCA{date}_{time}.png")
-
 
     fig2 = plt.figure()
     plt.hist(foldchange_colorscale,bins=20)

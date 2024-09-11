@@ -42,7 +42,7 @@ The data that is used for training here is derived from an oligo based cloning t
     outpuDim = EndHorizon-StartHorizon
     feedforwardDepth = 5
     feedforwardDim = 30
-    intermediate_dim = 50
+    intermediate_dim = 50 
     debug_splash = 0
     this_step_size_val = 0.01
     this_max_iters = 2e6
