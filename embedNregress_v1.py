@@ -558,7 +558,7 @@ if __name__ == "__main__":
     intermediate_dim = 50
     #training parameters
     debug_splash = 0
-    this_step_size_val = 0.1
+    this_step_size_val = 0.05
     this_max_iters = 2e6
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
     print(this_corpus)
