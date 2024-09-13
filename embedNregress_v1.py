@@ -559,7 +559,7 @@ if __name__ == "__main__":
     #training parameters
     debug_splash = 0
     this_step_size_val = 0.05
-    this_max_iters = 3e4
+    this_max_iters = 3e3
     this_corpus,this_labels = make_labeled_corpus(allseqs, data, stride_parameter)
     print(this_corpus)
     # Define the corpus for the model.
