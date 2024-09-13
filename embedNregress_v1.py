@@ -210,7 +210,7 @@ def embed_loss(y_true,embed_true):
                                                       #,axis=1))
     #Ky = tf.matmul(tf.matmul(Scale_Matrix_y,IP_Matrix_y),Scale_Matrix_y)
     #Ke = tf.matmul(tf.matmul(Scale_Matrix_e,IP_Matrix_e),Scale_Matrix_e)
-    return tf.norm(IP_Matrix_e-IP_Matrix_y,axis=[0,1],ord='fro')
+    return tf.norm(IP_Matrix_e-IP_Matrix_y,ord='fro')
 def ae_loss(y_model,y_true):
     '''Calculate the AE loss. The AE loss is the mean squared error between the predicted and true y values.
     args:
