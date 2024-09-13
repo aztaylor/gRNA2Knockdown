@@ -250,7 +250,7 @@ def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,
         '''
     regression_loss = tf.norm(this_regress_y-this_regress_y_labels,axis=[0,1],ord=2)/tf.norm(this_regress_y_labels,axis=[0,1],ord=2)
     lambda_regression = 1.0
-    return ae_loss(y_model,y_true)+embed_loss(y_true,embed_true) + lambda_regression*regression_loss
+    return ae_loss(y_model,y_true)+embed_loss(regress_y_true,embed_true) + lambda_regression*regression_loss
 
 # Define the network
 def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, 
@@ -452,7 +452,7 @@ def vecback2seq(untransformed_vec):
         returns:
             list, list of DNA sequences
     '''
-    #untransformed_vec is computed using the inverse of Rand_Transform to recover lattice-like vector representation/
+    #untransformed_vec is computed using the inverse of Rand_Transform to recover lattice-like vector representation
     #encoding
     seq_out = [elemback2seq(elem) for elem in untransformed_vec]
     return seq_out
