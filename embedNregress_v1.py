@@ -198,6 +198,8 @@ def embed_loss(y_true,embed_true):
             tf.Variable, embedding loss
     '''
     #y_true is (batch_size_param) x (dim of stride) tensor
+    print("IP_Matrix_y shape: " + repr(y_true.shape))
+    print("IP_Matrix_e shape: " + repr(embed_true.shape))
     IP_Matrix_y = tf.matmul(y_true,tf.transpose(y_true))
     IP_Matrix_e = tf.matmul(embed_true,tf.transpose(embed_true))
     print("IP_Matrix_y shape: " + repr(IP_Matrix_y.shape))
