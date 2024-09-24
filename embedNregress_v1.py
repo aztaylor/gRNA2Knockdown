@@ -555,7 +555,7 @@ if __name__ == "__main__":
     #ff parameters
     feedforwardDepth = 5
     feedforwardDim = 30
-    intermediate_dim = 20
+    intermediate_dim = 50
     #training parameters
     debug_splash = 0
     this_step_size_val = 0.05
@@ -616,10 +616,7 @@ if __name__ == "__main__":
 
         if True:
             # Train the network
-            train_figure_name = f"Figures/Training{embedding_dim}_{\
-                intermediate_dim}_\
-                    {stride_parameter}_\
-                        {n_pre_post_layers}\.png"
+            train_figure_name = f"Figures/Training{embedding_dim}_{intermediate_dim}_{stride_parameter}_{n_pre_post_layers}.png"
                 
             train_net(sess, this_corpus_vec,this_u,listed_foldchangedata,this_regress_y_labels,HybridLoss,
                     this_optim,
@@ -628,7 +625,8 @@ if __name__ == "__main__":
                     batchsize=batch_size_parameter,
                     step_size_val=this_step_size_val,
                     max_iters=this_max_iters,
-                    save_fig= train_figure_name}moved.
+                    save_fig= train_figure_name)
+    # This is likely redudent code that can be removed.
     # I think we just need to reconsider the loss function at this point.
     if False:
         feedforwardList = [embedding_dim]+[feedforwardDim]*feedforwardDepth+\
