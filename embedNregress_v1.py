@@ -555,7 +555,7 @@ if __name__ == "__main__":
     #ff parameters
     feedforwardDepth = 5
     feedforwardDim = 30
-    intermediate_dim = 50
+    intermediate_dim = 20
     #training parameters
     debug_splash = 0
     this_step_size_val = 0.05
