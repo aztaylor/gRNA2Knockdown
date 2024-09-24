@@ -626,7 +626,7 @@ if __name__ == "__main__":
                     batchsize=batch_size_parameter,
                     step_size_val=this_step_size_val,
                     max_iters=this_max_iters,
-                    save_fig= train_figure_name)
+                    save_fig= f"train_figure_name_{date}_{time}")
     # This is likely redudent code that can be removed.
     # I think we just need to reconsider the loss function at this point.
     if False:
