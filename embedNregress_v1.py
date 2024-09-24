@@ -650,7 +650,7 @@ if __name__ == "__main__":
         all_mismatches.append(num_mismatch(this_seq_out, this_corpus[ind]))
     # Plot the number of mismatches in the predicted sequences
     saver = tf.compat.v1.train.Saver()
-    save_path = saver.save(f'saved_models/{date}_{time}')
+    save_path = saver.save(sess, f'saved_models/{date}_{time}')
 
     mismatch_process = np.array(all_mismatches)
     np.sum(mismatch_process)/(len(mismatch_process)*1.0)
