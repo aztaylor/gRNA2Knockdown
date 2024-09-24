@@ -250,7 +250,6 @@ def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,embed_true:tf.Vari
         tf.Variable, custom loss
         '''
     regression_loss = tf.norm(this_regress_y-this_regress_y_labels,axis=[0,1],ord=2)/tf.norm(this_regress_y_labels,axis=[0,1],ord=2)
-   lambda_var = 0.1
     return ae_loss(y_model,y_true)+embed_loss(regress_y_true,embed_true) + lambda_regression*regression_loss
 
 # Define the network
