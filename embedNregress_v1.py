@@ -236,10 +236,8 @@ def customLoss(y_model:tf.Variable, y_true:tf.Variable,
         '''
     return ae_loss(y_model,y_true)+embed_loss(y_true,embed_true)
 #HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
-def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,
-               embed_true:tf.Variable, regress_y_model:tf.Variable,
-               regress_y_true:tf.Variable, lambda_var=0.5)
-                ->tf.Variable:
+def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,embed_true:tf.Variable, regress_y_model:tf.Variable,
+                      regress_y_true:tf.Variable, lambda_regression=0.5)->tf.Variable:
     '''Custom loss function that combines the AE loss and the embedding loss. The AE loss is the mean squared error
     between the predicted and true y values. The embedding loss is the mean squared error between the predicted and true
     embeddings. .... needs more 
