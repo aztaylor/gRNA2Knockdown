@@ -236,7 +236,7 @@ def customLoss(y_model:tf.Variable, y_true:tf.Variable,
         '''
     return ae_loss(y_model,y_true)+embed_loss(y_true,embed_true)
 #HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
-def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,
+def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,lambda_var = 0.5:float64
                embed_true:tf.Variable,regress_y_model:tf.Variable,regress_y_true:tf.Variable) -> tf.Variable:
     '''Custom loss function that combines the AE loss and the embedding loss. The AE loss is the mean squared error
     between the predicted and true y values. The embedding loss is the mean squared error between the predicted and true
@@ -250,7 +250,7 @@ def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,
         tf.Variable, custom loss
         '''
     regression_loss = tf.norm(this_regress_y-this_regress_y_labels,axis=[0,1],ord=2)/tf.norm(this_regress_y_labels,axis=[0,1],ord=2)
-    lambda_regression = 1.0
+   lambda_var = 0.1
     return ae_loss(y_model,y_true)+embed_loss(regress_y_true,embed_true) + lambda_regression*regression_loss
 
 # Define the network
@@ -384,7 +384,8 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
             y_test_train.append(y_all_training[select_ind_test[k]])
 
         optimizer.run(feed_dict={u_feed:u_batch,y_feed:y_batch}, session=sess) # embed_feed:,step_size:step_size_val});
-        valid_error = obj_func.eval(feed_dict={u_feed:u_valid,y_feed:y_valid}, session=sess) # embed_feed:y_valid});
+        valid_error = obj_func.eval(feed_dict={u_feed:u_valid,y_feed:y_valid},
+                                    session=sess) # embed_feed:y_valid});
 
         test_error = obj_func.eval(feed_dict={u_feed:u_test_train,y_feed:y_test_train}, 
                                    session=sess) # embed_feed:y_test_train});
@@ -395,7 +396,8 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
             validation_error_history_nocovar.append(obj_func.eval(
                 feed_dict={u_feed:u_valid, y_feed:y_valid}, session=sess));
             test_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_test_train, y_feed:y_test_train}, session=sess));
+                feed_dict={u_feed:u_test_train, y_feed:y_test_train}, 
+                session=sess));
 
 
         if (iter%1000==0) or (iter==1):
@@ -482,7 +484,7 @@ if __name__ == "__main__":
     seqs = csv.reader(open("Data/GFP_spacers.csv"))
     allseqs = [seq for seq in seqs]
     #print(allseqs[0:10])
-
+ 
     NumRowsonPlate = 8
     NumColumnsonPlate = 12
     HourHorizon = 18
@@ -550,6 +552,7 @@ if __name__ == "__main__":
     '''
     20 does not seem to be a good batch size for the data. The training error is not decreasing.
     '''
+    lambda_var = 0.1
     n_pre_post_layers = 10
     outpuDim = EndHorizon-StartHorizon #int(HourHorizon*1/SamplingRate
     #ff parameters
@@ -602,10 +605,13 @@ if __name__ == "__main__":
         this_Wregress_list,this_bregress_list = initialize_Wblist(embedding_dim,
                                                                   regress_list)
         try:
-            this_regress_y,all_regress_layers = network_assemble(this_embedding,this_Wregress_list,this_bregress_list)
+            this_regress_y,all_regress_layers = network_assemble(this_embedding
+                                                                 ,this_Wregress_list,
+                                                                 this_bregress_list)
         except:
             print(this_embedding.shape)
-        HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,this_regress_y,this_regress_y_labels)
+        HybridLoss = customRegressLoss(this_y_out,this_u,this_embedding,
+                                       this_regress_y,this_regress_y_labels)
         #result = sess.run(tf.compat.v1.global_variables_initializer())
         this_optim = tf.compat.v1.train.AdagradOptimizer(
             learning_rate=this_step_size_val).minimize(HybridLoss)
