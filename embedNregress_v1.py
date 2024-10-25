@@ -181,7 +181,7 @@ def rvs(dim=3):
         # Householder transformation
         Hx = (np.eye(dim-n+1) - 2.*np.outer(x, x)/(x*x).sum())
         mat = np.eye(dim)
-        mat[n-1:, n-1:] = Hx
+        mat[n-1:, n-1:] = Hx 
         H = np.dot(H, mat)
         # Fix the last sign such that the determinant is 1
     D[-1] = (-1)**(1-(dim % 2))*D.prod()
@@ -198,12 +198,12 @@ def embed_loss(y_true,embed_true):
             tf.Variable, embedding loss
     '''
     #y_true is (batch_size_param) x (dim of stride) tensor
-    print("IP_Matrix_y shape: " + repr(y_true.shape))
-    print("IP_Matrix_e shape: " + repr(embed_true.shape))
+    #print("IP_Matrix_y shape: " + repr(y_true.shape))
+    #print("IP_Matrix_e shape: " + repr(embed_true.shape))
     IP_Matrix_y = tf.matmul(y_true,tf.transpose(y_true))
     IP_Matrix_e = tf.matmul(embed_true,tf.transpose(embed_true))
-    print("IP_Matrix_y shape: " + repr(IP_Matrix_y.shape))
-    print("IP_Matrix_e shape: " + repr(IP_Matrix_e.shape))
+    #print("IP_Matrix_y shape: " + repr(IP_Matrix_y.shape))
+    #print("IP_Matrix_e shape: " + repr(IP_Matrix_e.shape))
    #Scale_Matrix_y = tf.linalg.tensor_diag(tf.norm(y_true,ord='euclidean'
                                                    #,axis=1))
     #Scale_Matrix_e = tf.linalg.tensor_diag(tf.norm(embed_true,ord='euclidean'
@@ -249,7 +249,8 @@ def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,embed_true:tf.Vari
     returns:
         tf.Variable, custom loss
         '''
-    regression_loss = tf.norm(this_regress_y-this_regress_y_labels,axis=[0,1],ord=2)/tf.norm(this_regress_y_labels,axis=[0,1],ord=2)
+    #regression_loss = tf.norm(this_regress_y-this_regress_y_labels,axis=[0,1],ord=2)/tf.norm(this_regress_y_labels,axis=[0,1],ord=2)
+    regression_loss = tf.norm(regress_y_model-regress_y_true,axis=[0,1],ord=2)/tf.norm(regress_y_true,axis=[0,1],ord=2)
     return ae_loss(y_model,y_true)+embed_loss(regress_y_true,embed_true) + lambda_regression*regression_loss
 
 # Define the network
@@ -272,7 +273,7 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
         z_temp_list: list, list of activations
     '''
     n_depth = len(W_list)
-    print("n_depth: " + repr(n_depth))
+    #print("n_depth: " + repr(n_depth))
     z_temp_list = []
     for k in range(0,n_depth):
         # form the input layer with the flag Variable determining the activation function.
@@ -416,9 +417,9 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
     if save_fig is not None:
         fig, ax = plt.subplots(1,1)
         x = np.arange(0,len(validation_error_history_nocovar),1)
-        ax.plot(x,training_error_history_nocovar,label='train. err.')
-        ax.plot(x,validation_error_history_nocovar,label='valid. err.')
-        ax.plot(x,test_error_history_nocovar,label='test err.')
+        ax.plot(x,training_error_history_nocovar,label='train. err.', c='firebrick')
+        ax.plot(x,validation_error_history_nocovar,label='valid. err.', c='darkgray')
+        ax.plot(x,test_error_history_nocovar,label='test err.', c='black')
         #ax.plot(x,u_all_training,label='Reconstruction Loss')
         ax.legend()
         ax.set_xlabel('Iterations')
