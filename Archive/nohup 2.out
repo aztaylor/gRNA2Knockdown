@@ -1,1793 +1,0 @@
-2024-07-25 16:30:41.700324: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
-2024-07-25 16:30:41.751260: I tensorflow/tsl/cuda/cudart_stub.cc:28] Could not find cuda drivers on your machine, GPU will not be used.
-2024-07-25 16:30:41.751729: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
-To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
-2024-07-25 16:30:42.570076: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
-2024-07-25 16:30:45.470464: W tensorflow/core/common_runtime/gpu/gpu_device.cc:1960] Cannot dlopen some GPU libraries. Please make sure the missing libraries mentioned above are installed properly if you would like to use GPU. Follow the guide at https://www.tensorflow.org/install/gpu for how to download and setup the required libraries for your platform.
-Skipping registering GPU devices...
-2024-07-25 16:30:46.024118: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:375] MLIR V1 optimization pass is not enabled
-2024-07-25 16:30:46.038648: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable (VarHandleOp) /device:GPU:0
-  Variable/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable/Assign (AssignVariableOp) /device:GPU:0
-  Variable/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.038710: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_1 (VarHandleOp) /device:GPU:0
-  Variable_1/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_1/Assign (AssignVariableOp) /device:GPU:0
-  Variable_1/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.038751: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_2 (VarHandleOp) /device:GPU:0
-  Variable_2/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_2/Assign (AssignVariableOp) /device:GPU:0
-  Variable_2/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_1/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.038819: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_3 (VarHandleOp) /device:GPU:0
-  Variable_3/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_3/Assign (AssignVariableOp) /device:GPU:0
-  Variable_3/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_1/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.038860: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_4 (VarHandleOp) /device:GPU:0
-  Variable_4/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_4/Assign (AssignVariableOp) /device:GPU:0
-  Variable_4/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_2/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.038899: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_5 (VarHandleOp) /device:GPU:0
-  Variable_5/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_5/Assign (AssignVariableOp) /device:GPU:0
-  Variable_5/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_2/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.038937: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_6 (VarHandleOp) /device:GPU:0
-  Variable_6/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_6/Assign (AssignVariableOp) /device:GPU:0
-  Variable_6/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_3/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.038985: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_7 (VarHandleOp) /device:GPU:0
-  Variable_7/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_7/Assign (AssignVariableOp) /device:GPU:0
-  Variable_7/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_3/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039024: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_8 (VarHandleOp) /device:GPU:0
-  Variable_8/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_8/Assign (AssignVariableOp) /device:GPU:0
-  Variable_8/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_4/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039062: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_9 (VarHandleOp) /device:GPU:0
-  Variable_9/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_9/Assign (AssignVariableOp) /device:GPU:0
-  Variable_9/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_4/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039109: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_10 (VarHandleOp) /device:GPU:0
-  Variable_10/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_10/Assign (AssignVariableOp) /device:GPU:0
-  Variable_10/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_5/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039147: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_11 (VarHandleOp) /device:GPU:0
-  Variable_11/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_11/Assign (AssignVariableOp) /device:GPU:0
-  Variable_11/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_5/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039185: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_12 (VarHandleOp) /device:GPU:0
-  Variable_12/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_12/Assign (AssignVariableOp) /device:GPU:0
-  Variable_12/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_6/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039222: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_13 (VarHandleOp) /device:GPU:0
-  Variable_13/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_13/Assign (AssignVariableOp) /device:GPU:0
-  Variable_13/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_6/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039268: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_14 (VarHandleOp) /device:GPU:0
-  Variable_14/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_14/Assign (AssignVariableOp) /device:GPU:0
-  Variable_14/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_7/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039306: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_15 (VarHandleOp) /device:GPU:0
-  Variable_15/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_15/Assign (AssignVariableOp) /device:GPU:0
-  Variable_15/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_7/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039344: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_16 (VarHandleOp) /device:GPU:0
-  Variable_16/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_16/Assign (AssignVariableOp) /device:GPU:0
-  Variable_16/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_8/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039390: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_17 (VarHandleOp) /device:GPU:0
-  Variable_17/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_17/Assign (AssignVariableOp) /device:GPU:0
-  Variable_17/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_8/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039427: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_18 (VarHandleOp) /device:GPU:0
-  Variable_18/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_18/Assign (AssignVariableOp) /device:GPU:0
-  Variable_18/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_9/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039465: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_19 (VarHandleOp) /device:GPU:0
-  Variable_19/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_19/Assign (AssignVariableOp) /device:GPU:0
-  Variable_19/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_9/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039502: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_20 (VarHandleOp) /device:GPU:0
-  Variable_20/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_20/Assign (AssignVariableOp) /device:GPU:0
-  Variable_20/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_10/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039547: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_21 (VarHandleOp) /device:GPU:0
-  Variable_21/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_21/Assign (AssignVariableOp) /device:GPU:0
-  Variable_21/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_10/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039586: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_22 (VarHandleOp) /device:GPU:0
-  Variable_22/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_22/Assign (AssignVariableOp) /device:GPU:0
-  Variable_22/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_11/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039623: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_23 (VarHandleOp) /device:GPU:0
-  Variable_23/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_23/Assign (AssignVariableOp) /device:GPU:0
-  Variable_23/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_11/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039669: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_24 (VarHandleOp) /device:GPU:0
-  Variable_24/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_24/Assign (AssignVariableOp) /device:GPU:0
-  Variable_24/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_12/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039707: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_25 (VarHandleOp) /device:GPU:0
-  Variable_25/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_25/Assign (AssignVariableOp) /device:GPU:0
-  Variable_25/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_12/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039744: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_26 (VarHandleOp) /device:GPU:0
-  Variable_26/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_26/Assign (AssignVariableOp) /device:GPU:0
-  Variable_26/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_13/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039781: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_27 (VarHandleOp) /device:GPU:0
-  Variable_27/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_27/Assign (AssignVariableOp) /device:GPU:0
-  Variable_27/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_13/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039826: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_28 (VarHandleOp) /device:GPU:0
-  Variable_28/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_28/Assign (AssignVariableOp) /device:GPU:0
-  Variable_28/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_14/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039864: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_29 (VarHandleOp) /device:GPU:0
-  Variable_29/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_29/Assign (AssignVariableOp) /device:GPU:0
-  Variable_29/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_14/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039901: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_30 (VarHandleOp) /device:GPU:0
-  Variable_30/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_30/Assign (AssignVariableOp) /device:GPU:0
-  Variable_30/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_15/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039947: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_31 (VarHandleOp) /device:GPU:0
-  Variable_31/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_31/Assign (AssignVariableOp) /device:GPU:0
-  Variable_31/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_15/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.039985: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_32 (VarHandleOp) /device:GPU:0
-  Variable_32/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_32/Assign (AssignVariableOp) /device:GPU:0
-  Variable_32/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_16/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040023: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_33 (VarHandleOp) /device:GPU:0
-  Variable_33/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_33/Assign (AssignVariableOp) /device:GPU:0
-  Variable_33/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_16/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040060: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_34 (VarHandleOp) /device:GPU:0
-  Variable_34/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_34/Assign (AssignVariableOp) /device:GPU:0
-  Variable_34/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_17/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040105: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_35 (VarHandleOp) /device:GPU:0
-  Variable_35/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_35/Assign (AssignVariableOp) /device:GPU:0
-  Variable_35/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_17/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040143: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_36 (VarHandleOp) /device:GPU:0
-  Variable_36/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_36/Assign (AssignVariableOp) /device:GPU:0
-  Variable_36/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_18/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040180: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_37 (VarHandleOp) /device:GPU:0
-  Variable_37/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_37/Assign (AssignVariableOp) /device:GPU:0
-  Variable_37/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_18/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040226: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_38 (VarHandleOp) /device:GPU:0
-  Variable_38/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_38/Assign (AssignVariableOp) /device:GPU:0
-  Variable_38/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_19/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040264: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_39 (VarHandleOp) /device:GPU:0
-  Variable_39/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_39/Assign (AssignVariableOp) /device:GPU:0
-  Variable_39/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_19/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040300: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_40 (VarHandleOp) /device:GPU:0
-  Variable_40/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_40/Assign (AssignVariableOp) /device:GPU:0
-  Variable_40/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_20/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040338: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_41 (VarHandleOp) /device:GPU:0
-  Variable_41/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_41/Assign (AssignVariableOp) /device:GPU:0
-  Variable_41/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_20/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040383: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_42 (VarHandleOp) /device:GPU:0
-  Variable_42/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_42/Assign (AssignVariableOp) /device:GPU:0
-  Variable_42/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_21/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040421: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_43 (VarHandleOp) /device:GPU:0
-  Variable_43/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_43/Assign (AssignVariableOp) /device:GPU:0
-  Variable_43/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_21/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040501: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_44 (VarHandleOp) /device:GPU:0
-  Variable_44/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_44/Assign (AssignVariableOp) /device:GPU:0
-  Variable_44/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_22/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040547: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_45 (VarHandleOp) /device:GPU:0
-  Variable_45/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_45/Assign (AssignVariableOp) /device:GPU:0
-  Variable_45/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_22/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040584: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_46 (VarHandleOp) /device:GPU:0
-  Variable_46/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_46/Assign (AssignVariableOp) /device:GPU:0
-  Variable_46/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_23/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040622: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_47 (VarHandleOp) /device:GPU:0
-  Variable_47/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_47/Assign (AssignVariableOp) /device:GPU:0
-  Variable_47/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_23/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040659: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_48 (VarHandleOp) /device:GPU:0
-  Variable_48/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_48/Assign (AssignVariableOp) /device:GPU:0
-  Variable_48/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  MatMul_24/ReadVariableOp (ReadVariableOp) 
-
-2024-07-25 16:30:46.040703: W tensorflow/core/common_runtime/colocation_graph.cc:1213] Failed to place the graph without changing the devices of some resources. Some of the operations (that had to be colocated with resource generating operations) are not supported on the resources' devices. Current candidate devices are [
-  /job:localhost/replica:0/task:0/device:CPU:0].
-See below for details of this colocation group:
-Colocation Debug Info:
-Colocation group had the following types and supported devices: 
-Root Member(assigned_device_name_index_=-1 requested_device_name_='/device:GPU:0' assigned_device_name_='' resource_device_name_='/device:GPU:0' supported_device_types_=[CPU] possible_devices_=[]
-AssignVariableOp: CPU 
-ReadVariableOp: CPU 
-VarIsInitializedOp: CPU 
-VarHandleOp: CPU 
-
-Colocation members, user-requested devices, and framework assigned devices, if any:
-  Variable_49 (VarHandleOp) /device:GPU:0
-  Variable_49/IsInitialized/VarIsInitializedOp (VarIsInitializedOp) /device:GPU:0
-  Variable_49/Assign (AssignVariableOp) /device:GPU:0
-  Variable_49/Read/ReadVariableOp (ReadVariableOp) /device:GPU:0
-  add_24/ReadVariableOp (ReadVariableOp) 
-
-WARNING:tensorflow:From /home/yeunglab/.local/lib/python3.8/site-packages/tensorflow/python/training/adagrad.py:138: calling Constant.__init__ (from tensorflow.python.ops.init_ops) with dtype is deprecated and will be removed in a future version.
-Instructions for updating:
-Call initializer instance with the dtype argument instead of passing it to the constructor
-2024-07-25 16:30:46.635295: W tensorflow/c/c_api.cc:304] Operation '{name:'Variable_49/Assign' id:611 op device:{requested: '/device:GPU:0', assigned: ''} def:{{{node Variable_49/Assign}} = AssignVariableOp[_has_manual_control_dependencies=true, dtype=DT_FLOAT, validate_shape=false, _device="/device:GPU:0"](Variable_49, truncated_normal_49)}}' was changed by setting attribute after it was run by a session. This mutation will have no effect, and will trigger an error in the future. Either don't modify nodes after running them or create a new session.
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-(8, 12, 361)
-(360,)
-listed fold change data shape: (96, 360)
-n_depth: 22
-n_depth: 3
- step 1 , validation error 4.2385
- step 1 , test error 3.91368
- Reconstruction Loss: 0.95835465
- Embedding Loss: 2.8763814
- step 1000 , validation error 0.200503
- step 1000 , test error 0.167159
- Reconstruction Loss: 0.0999634
- Embedding Loss: 0.04046519
- step 2000 , validation error 0.176737
- step 2000 , test error 0.151743
- Reconstruction Loss: 0.07997131
- Embedding Loss: 0.0369013
- step 3000 , validation error 0.151242
- step 3000 , test error 0.135559
- Reconstruction Loss: 0.07036862
- Embedding Loss: 0.023929773
- step 4000 , validation error 0.129844
- step 4000 , test error 0.128122
- Reconstruction Loss: 0.07235652
- Embedding Loss: 0.026324378
- step 5000 , validation error 0.123588
- step 5000 , test error 0.107182
- Reconstruction Loss: 0.057282362
- Embedding Loss: 0.022170242
- step 6000 , validation error 0.114337
- step 6000 , test error 0.10448
- Reconstruction Loss: 0.06070489
- Embedding Loss: 0.02203982
- step 7000 , validation error 0.106022
- step 7000 , test error 0.105136
- Reconstruction Loss: 0.044955812
- Embedding Loss: 0.02729395
- step 8000 , validation error 0.0953383
- step 8000 , test error 0.0890718
- Reconstruction Loss: 0.04138863
- Embedding Loss: 0.024101283
- step 9000 , validation error 0.0881873
- step 9000 , test error 0.107816
- Reconstruction Loss: 0.06512954
- Embedding Loss: 0.020585572
- step 10000 , validation error 0.0827711
- step 10000 , test error 0.0799056
- Reconstruction Loss: 0.047853325
- Embedding Loss: 0.019046646
- step 11000 , validation error 0.0668723
- step 11000 , test error 0.0595496
- Reconstruction Loss: 0.02942343
- Embedding Loss: 0.018805483
- step 12000 , validation error 0.0601832
- step 12000 , test error 0.0529034
- Reconstruction Loss: 0.028557641
- Embedding Loss: 0.018366484
- step 13000 , validation error 0.0581015
- step 13000 , test error 0.0478811
- Reconstruction Loss: 0.024061441
- Embedding Loss: 0.017793141
- step 14000 , validation error 0.0563619
- step 14000 , test error 0.0576652
- Reconstruction Loss: 0.026978562
- Embedding Loss: 0.019476602
- step 15000 , validation error 0.0530802
- step 15000 , test error 0.0514034
- Reconstruction Loss: 0.024650734
- Embedding Loss: 0.020578299
- step 16000 , validation error 0.0491221
- step 16000 , test error 0.0463545
- Reconstruction Loss: 0.024361035
- Embedding Loss: 0.017019896
- step 17000 , validation error 0.0670097
- step 17000 , test error 0.049985
- Reconstruction Loss: 0.023249898
- Embedding Loss: 0.01889503
- step 18000 , validation error 0.0479026
- step 18000 , test error 0.0398666
- Reconstruction Loss: 0.021547224
- Embedding Loss: 0.017011123
- step 19000 , validation error 0.050263
- step 19000 , test error 0.0431124
- Reconstruction Loss: 0.020628491
- Embedding Loss: 0.018255558
- step 20000 , validation error 0.0441392
- step 20000 , test error 0.0437697
- Reconstruction Loss: 0.020387996
- Embedding Loss: 0.016643297
- step 21000 , validation error 0.0450833
- step 21000 , test error 0.040421
- Reconstruction Loss: 0.020589072
- Embedding Loss: 0.016087977
- step 22000 , validation error 0.0451082
- step 22000 , test error 0.0397908
- Reconstruction Loss: 0.017227085
- Embedding Loss: 0.016278025
- step 23000 , validation error 0.0511003
- step 23000 , test error 0.0386142
- Reconstruction Loss: 0.020302719
- Embedding Loss: 0.016121643
- step 24000 , validation error 0.0407113
- step 24000 , test error 0.0375022
- Reconstruction Loss: 0.015903035
- Embedding Loss: 0.015720503
- step 25000 , validation error 0.0374015
- step 25000 , test error 0.0400976
- Reconstruction Loss: 0.015344802
- Embedding Loss: 0.016789144
- step 26000 , validation error 0.0416587
- step 26000 , test error 0.0358486
- Reconstruction Loss: 0.016384942
- Embedding Loss: 0.016763844
- step 27000 , validation error 0.0418257
- step 27000 , test error 0.0392323
- Reconstruction Loss: 0.015294139
- Embedding Loss: 0.01544736
- step 28000 , validation error 0.0421201
- step 28000 , test error 0.0403679
- Reconstruction Loss: 0.019352151
- Embedding Loss: 0.015268998
- step 29000 , validation error 0.045057
- step 29000 , test error 0.0418863
- Reconstruction Loss: 0.018471593
- Embedding Loss: 0.016326163
- step 30000 , validation error 0.0377242
- step 30000 , test error 0.0387917
- Reconstruction Loss: 0.015755188
- Embedding Loss: 0.015285783
- step 31000 , validation error 0.0411874
- step 31000 , test error 0.0328772
- Reconstruction Loss: 0.016953217
- Embedding Loss: 0.014869891
- step 32000 , validation error 0.0413997
- step 32000 , test error 0.0323159
- Reconstruction Loss: 0.01223661
- Embedding Loss: 0.0147571955
- step 33000 , validation error 0.0503796
- step 33000 , test error 0.0349383
- Reconstruction Loss: 0.01872292
- Embedding Loss: 0.014999049
- step 34000 , validation error 0.0312331
- step 34000 , test error 0.0295572
- Reconstruction Loss: 0.01230968
- Embedding Loss: 0.014256177
- step 35000 , validation error 0.0380824
- step 35000 , test error 0.0350711
- Reconstruction Loss: 0.012724765
- Embedding Loss: 0.014489827
- step 36000 , validation error 0.0389107
- step 36000 , test error 0.0352351
- Reconstruction Loss: 0.016629139
- Embedding Loss: 0.014310953
- step 37000 , validation error 0.0359772
- step 37000 , test error 0.0294903
- Reconstruction Loss: 0.012179815
- Embedding Loss: 0.014566854
- step 38000 , validation error 0.0343265
- step 38000 , test error 0.0295448
- Reconstruction Loss: 0.011387429
- Embedding Loss: 0.015301847
- step 39000 , validation error 0.0389119
- step 39000 , test error 0.0281885
- Reconstruction Loss: 0.0115708625
- Embedding Loss: 0.014154675
- step 40000 , validation error 0.0430163
- step 40000 , test error 0.0345027
- Reconstruction Loss: 0.019206574
- Embedding Loss: 0.014625603
- step 41000 , validation error 0.0348788
- step 41000 , test error 0.0295885
- Reconstruction Loss: 0.012916268
- Embedding Loss: 0.013945006
- step 42000 , validation error 0.0334985
- step 42000 , test error 0.0288085
- Reconstruction Loss: 0.011951624
- Embedding Loss: 0.014078938
- step 43000 , validation error 0.0327388
- step 43000 , test error 0.030027
- Reconstruction Loss: 0.012497467
- Embedding Loss: 0.014601814
- step 44000 , validation error 0.0334256
- step 44000 , test error 0.0292194
- Reconstruction Loss: 0.01096875
- Embedding Loss: 0.013860361
- step 45000 , validation error 0.0312615
- step 45000 , test error 0.0301385
- Reconstruction Loss: 0.010517655
- Embedding Loss: 0.013710091
- step 46000 , validation error 0.0304595
- step 46000 , test error 0.0260236
- Reconstruction Loss: 0.010652998
- Embedding Loss: 0.013808487
- step 47000 , validation error 0.0327632
- step 47000 , test error 0.0278319
- Reconstruction Loss: 0.0091949105
- Embedding Loss: 0.014452202
- step 48000 , validation error 0.0295756
- step 48000 , test error 0.0285968
- Reconstruction Loss: 0.009863113
- Embedding Loss: 0.0142570445
- step 49000 , validation error 0.0271264
- step 49000 , test error 0.0262953
- Reconstruction Loss: 0.0085386885
- Embedding Loss: 0.013569611
- step 50000 , validation error 0.0336715
- step 50000 , test error 0.0257572
- Reconstruction Loss: 0.009653226
- Embedding Loss: 0.01381627
-Predicted:'TTGATCTCCT
-Ground Truth:'TTGATCTCCT'
-
-
-Predicted:'TTTCATTGTT
-Ground Truth:'TTTCATTGTT'
-
-
-Predicted:'AAAATTGCTT
-Ground Truth:'AAAATTGCTT'
-
-
-Predicted:'TCAGTACGAA
-Ground Truth:'TCAGTACGAA'
-
-
-Predicted:'AAGATGTTTC
-Ground Truth:'AAGATGTTTC'
-
-
-Predicted:'GCATGATTAA
-Ground Truth:'GCATGATTAA'
-
-
-Predicted:'CCTCCCCTGC
-Ground Truth:'CCTCCCCTGC'
-
-
-Predicted:'TTAGAAACCC
-Ground Truth:'TTAGAAACCC'
-
-
-Predicted:'AAGCTCCATT
-Ground Truth:'AAGCTCCATT'
-
-
-Predicted:'CCAGTGAAAA
-Ground Truth:'CCAGTGAAAA'
-
-
-Predicted:'GAACAACGCC
-Ground Truth:'GAACAACGCC'
-
-
-Predicted:'CAGGATGGGA
-Ground Truth:'CAGGATGGGA'
-
-
-Predicted:'AGCTCGACCA
-Ground Truth:'AGCTCGACCA'
-
-
-Predicted:'CGCCGTCCAG
-Ground Truth:'CGCCGTCCAG'
-
-
-Predicted:'GTTTACGTCG
-Ground Truth:'GTTTACGTCG'
-
-
-Predicted:'TTGTGGCCGT
-Ground Truth:'TTGTGGCCGT'
-
-
-Predicted:'CGCTGAACTT
-Ground Truth:'CGCTGAACTT'
-
-
-Predicted:'GCCGGACACG
-Ground Truth:'GCCGGACACG'
-
-
-Predicted:'TCGCCCTCGC
-Ground Truth:'TCGCCCTCGC'
-
-
-Predicted:'CATCGCCCTC
-Ground Truth:'CATCGCCCTC'
-
-
-Predicted:'GTAGGTGGCA
-Ground Truth:'GTAGGTGGCA'
-
-
-Predicted:'AGCTTGCCGT
-Ground Truth:'AGCTTGCCGT'
-
-
-Predicted:'TCAGGGTCAG
-Ground Truth:'TCAGGGTCAG'
-
-
-Predicted:'GATGAACTTC
-Ground Truth:'GATGAACTTC'
-
-
-Predicted:'GTGGTGCAGA
-Ground Truth:'GTGGTGCAGA'
-
-
-Predicted:'GCTTGCCGGT
-Ground Truth:'GCTTGCCGGT'
-
-
-Predicted:'CACGGGCAGC
-Ground Truth:'CACGGGCAGC'
-
-
-Predicted:'GGCCAGGGCA
-Ground Truth:'GGCCAGGGCA'
-
-
-Predicted:'CGAGGGTGGG
-Ground Truth:'CGAGGGTGGG'
-
-
-Predicted:'GGTGGTCACG
-Ground Truth:'GGTGGTCACG'
-
-
-Predicted:'TAGGTCAGGG
-Ground Truth:'TAGGTCAGGG'
-
-
-Predicted:'GCACGCCGTA
-Ground Truth:'GCACGCCGTA'
-
-
-Predicted:'GAAGCACTGC
-Ground Truth:'GAAGCACTGC'
-
-
-Predicted:'TAGCGGCTGA
-Ground Truth:'TAGCGGCTGA'
-
-
-Predicted:'GGTCGGGGTA
-Ground Truth:'GGTCGGGGTA'
-
-
-Predicted:'CTTCATGTGG
-Ground Truth:'CTTCATGTGG'
-
-
-Predicted:'TCGTGCTGCT
-Ground Truth:'TCGTGCTGCT'
-
-
-Predicted:'TGAAGAAGTC
-Ground Truth:'TGAAGAAGTC'
-
-
-Predicted:'GGCGGACTTG
-Ground Truth:'GGCGGACTTG'
-
-
-Predicted:'TCGGGCATGG
-Ground Truth:'TCGGGCATGG'
-
-
-Predicted:'CGTAGCCTTC
-Ground Truth:'CGTAGCCTTC'
-
-
-Predicted:'CTCCTGGACG
-Ground Truth:'CTCCTGGACG'
-
-
-Predicted:'ATGGTGCGCT
-Ground Truth:'ATGGTGCGCT'
-
-
-Predicted:'TGAAGAAGAT
-Ground Truth:'TGAAGAAGAT'
-
-
-Predicted:'GTCGTCCTTG
-Ground Truth:'GTCGTCCTTG'
-
-
-Predicted:'TAGTTGCCGT
-Ground Truth:'TAGTTGCCGT'
-
-
-Predicted:'GGGTCTTGTA
-Ground Truth:'GGGTCTTGTA'
-
-
-Predicted:'CTCGGCGCGG
-Ground Truth:'CTCGGCGCGG'
-
-
-Predicted:'AACTTCACCT
-Ground Truth:'AACTTCACCT'
-
-
-Predicted:'CGCCCTCGAA
-Ground Truth:'CGCCCTCGAA'
-
-
-Predicted:'CAGGGTGTCG
-Ground Truth:'CAGGGTGTCG'
-
-
-Predicted:'CGGTTCACCA
-Ground Truth:'CGGTTCACCA'
-
-
-Predicted:'GCTCGATGCG
-Ground Truth:'GCTCGATGCG'
-
-
-Predicted:'GCCCTTCAGC
-Ground Truth:'GCCCTTCAGC'
-
-
-Predicted:'AAGTCGATGC
-Ground Truth:'AAGTCGATGC'
-
-
-Predicted:'CCTCCTTGAA
-Ground Truth:'CCTCCTTGAA'
-
-
-Predicted:'GTTGCCGTCC
-Ground Truth:'GTTGCCGTCC'
-
-
-Predicted:'CCCAGGATGT
-Ground Truth:'CCCAGGATGT'
-
-
-Predicted:'GCTTGTGCCC
-Ground Truth:'GCTTGTGCCC'
-
-
-Predicted:'GTACTCCAGC
-Ground Truth:'GTACTCCAGC'
-
-
-Predicted:'TTGTAGTTGT
-Ground Truth:'TTGTAGTTGT'
-
-
-Predicted:'TGTGGCTGTT
-Ground Truth:'TGTGGCTGTT'
-
-
-Predicted:'ATAGACGTTG
-Ground Truth:'ATAGACGTTG'
-
-
-Predicted:'GCCATGATAT
-Ground Truth:'GCCATGATAT'
-
-
-Predicted:'GCTTGTCGGC
-Ground Truth:'GCTTGTCGGC'
-
-
-Predicted:'GTTCTTCTGC
-Ground Truth:'GTTCTTCTGC'
-
-
-Predicted:'TTGATGCCGT
-Ground Truth:'TTGATGCCGT'
-
-
-Predicted:'AGTTCACCTT
-Ground Truth:'AGTTCACCTT'
-
-
-Predicted:'GATCTTGAAG
-Ground Truth:'GATCTTGAAG'
-
-
-Predicted:'TTGTGGCGGA
-Ground Truth:'TTGTGGCGGA'
-
-
-Predicted:'CCTCGATGTT
-Ground Truth:'CCTCGATGTT'
-
-
-Predicted:'GCTGCCGTCC
-Ground Truth:'GCTGCCGTCC'
-
-
-Predicted:'AGCTGCACGC
-Ground Truth:'AGCTGCACGC'
-
-
-Predicted:'GGTCGGCGAG
-Ground Truth:'GGTCGGCGAG'
-
-
-Predicted:'CTGGTAGTGG
-Ground Truth:'CTGGTAGTGG'
-
-
-Predicted:'GTGTTCTGCT
-Ground Truth:'GTGTTCTGCT'
-
-
-Predicted:'CGATGGGGGT
-Ground Truth:'CGATGGGGGT'
-
-
-Predicted:'GCCGTCGCCG
-Ground Truth:'GCCGTCGCCG'
-
-
-Predicted:'AGCACGGGGC
-Ground Truth:'AGCACGGGGC'
-
-
-Predicted:'CGGGCAGCAG
-Ground Truth:'CGGGCAGCAG'
-
-
-Predicted:'GTGGTTGTCG
-Ground Truth:'GTGGTTGTCG'
-
-
-Predicted:'CTCAGGTAGT
-Ground Truth:'CTCAGGTAGT'
-
-
-Predicted:'ACTGGGTGCT
-Ground Truth:'ACTGGGTGCT'
-
-
-Predicted:'CAGGGCGGAC
-Ground Truth:'CAGGGCGGAC'
-
-
-Predicted:'TCTTTGCTCA
-Ground Truth:'TCTTTGCTCA'
-
-
-Predicted:'CGTTGGGGTC
-Ground Truth:'CGTTGGGGTC'
-
-
-Predicted:'GCGCTTCTCG
-Ground Truth:'GCGCTTCTCG'
-
-
-Predicted:'ATGTGATCGC
-Ground Truth:'ATGTGATCGC'
-
-
-Predicted:'GCAGGACCAT
-Ground Truth:'GCAGGACCAT'
-
-
-Predicted:'GAACTCCAGC
-Ground Truth:'GAACTCCAGC'
-
-
-Predicted:'GCGGTCACGA
-Ground Truth:'GCGGTCACGA'
-
-
-Predicted:'TCCCGGCGGC
-Ground Truth:'TCCCGGCGGC'
-
-
-Predicted:'TCATTAGATC
-Ground Truth:'TCATTAGATC'
-
-
-Predicted:'CTGAAAGTTC
-Ground Truth:'CTGAAAGTTC'
-
-
-Predicted:'TTTTTTGGCT
-Ground Truth:'TTTTTTGGCT'
-
-
-Predicted:'GTCTTAAGTT
-Ground Truth:'GTCTTAAGTT'
-
-
-PCA Explained Variance Ratio: array([0.10727545, 0.10215449, 0.09311286], dtype=float32)
-PCA Singular Values: array([4.0760174, 3.9775405, 3.7974381], dtype=float32)
-[[0.48967972]
- [0.66449318]
- [0.62477396]
- [0.57653631]
- [0.80774615]
- [0.68183095]
- [0.75487115]
- [0.79132231]
- [0.64261632]
- [0.8319725 ]
- [1.01947149]
- [0.97297297]
- [0.70153061]
- [0.69923971]
- [0.75194918]
- [0.69257642]
- [0.74842045]
- [0.99758065]
- [0.89776119]
- [0.62517289]
- [0.84022556]
- [0.91471215]
- [0.88119658]
- [0.99339389]
- [0.79677309]
- [1.00140252]
- [0.84430052]
- [0.87745267]
- [0.75186787]
- [0.72773279]
- [0.86952931]
- [0.84638256]
- [0.96209913]
- [0.7253886 ]
- [1.13907285]
- [0.94646098]
- [0.68170878]
- [0.75714803]
- [0.99369266]
- [0.79386571]
- [0.71204657]
- [1.12708333]
- [0.94161454]
- [0.82415254]
- [0.76586742]
- [1.01751592]
- [0.80012571]
- [1.05286783]
- [0.77489177]
- [0.85014925]
- [0.7957958 ]
- [1.11779449]
- [0.96035242]
- [1.01086957]
- [1.05012853]
- [0.90761905]
- [1.22179732]
- [1.14285714]
- [1.34018265]
- [1.13733906]
- [0.75261116]
- [0.73387097]
- [0.71372205]
- [0.75538821]
- [0.73289183]
- [0.69176052]
- [0.72590883]
- [0.77142857]
- [0.8692053 ]
- [0.86188437]
- [0.97775629]
- [0.84889148]
- [0.83516484]
- [0.8804169 ]
- [0.79434311]
- [0.89006623]
- [0.97163121]
- [0.80230548]
- [0.92955169]
- [0.90152403]
- [0.86868687]
- [0.98571429]
- [1.        ]
- [0.94285714]
- [0.93333333]
- [0.91855524]
- [0.86734694]
- [0.80769231]
- [1.17094017]
- [1.04580153]
- [1.05645161]
- [1.02325581]
- [0.91428571]
- [0.79268293]
- [0.80769231]
- [1.01333333]]

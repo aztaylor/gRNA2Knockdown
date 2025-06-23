@@ -1,0 +1,312 @@
+\documentclass[times]{zHenriquesLab-StyleBioRxiv}
+\usepackage{blindtext}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{multicol}
+
+
+\leadauthor{Taylor} 
+
+\title{Genetic Control in \textit{E. coli} Leveraging Auto-encoder Based crRNA Design and CRISPR-Cas13d.} 
+\shorttitle{dCasRx}
+
+\author[1\Letter]{Aleczander Taylor}
+\author[3]{Claire Kuykendall}
+\author[2,3]{Michael Zheng}
+\author[1]{Jennifer Smith}
+\author[4]{Robert Egbert}
+\author[1]{Enoch Yeung}
+
+\affil[1]{University of California Santa Barbara, Department of Mechanical Engineering}
+\affil[2]{University of California Santa Barbara, Department of Statistics and Applied Probability}
+\affil[3]{University of California Santa Barbara, Department of Molecular, Cellular, and Developmental Biology}
+\affil[4]{Pacific Northwest National Laboratory}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract} 
+Type VI CRISPR-Cas proteins are a family of RNA-guided RNA targeting CRISPR effectors inherent in the prokaryotic viral immune response. Using a simple CRISPR RNA (crRNA), cas13 specifically binds and cleaves target mRNA while also degrading bystander RNA. Although casRx-mediated knockdown has been extensively studied in various organisms, it often causes toxicity in prokaryotes and demonstrates limited efficacy. Here, we investigate the potential of catalytically inactive cas13d from \textit{Ruminococcus flavefaciens} (dCasRx) to achieve precise phenotypic control.  Our goal was to engineer a system for fine-tuned translational regulation within \textit{Escherichia coli}. We show that dCasRx induces reduced growth defects compared to active casRx and dCas9. Remarkably, dCasRx affects gene expression in a location-dependent manner, enabling both up-regulation and down-regulation of genes based on the target protospacer. To evaluate dCasRx's capacity for chromosomal DNA manipulation and growth control, we targeted DNA gyrase, an enzyme that alleviates positive supercoiling in double-stranded DNA. We hypothesized that inhibiting the resolution of the DNA torsional tension would impair growth; however, knockdown of specific regions within the gyrA transcript led to enhanced stationary phase growth. To differentiate the effects of dCasRx knockdown from chemical gyrase inhibition, which is a common mechanism in antibiotic treatments, we analyzed transcriptional responses under each condition. The expression profiles revealed minimal overlap between the two. Finally, we developed a novel deep learning model to predict how specific dCasRx-gRNA effectors influence phenotypes. The model embeds gRNA sequences into a lower-dimensional latent space, which achieves perfect reconstruction, and feeds the latent representation to a feed forward network to predict time-series expression. As an implementation of few-shot learning, the model performs well on smaller datasets, making it practical for small-scale experiments. Together, the results of this study show that dCasRx can be an effective and diverse way of controlling gene expression, which can be predicted by modern machine learning methods, providing an alternative platform to traditional CRISPRi and RNA interference.
+\end{abstract}
+
+\begin{keywords}
+CRISPR | Cas13 | Gyrase | DNA supercoiling | E. coli | Biological control
+\end{keywords}
+
+\begin{corrauthor}
+aztaylor \at ucsb.edu
+\end{corrauthor}
+
+\section*{Introduction}
+
+CRISPR-Cas-based systems have become a revolutionary and widespread tool for gene editing and control. They have become ubiquitous within the systems and synthetic biology community due to the simplicity of their design of target elements and the ease of implementation\textsuperscript{\cite{evers_crispr_2016, hillary_review_2023}}. The structure of the CRISPR array and its role in the bacterial and archaean immune response have been well characterized\textsuperscript{\cite{Ishino:1987aa, Mojica1993, Marraffini2010, Koon_Markarova2013, Barragou_Marraffini2014}}, and native and engineered versions of CRISPR-associated proteins (Cas) as genetic editing tools have ushered in a new era of molecular biology\textsuperscript{\cite{DoudnaCharpentier2014, Jinek2012, KONERMANN2018665}}. 
+Several CRISPR-cas-based systems have been deployed in both prokaryotic\textsuperscript{\cite{{DoudnaCharpentier2014, Jinek2012}}} and eukaryotic cells\textsuperscript{\cite{Cong2013}}. 
+Our work focuses on class 2 type-VI Cas effectors, namely the Cas13 family of riboendonucleases. Cas13-based systems differentiate themselves from other Cas proteins with their characteristic ability to target RNA. Due to significant over-representation of transcripts to genes, we postulated that translational knockdown of gene expression would allow for fine-tuned control of phenotypic traits. 
+
+Cas13 stands out among other CRISPR-Cas systems in part due to its two higher eukaryotic and prokaryotic nucleotide binding domains (HEPNs)\textsuperscript{\cite{SHMAKOV2015385, Abudayyeh2016}}, a characteristic commonly present within riboendonucleases (RNases)\textsuperscript{\cite{{Anantharaman2013}}}, suggesting its role as an RNA-based immunological system in prokaryotic. The first HEPN domain is responsible for the processing of pre-CRISPR RNAs (pre-gRNAs) into mature and functional gRNAs\textsuperscript{\cite{Abudayyeh2016}}. Individual HEPN domains have been shown to form two distinct functions in Cas13a (formally C2c2). The first HEPN domain is responsible for the processing of pre-CRISPR (pregRNA) RNAs into mature and functional gRNAs. 
+
+\begin{figure*}[t] % Correct placement specifier
+    \centering
+    \includegraphics[width=\linewidth]{Figures/paperFigIv1_Mech_and_plasmids.png}
+    
+    % Ensure absolute positioning mode
+    \caption{
+        \scriptsize A. A cartoon showing the process of translational control using deactivated CRISPR-CasRx. The enzyme first binds to the spacer sequence(gRNA) causing a conformational change. Once in the apo-state the enzyme can bind to the protospacer sequence on a plasmid or the chromosome and block translation. Also represented is the different binding locations associated with the library of gRNA sequences. B. The expression cassette for dCasRx driven by the IPTG inducible placUV5 promoter.  C. A schematic representing the library of plasmids harboring GFP driven by the constitutive pJ23105 promoter and tilled gRNAs driven by the ATC inducible promoter.}
+
+    \label{fig:1}
+\end{figure*}
+
+In contrast, the second HEPN domain is activated once the first HEPN-cRNA complex binds to a target specified by the crRNA,  creating a Cas13 effector that results in cleavage of the target RNA and collateral RNA degradation\textsuperscript{\cite{East-Seletsky:2016aa}}. Abudayyeh et al. showed that due to its preference for single-stranded RNA, the performance of the Cas13 effector is influenced by secondary RNA structures\textsuperscript{\cite{Abudayyeh2016}}. Although secondary structure is key to translational control, we hypothesize that higher-dimensional affects may be instrumental to understanding the mRNA-protein interaction. Therefore, the significance of three-dimensional structural structures may be instrumental in controlling gene expression.\textsuperscript{\cite{Abudayyeh2016}} Collateral RNA targeting acts to eradicate a virally infected prokaryotic cell, with the goal of achieving survivability within the cell colony. The development of catalytically inactive variants of several Cas13 orthologs has resulted in RNA targeting systems completely void of RNAse activity\textsuperscript{\cite{Abudayyeh2016}}.
+
+\begin{figure*}[t!]
+    \centering  
+    \includegraphics[width=1.0\linewidth, scale=0.75]{Figures/paperFigIIv1_Experimental_Hist_Bar.png}
+    \label{fig:2}
+    \caption{A. An illustration of the experimental design used within this study, the strains are grown in LB as overnight cultures, passaged to M9CA, recovered, and run in a plate reader. The different wells represent different concentrations of IPTG to induce CasRx. B. The difference in fluorescence between either the 1mM (red) or 10mM (gray) induced conditions and the 0mM un-induced case at 7.5 hours. The x-axis corresponds to the location across the expression cassette, from the RBS to the terminator. C. A comparison of the distributions of the 0mM – 1mM case (red) and the 0mM – 10mM case (gray).}
+\end{figure*}
+
+Significantly, this allows for control of the expression of single gene transcripts within a polycistronic operon without toxic, indiscriminate RNAse activity. Compared to other CRISPR systems, these enzymes do not require additional pre-crRNA processing enzymes as in the case of other class 2 cas enzymes such as natural Cas9 systems with tracrRNA (a component no longer required due to the invention of single guide RNAs (sgRNAs\textsuperscript{\cite{DoudnaCharpentier2014}}.
+
+%Above sentence could be broken into 2 or shortend. 
+Cas13 proteins also exhibit a smaller genetic footprint \(930 AA, ~2.8Kb\), allowing higher-fidelity cloning and packaging, which is especially useful for higher-order organisms such as plants and mammals.
+
+%Maybe move this above sentence above when describing benefits of cas13
+% Thesis exxplanation and reference back High level to technical to high level run on sentence. 
+In this work, we established a gene regulation framework using a catalytically inactive Cas13d derived from {\it Rumminococcus flavefaciens} (deactivated rfxCas13d or dCasRx) in {\it E. coli}. 
+%Maybe reference in this sentence because of the unqiue properties for cas13 is why it's a good candidate for gene regulation. 
+
+dCasRx was chosen due to the lack of requirements for the protospacer flanking sequence (PFS) and because its catalytically active version exhibits robust and effective RNA knockdown (>0.9)\textsuperscript{\cite{KONERMANN2018665}} in human cells. Previous studies have attempted translational knockdown of fluorescent markers within prokaryotic cells using active CasRx, but relied on low copy number vectors to bypass toxicity and achieved limited knockdown capability\textsuperscript{\cite{Chuang2021}}. Here we first optimize the knockdown potential by developing a machine learning platform to optimize the design of sgRNA, and use dCasRx with medium and high copy number plasmids to influence the growth and marker protein in the E. coli K12 substrain {\it. MG1655z1}.
+
+To demonstrate the effectiveness of our system, we chose to target enzymes that regulate the tertiary structure of chromosomal and plasmid-based DNA, thus influencing multiple genes at once.
+% too short  needs better flow
+This is to show that by selecting sequence-specific mRNAs, we can control cell proliferation.
+
+Gyrase was chosen because of its direct influence on DNA supercoiling.
+% not flowing because of (maybe should. more specific about other peoples work and why it doesnt work one paragraph at the end that says wour plan 
+%Maybe more directly say one mechanism to do this is
+DNA supercoiling is a phenomenon in which genetic material develops a tertiary structure as a consequence of the actions of enzymes associated with the genome, such as RNA polymerase (RNAP) or DNA polymerase (DNAP)\textsuperscript{\cite{Cozzarelli1980}}.
+%Target housekeeping gene
+the relaxed state and within the absence of DNA active molecules, double-stranded DNA conforms to a state determined by entropic forces. When a DNA active enzyme is introduced, torsional strain is introduced, resulting in positive (clockwise, using the left-hand rule) and negative (counterclockwise) supercoils. 
+
+Since mRNA is polymerized by RNAP, a process that causes positive super-coiling downstream and negative super-coiling upstream of the transcription bubble \cite{RAHMOUNI1992131}, we chose this mechanism as a secondary control mechanism for global transcriptional state to prove the viability of control at the chromosomal level. A ubiquitous Type II topoisomerase in bacteria, Gyrase, acts on regions upstream of the transcription bubble to induce negative supercoiling and relax transcription, inhibit positive supercoils and control gene expression rates. Thus, it was chosen as a target to prove that endogenous genes can be controlled using our system. %need referenece%
+ 
+%Sentence could be worded more succintly above
+Specifically, gyrase is composed of two subunits, gyrA, which binds DNA using a WHD domain and contorts it to the proper conformation once it is cleaved, and gyrB, which contains a TOPRIM domain responsible for cleaving and rejoining dsDNA through ATP hydrolysis. The conformational change introduced by this reaction is transduced to the TOPRIM domain as well as multiple domains within the A subunit to unwind the strands. With the intent to create a controlled cell-wide reduction in transcription, we targeted gyrase using dCasRx. Our hypothesis was that by suppressing Gyrase translation, we can introduce a genome-wide reduction in transcription and control growth defects without introducing unintended knockdowns.
+
+ In this work, we explore the knockdown potential of these systems.  We compare the toxicity of dCasRx with CasRx and dCas9, and test multiple spacers targeting both plasmid-based GFP and chromosomal {\it gyrA} and {\it gyrB} to evaluate the validity of our hypothesis. Due to the complexity in gRNA design arising from potential factors such as mRNA secondary and tertiary structure, we developed a deep learning model and trained a deep learning model on an extensive library of gRNA to discover the optimal gRNA for the specific goals of an experimentalist. These experiments and models show that our approach is effective in down-regulating and up-regulating gene expression.
+ 
+\section*{Deactivated CasRx Shows Less Toxicity than Active CasRx and dCas9.}
+ DNA targeting Cas proteins such as Cas9 and Cas12a have been used for gene knockdown within cells, tpyically with  . Here we propose that in order to create a better genetic control system, mRNA based Cas proteins may provide advantages over these enzymes. The rational being that mRNA is considerably more abundant within cells and therefore provides an advantage in terms of dynamic range. Additionally the lower genetic foot print of CasRx negates the negative effects of metabolic burden.
+
+To establish and compare the toxicity of dCasRx to CasRx and dCas9 (two other enzymes that have been used in CRISPRi), we performed growth assays represented in figure \ref{fig:computerNo}a. Overnight cultures were passed and their OD$_{600}$ and fluorescence curves were quantified with time-series plate reader experiments. The strains used carried two essential plasmids. The first expressed one of CasRx, dCasRx, or dCas9 driven by the lacUV5 promoter and the BCD17\textsuperscript{\cite{Mutalik:2013aa}} ribosome binding site (RBS). The other construct expressed GFP driven by promoter pJ23105, BCD5 \textsuperscript{\cite{Mutalik:2013aa}} and a in-house gRNA expression cassette containing the appropriate direct repeat (DR) and a variable spacer which was driven by the Tet promoter (biobricks part BBaR0040). The two plasmid system for dCasRx is shown in figure \ref{fig:computerNo}b, while the other constructs take similar but different forms related to the requirements of their effector proteins.
+
+To evaluate the toxicity of the three Cas enzymes above, we transformed each into {\it E. coli K12 MG1655z1}, where z1 indicates the genotype F-, lambda-, rph-1, laciq, PN25-, tetR, SpR, to produce constitutive levels of TetR, LacI, and AraC\textsuperscript{\cite{Sekar:2016aa}}. The gRNA plasmids introduced to each of these contained a spacer targeting the same region of the GFP coding sequence (CDS). Both plasmids were induced with 100 ng/$\mu$l of anhydrotetracycline (aTc) and variable concentrations of isopropyl $\beta$-D-1-thiogalactopyranoside (IPTG), see the legend of figure\ref{fig:computerNo} for the specific concentrations. As expected, CasRx exhibited significantly larger growth defects in the presence of IPTG concentrations greater than zero $\mu$M due to the collateral damage introduced by its HEPN domain activation. dCas9 exhibited no growth defects at lower IPTG concentrations, but a decrease in stationary phase cell density at higher concentration. The negative control and dCasRx strains showed little to no growth defect at even the highest IPTG concentrations. One point to note is the increase in variance with the dCasRx strains, a point which is explored in the discussion.
+
+
+\section*{dCasRx Knocks Down GFP Expression in a Location Dependent Manner.}
+In order to assess the effect protospacer/gRNA location has on dCasRx knockdown, a library of 83 tiled GFP targeting spacers were introduced to {\it E.coli MG1655z1} using the system described in figure \ref{fig:computerNo} B. Induction of placUV5 was achieved using 0mM, 1mM, and 10mM working concentrations of IPTG, while pTet was induced with 100ng/$\mu$l of aTc. The time series experiments were conducted in triplicate using a plate reader over an 18-hour period to monitor growth and fluorescence levels as shown in supplementary figure \ref{supfig:1}. These data show that the knockdown effect of dCasRx varies in a sequence-spatial manner, where spacers are that upregulated and downregulated are represented. Of note, the most significant effect can be seen between the late logrithmic and early stationary phases. 
+%Think about rewriting above sentence more directly
+%Consideration of this effect is speculative at this point, and hypothesis regarding such findings will be expanded in the discusion where a biophysical explanation is given and future directions proposed. 
+
+Controlling variation in gene translation with CRISPR systems is an emerging direction.  Traditionally, CRISPRi strategies focus on transcriptional rather than translational control.  Further, there are no explorative dCasRx studies on how varying the position of gRNA-mRNA binding changes the degree of translated mRNA.  Here we present a thorough study of dCasRx regulation of mRNA translation of GFP, with over 84 different gRNA loci. 
+
+We conducted an time-lapse photospectrometry experiment on 84 different gRNA spacers transformed individually in a non-pooled library of strains.  We engineered in non-pooled format so we could study the kinetic response of dCasRx and explore how variations in gRNA locus affected the temporal dynamics of GFP expression.  We found .... 
+
+
+While the explanation of the variability in gene expression potential is not yet understood, there is a clear indication that dCasRx can produce a wider variety of gene expression profiles than other cas proteins, especially when considering it's ability to increase the expression level of both endogenous and exogenous genes. This data is then leveraged to train our neural network, owing to the fact that the interplay between gRNA design and dCasRx effectiveness is complex and thus a non-standard physics based model is not appropriate for prediction based modeling until a further understanding of the mechanisms involved has been achieved. For that reason we developed a novel two model neural network where the first module is an autoencoder and and feed forward neural network. The network is described below and shown in \ref{fig:2}.
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=1.0\linewidth]{Figures/paperFigIIIv1_Traces_Model.png}
+    \caption{Comparison of dCas9, CasRx, and dCasRx containing strains of \textit{E. coli MG1655} against the wildtype. Each strain contains two plasmid, one containing the relevant CAS protein and the other containing the gRNA sequence. dCasRx showed the most consistent lack of toxicity when compared to dCas9 and active CasRx.}
+    \label{fig:dCas9CasRxComp}
+\end{figure*}
+
+%Rewrite above sentence more succintly
+\section*{dCasRx Knockdown of \textit{gyrA} Produces an Increase in Cell Growth.} We next tested our bacterial dCasRx system with spacers targeting the type II topoisomerase {\it gyrase}. As with the GFP targeting library, to evaluate gRNA designed we again created a tiled reverse-complimentary spacer library along the 5' UTR of the chromosomal copy of {it\ gyrase}. We hypothesized that {\it gyrase} knockdown would cause a global decrease in mRNA production due to unresolved torsional strain on the chromosome and result in growth defect. This hypothesis is supported by the know mechanism of several antibiotics (exemplified by the fluoroquinolone class of drugs) which target {\it gyrase}\textsuperscript{\cite{Collin:2011aa}}. Surprisingly, when targeting the A sub-unit of Gyrase {\it gyrA} there was and increase in cell growth and when we targeted the B subunit of the enzyme {\it gyrB} does not produce the same effects as seen in figure\ref{fig:GyraseKnockdown}. In order to understand this phenomenon we investigated the differential gene expression between the Gyrase A knockdown strain and a non targeting negative control using bulk RNA sequencing. As seen in \ref{fig:volcano}, genes were observed that were both significantly up regulated and down regulated. According to our analysis, 94 (41\%) of the differentially expressed genes were significantly down regulated, while 44 (19\%) were significantly up regulated. The remaining 90 (39\%) differently expressed genes were not significant. 
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.9\linewidth]{Figures/GyraseKnockdown2.png}
+    \caption{A. Maximum fold change of the OD normalized GFP fluorescence. The x-axis represents the position of the gRNA based off of the location of the first matching nucleotide, note that the gRNAs are tiled by 8nt with 84 guides being represented. B. The distribution of data shown in A., indicating a mean of decrease in fluorescence. Most gRNAs created a knockdown while some caused increases in fluorescence.}
+    \label{fig:1}
+\end{figure*}
+
+\section*{Deep Learning Approaches to Determining gRNA efficacy}
+In order to capture the complex interplay between gRNA locus choice and knock down ability as exemplified in figure \ref{fig:computerNo}
+we developed a deep learning model consisting off two interdependent architectures. Initially, the model encodes the gRNA sequence using a normalized one hot encoding. This is then transformed using a a random householder function to create a continuous input matrix. Once encoded and randomized, the data is passed through a standard auto-encoder to reduce the dimensionality of the gRNA and expose crucial details in the targeting structures design. Finally, the resulting embedding is passed to a feedforward network to predict the knockdown effect at it's most prominent time (approx 8 hours). This is visualized in  Utilizing this combined approach we are able to achieve a loss of !!
+
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=\linewidth]{Figures/volcanoplot2_grainy.png}
+    \caption{Heat maps showing the Log2(Fold Change) in mRNA of the top 75 most differentially expressed genes for spacer 3 affecting gyrA at 5 hours and 18 hrs. Red indicates strong up regulation of a gene and gray indicates strong down regulation when compared to the un-induced case. B. Comparison of mRNA expression between gyrA spacer 3 effector strains and strains treated with the chemical inhibitor Nofloxacin at concentration of 0.5 to 133 MIC. C. Volcano plot plot comparing the log2(Fold Change) of mRNA expression to the adjusted p-value. Gray indicates significant down regulation, black no significance, and gray up regulation.}
+    \label{fig:volcano}
+\end{figure*}
+
+in the embedding space, thus resulting in a mismatch percentage of 0 as shown in figure \ref{fig:computerNo}c. Additionally, when the embedding space is clustered using principle component analysis (PCA), there is a clear gradient indicating that the lower dimensional space was able to capture  When the latent space representation of the gRNAs was trained against a window of 5 to 15 hours (representing the typical region of max foldchange) of the fluorescence foldchange time series data, the loss was able to achieve a value of approximately 2\% indicating an accuracy of 98\% as shown in Figure \ref{fig:computerNo}b. This shows t that the the network was able to capture the complex interplay between gRNA design and fold-change in GFP expression.
+
+\section*{Discussion}
+Through this series of studies we have shown that CRISPR-rfxCas13d shows less toxicity than other Cas proteins while showing significant dynamic range. By testing a library of gRNAs targeted at tiled loci within a reporter CDS (specifically GFP) we were able to confirm that CasRx shows the potential to both increase and decreases gene expression within gram-negative prokaryotic cells. This proves to be in contrast with other inactive Cas proteins and raises questions about the RNA targeting proteins effect translation. While the mechanism for which this is not yet known, the specifics of this mechanism is speculated in the discussion section, it is an avenue of future studies. Furthermore, the neural network predictive model that we developed has shown the ability to reconstruct gRNA sequences.
+
+\begin{figure*}[ht]
+    \centering  
+    \includegraphics[width=0.8\linewidth, scale=0.5]{Figures/Neural_newwork_diagram_ideaARCH.png}
+    \caption{A. Diagram of the Neural Network Described. An Auto encoder is Utilized to Reduce the Dimensionality of the gRNA Sequences, and the Embedding Space is used to Determine the Fold Change Knock Down within a Specific Region of the Time Series Curves. B. A Graph Showing the Loss Train, Test, and Validation Loss Functions of while Training the Full Network. C. A Bar Chart Showing the Reconstruction Ability of the Auto Encoder. D. A PCA Showing the ability of the network to separate the gRNA Sequences Based of Fold Change}
+    \label{fig:2}
+\end{figure*}
+
+\section*{Methods} 
+\subsection{Strain Preparation}
+All base plasmids used were assembled using NEBridge\copyright\ golden gate assembly, specifically with BsaI-HFv2 Enzyme Master Mix\copyright\ or SapI. The expression cassettes for {\it E. coli} codon-optimized deactivated RfxCas13d and its gRNA expression cassettes were synthesized as gBlocks\copyright\ by Integrated DNA Technologies (IDT). To create the various spacer libraries, annealed oligo cloning such that the resulting golden gate parts contained the same overhangs, allowing for high throughput assembly. The resulting parts were assembled to a prepared broad-host range vector was performed using NEBridge BsaI-HFv2 Master Mix\copyright . Each annealed set of oligos contained a spacer as well as portions of the 30 nt direct repeat and the {\it S. pyrogenes} constructs, the resulting plasmids were sub-cloned in Thermofischer Mach1\copyright\ chemically competent cells. The resulting methylated constructs were isolated using Qiagen's Qiaquick\copyright\ mini-prep kit, sequenced varied using Eurofins Genomic's Sanger Sequencing services, and transformed into {\it E. coli MG1655z1}. Finally, PCR verification was conducted to confirm the presence of the construct in the final strain. 
+
+\subsection{Growth and Fluorescence Assays}
+Growth and fluorescence assays were run in Biotek Synergy H1\copyright\ microplate readers. Cultures of each library member strain were grown overnight in 1.5 ml of LB Miller broth (supplied by Teknova Inc.) (50 {$\mu$}g/ul of kanamycin and 34 {$\mu$}g/ml of chloramphenicol) in 96 deep-well plates at 37\degree\ C and 800 rpm. The cells were then passaged with a 1:100 dilution into M9CA (supplied by Teknova Inc.) (50 {$\mu$}g/ul of Kanamycin and 34 {$\mu$}g/ml of Chloramphenicol) and recovered until they reached an $\text{OD}_{600}$ of approximately 0.5. To compare the growth profiles of dCas9, dCasRx, and CasRx, 96 well glass bottom plates were prepared by 10-fold serial dilution with a max concentration of 10mM IPTG, a minimum concentration of 0mM IPTG, and a final volume of 360 $\mu$L. Each well contained 100ng/$/mu$l of aTc and the appropriate antibiotics for the strain added. Each recovered culture was then diluted in M9CA with antibiotics to a final $\text{OD}_{600}$ of 0.1 and 40 $\mu$L of the resulting solution was added to the pre-made 96 well optical microplates containing 360 ul of M9CA-antibiotic-inducer media, resulting in a working cell OD of 0.01. The plates were run using an 18-hour time-series Gen5\copyright(Biotek) protocol defining a culture temperature of 37C, continuous shaking, and a kinetic loop with fluorescence (Excitation: 480, Emission:510) and absorbance (600nm) readings occurring every 3:00 minutes.\ The GFP library was tested in a similar fashion, however, instead of performing a serial dilution, three optical microplates were prepared with 360$\mu$/L M9CA, 100ng/$\mu$L of aTc, appropriate antibiotics, and 11.1mM, 1.11mM, and 0mM concentrations of IPTG respectively. After passaging and recovering library cultures overnight in 96 well plates, 40 $\mu$ l of each member's culture at $\text{OD}_{600}$ 0.1 was added to the wells of the three optical microplates. The same 18-hour time-series Gen5\copyright(Biotek) protocol was used. 
+
+\subsection{Gyrase Knockdown Differential Expression Experiments.}
+In order to establish that the CasRx system we developed will succeed not only at the plasmid level but also at the genomic level with prokaryotic cells, we tested multiple gRNA designs targeting endogenous {\it gyrase} subunits within {\it E. coli}. 
+Because {\it gyrase} acts as a supercoiling housekeeping gene, we correctly assumed that many of the genes that have responded to {\it gyrase} targeting antibacterial drugs would respond to our genetic treatment. 
+Therefore, to validate this hypothesis we performed RNA sequencing experiments on samples which have be treated with various forms of the proposed system. 
+Specifically, we looked at how {\it E. coli K12 MG1655} would respond to negative control strains, which do not have a known sequence within the aforementioned genome, strains that targeted the {\it gyrA} gene, strains which targeted the {\it gyrB} gene, and wild-type strains.
+To demonstrate the ability of our CRISPR-CasRx system to specifically target individual cell growth, we designed plasmids targeting both {\it(gyrA)} and {\it(gyrB)}, with the hypothesis that the deletion of the essential gyrase gene would create global reduction in RNA production. To do so, cultures of each strain were grown overnight for 16 hours.
+\begin{figure*}[ht!]
+    \centering
+    \includegraphics[width=0.9\linewidth, scale=0.75]{Figures/GyraseKnockdown2.png}
+    \caption{Results of Gyrase Knockdown by dCasRx. A. Knockdown of \textit{gyrA} produces an increase in final OD over an 18 hour plate reader run when compared to dCasRx containing a non-targeting gRNA or the wild type. B. knockdown of \textit{gyrB} did not create the same effect as knockdown of \textit{gyrB}, having a similar profile to the wild-type and non-targeting strains. C. Analysis of differential gene expression in the \textit{gyrA} knockdown strain. The Horizontal line represents a p-value of 0.01 and the two vertical lines represent a +/- foldchange of 1. Gray dots represent significantly downregulated endogenous genes, red represents significantly upregulated endogenous genes, and black dots represent genes that were differentially expressed but not significant.  }
+    \label{fig:GyraseKnockdown}
+\end{figure*}
+\subsection{Model Initiation}
+To initialize the model we first encoded our gRNA sequences using a normalized hot encoding where each nucleotide was as shown in \ref{fig:2}a. This is then transformed using a random Householder matrix to map the encoding into a continuous space input matrix with a determinant of one. The algorithm used to produce the Householder Matrix is described in Supplementary Note 2. Once the matrix was constructed, it was multiplied by the vector of numerically encoded spacers as such
+
+\begin{equation}
+\bar{x}_{ae} = HX_{en}
+\end{equation}
+%Should describe how this helps
+Here $X_{en}$ represents the corpus of gRNAs represented numerically.
+To initialize the weights and biases of the model, we leveraged Xavier Initialization\textsuperscript{\cite{pmlr-v9-glorot10a}}.
+
+\subsection{Model Training}
+In order to train the model, we first developed the loss function:
+
+\begin{equation}
+    \mathcal{L}_{ae} =: \frac{||\bar{x}_{ae}-\bar{p}_{ae}||_2}{||\bar{x}_{ae}||_2}
+\end{equation}
+
+To train the auto-encoder to reduce the dimensionality of our sequence space and then accurately reconstruct them. Next we developed the loss function to take the lower embedded sequences and used the feed-forward network to predict the fold change of the GFP marker. To determine the covariance between the true sequence and the lower-dimensional embedding we used the following loss function:
+
+\begin{equation}
+    \mathcal{L}_{em} =: ||\frac{X_{ae}^TX_{ae}}{||X_{ae}^TX_{ae}||_F}-\frac{X_{e}^TX_{e}}{||X_{e}^TX_{e}||_F}||_F 
+\end{equation}
+
+Finally, we combined the two loss functions to create a total loss function:
+
+\begin{equation}
+    \mathcal{L}_{t} =: \mathcal{L}_{ae}+\mathcal{L}_{em}
+\end{equation}
+
+The regression aspect of this model required another loss function to be developed.
+
+\begin{equation}
+    \mathcal{L}_{r} =: \mathcal{L}_{t} + \lambda \frac{||\bar{x}_{ts}-\bar{p}_{ts}||_2}{||\bar{p}_{ts}||_2}
+\end{equation}
+
+Where $\lambda$ is the hyperparameter which was used to determine the contribution of each loss function to the total loss as training proceeded. As the total embedding loss reaches a minimum, the optimizer would then focus on the regression loss. The remaining variables are described in \ref{table:1} To train the model we relied on adaptive gradient descent (AdaGrad) with Python's TensorFlow module.
+
+\begin{table}
+\centering
+    \scriptsize
+    \begin{tabular}{|c|c|}
+        \hline
+        & \\
+        Symbol & Verbal Definition \\
+        & \\
+        \hline
+        \hline
+        & \\
+        $\mathcal{L}_{ae}$ & Reconstruction loss. \\
+        $\bar{x_{ae}}$ & True numerical representation of the gRNA sequences.\\
+        $\bar{p_{ae}}$ & Predicted numerical representation of gRNA sequences.\\
+        & \\
+        \hline
+        & \\
+        $\mathcal{L}_{em}$ & Embedding loss. \\
+        $X_{ae}$ & Matrix of the numerical representation of the gRNA sequences.\\
+        $X_e$ & Matrix of the latent space representation of the gRNA sequences.\\
+        & \\
+        \hline
+        & \\
+        $\mathcal{L}_t$ & Reconstruction-Embedding combined loss.\\
+        & \\
+        \hline
+        & \\
+        $\mathcal{L}_r$ & Regression loss.\\
+        $\bar{x_ts}$ & True fluorescence time series data.\\
+        $\bar{p_ts}$ & Predicted fluorescence time series data.\\
+        &\\
+        \hline  
+    \end{tabular}
+    \caption{Variables used in the definition of our loss function and it's components.}
+    \label{table:1}
+\end{table}
+
+\subsection{Hyperparameters}
+First, we chose hyperparameters to optimize reconstruction and embedding within the autoencoder. We found that a relatively shallow network (10 layers for the encoder and decoder and 18 layers for the latent space module was able to perfectly reconstruct our sequences as seen in figure \ref{fig:2}C. A PCA on the embedding space yielded a gradient that corresponded to the tiled nature of the library design as seen in figure \ref{fig:2}D. Finally, attention was focused on determining the hyperparameters of the feedforward neural network, which performed well with 10 layers each containing 20 nodes. This regression network was able to predict the timeseries GFP signal with an error of 
+\newline
+\newline
+
+\begin{acknowledgements}
+\blindtext
+\end{acknowledgements}
+
+\section*{Bibliography}
+\bibliography{ATCitations.bib}
+
+\clearpage
+\section{OD Normalized GFP Fluorescence Traces.}
+
+\begin{figure}[ht]
+    \centering   
+    \includegraphics[scale=0.3]{Figures/80memberGFPLibrary.png}
+    \caption{Raw data fluorescence.}
+    \label{supfig:1}
+\end{figure}
+
+\clearpage
+
+\section{Unfiltered GFP knockdown Data.}.
+\begin{figure}[ht!]
+    \centering   
+    \includegraphics[scale=0.4]{Figures/80MemberLibraryFoldChangeWithtilling2_non_filtered.png}
+    \label{supfig:2}
+\end{figure}
+
+\clearpage
+
+\section{Randomized Householder Transformation.}
+
+\begin{algorithm}
+    \caption{Random Matrix Generation using Householder Transformations}
+    \begin{algorithmic}
+        \State \textbf{Input}: \textit{dim}, the dimension of the matrix
+        \State \textbf{Output}: \textit{H}, an orthogonal matrix with determinant 1
+        \State random\_state $\gets$ np.random
+        \State $H \gets \mathbb{I}_{dim}$ 
+        \State $D \gets \mathbf{1}_{dim}$ 
+        
+        \For{$n \gets 1$ to $dim-1$}
+            \State $x \gets$ random\_state.normal(size=$(dim-n+1)$)
+            \State $D[n-1] \gets \text{sign}(x[0])$
+            \State $x[0] \gets x[0] - D[n-1] \cdot \sqrt{\sum (x^2)}$
+            \State $Hx \gets \mathbb{I}_{dim-n+1} - \frac{2 \cdot (x \otimes x)}{\sum (x^2)}$ 
+            \State $mat[n-1:, n-1:] \gets Hx$
+            \State $H \gets H \cdot mat$
+        \EndFor
+        
+        \State $D[-1] \gets (-1)^{1 - (dim \mod 2)} \cdot \prod D$ 
+        \State $H \gets (D \cdot H^T)^T$ \Comment{Apply sign correction to $H$}
+        \State \textbf{return} $H$
+    \end{algorithmic}
+\end{algorithm}
+\end{document}

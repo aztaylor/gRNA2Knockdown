@@ -4,7 +4,7 @@ Explore.ipynb
 Seq2Nbhd_MGH_Data_Flashpoint copy.ipynb
 Seq2Nbhd_MGH_Data_Flashpoint.ipynb
 .vscode
-dCasRx Paper
+dCasRx_Paper
 Figures
 Illustrator
 dCasRxPaper.code-workspace
@@ -15,3 +15,11 @@ Notebook.md
 #dCasRx Paper/
 Figures
 AE
+.venv/
+ErrorData/
+Biophysical_Model/
+faux_growthcurves.ipynb
+Archive/
+PRE001_80memberAnalysis_2_0_2.ipynb
+dCasRx Paper/Figures
+Data/

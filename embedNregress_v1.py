@@ -14,18 +14,19 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import platereadertools as pr
 
-from sklearn.decomposition import PCA    
+from sklearn.decomposition import PCA
 from mpl_toolkits.mplot3d import Axes3D
 from sklearn.preprocessing import MinMaxScaler
 from datetime import datetime
-'''This module contains the functions to encode DNA sequences and for use in predicting  the knockdown 
-efficiency of CRISPR dCasRx-gRNAs effectors. The model takes in the RNA sequence of the targeted transcript 
-embedds the sequence using an autoencoder. Subsequently, the model takes the embedded sequence and the mRNA of the 
-targetto predict the knockdown efficiency. The base design is adaptable with a variable number of hidden layers and 
+from IPython.display import display, clear_output
+'''This module contains the functions to encode DNA sequences and for use in predicting  the knockdown
+efficiency of CRISPR dCasRx-gRNAs effectors. The model takes in the RNA sequence of the targeted transcript
+embedds the sequence using an autoencoder. Subsequently, the model takes the embedded sequence and the mRNA of the
+targetto predict the knockdown efficiency. The base design is adaptable with a variable number of hidden layers and
 units andis meant to be able to construct autoencoders, feedforward NNs and residual networks.
 
-The model is trained using  the Adam optimizer and a custom AE embbed loss function to determine the mean squared 
-error.The original code was developed by Enoch Yeung in the Biological Control Laboratory at the University of 
+The model is trained using  the Adam optimizer and a custom AE embbed loss function to determine the mean squared
+error.The original code was developed by Enoch Yeung in the Biological Control Laboratory at the University of
 California, Santa Barbara. Some things to note:
  - The code is written in Python 3.11 and uses the TensorFlow 2.x library.
  - The code is written in a modular fashion and can be used as a module in other scripts.
@@ -78,7 +79,7 @@ def make_labeled_corpus(seq_list, label_list, stride_param):
 def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride=1) -> dict:
     '''Create a corpus of sequences and their corresponding labels (y_trace).
     args:
-        seq_array: np.ndarray, 2D array of 
+        seq_array: np.ndarray, 2D array of
         y_trace: np.ndarray, 2D array of y traces (OD values or Fluorescence)
     returns:
         labeled_corpus: dict, dict of data and labels (sequence, y_trace)
@@ -86,7 +87,7 @@ def create_corpus(seq_array:np.ndarray, y_trace: np.ndarray, stride=1) -> dict:
     corpus = {}
     if seq_array.shape[0] != y_trace.shape[0]:
         raise ValueError('seq_array and y_trace have different number of rows')
-    
+
     for seq in seq_array:
         for i in range(len(seq)):
             corpus[seq[i]] = y_trace[i]
@@ -99,7 +100,7 @@ def xavier_init(n_inputs: int, n_outputs: int, uniform=True) -> tf.initializers:
         n_inputs: int, number of inputs
         n_outputs: int, number of outputs
         uniform: bool, if True use uniform distribution, else use normal distribution
-        
+
     returns:
         tf.initializer, tensorflow initializer
     '''
@@ -118,8 +119,8 @@ def weight_Variable(shape: tuple) -> tf.Variable:
         tf.Variable, tensorflow Variable
     '''
     std_dev = math.sqrt(3.0/(shape[0] + shape[1]))
-    return tf.Variable(tf.random.truncated_normal(shape, 
-                                                  mean=0.0, 
+    return tf.Variable(tf.random.truncated_normal(shape,
+                                                  mean=0.0,
                                                   stddev=std_dev,
                                                   dtype=tf.float32))
 
@@ -131,13 +132,13 @@ def bias_Variable(shape: tuple) -> tf.Variable:
     returns:
         tf.Variable, tensorflow Variable
     '''
-    
+
     std_dev = math.sqrt(3.0 / shape[0])
     return tf.Variable(tf.random.truncated_normal(shape, mean=0.0,
                                                   stddev=std_dev,
                                                   dtype=tf.float32))
 def initialize_Wblist(n_u, hv_list) -> (list, list): # type: ignore
-    '''Initialize the weights and biases for the network. The weights are initialized using the weight_Variable function 
+    '''Initialize the weights and biases for the network. The weights are initialized using the weight_Variable function
     and the biases are initialized using the bias_Variable function. The weights and biases are stored in lists.
     args:
         n_u: int, number of inputs
@@ -150,7 +151,7 @@ def initialize_Wblist(n_u, hv_list) -> (list, list): # type: ignore
     b_list = []
     n_depth = len(hv_list)
     #print("Length of hv_list: " + repr(n_depth))
-    
+
     #hv_list[n_depth-1] = n_y;
     for k in range(0,n_depth):
         if k==0:
@@ -163,7 +164,7 @@ def initialize_Wblist(n_u, hv_list) -> (list, list): # type: ignore
             b_list.append(bias_Variable([hv_list[k]]))
     return W_list, b_list
 def rvs(dim=3):
-    '''Generate a random orthogonal matrix. The matrix is generated using the Householder transformation. This should 
+    '''Generate a random orthogonal matrix. The matrix is generated using the Householder transformation. This should
     scrabble the 4-hot encoding to project into random input space. This improves performance for reason I do not yet
     know.
     args:
@@ -181,7 +182,7 @@ def rvs(dim=3):
         # Householder transformation
         Hx = (np.eye(dim-n+1) - 2.*np.outer(x, x)/(x*x).sum())
         mat = np.eye(dim)
-        mat[n-1:, n-1:] = Hx 
+        mat[n-1:, n-1:] = Hx
         H = np.dot(H, mat)
         # Fix the last sign such that the determinant is 1
     D[-1] = (-1)**(1-(dim % 2))*D.prod()
@@ -240,12 +241,12 @@ def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,embed_true:tf.Vari
                       regress_y_true:tf.Variable, lambda_regression=0.5)->tf.Variable:
     '''Custom loss function that combines the AE loss and the embedding loss. The AE loss is the mean squared error
     between the predicted and true y values. The embedding loss is the mean squared error between the predicted and true
-    embeddings. .... needs more 
+    embeddings. .... needs more
     args:
         y_model: tf.Variable, predicted y values
         y_true: tf.Variable, true y values
         embed_true: tf.Variable, true embeddings
-        
+
     returns:
         tf.Variable, custom loss
         '''
@@ -254,10 +255,10 @@ def customRegressLoss(y_model:tf.Variable, y_true:tf.Variable,embed_true:tf.Vari
     return ae_loss(y_model,y_true)+embed_loss(regress_y_true,embed_true) + lambda_regression*regression_loss
 
 # Define the network
-def network_assemble(input_var:tf.Variable, W_list:list, b_list:list, 
-                     keep_prob=1.0, activation_flag=1, 
+def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
+                     keep_prob=1.0, activation_flag=1,
                      res_net=0, debug_splash=False)->(tf.Variable, list): # type: ignore
-    ''''Assemble the network with the given weights and biases. The activation function is defined by the 
+    ''''Assemble the network with the given weights and biases. The activation function is defined by the
     activation_flag. The res_net flag is used to define if the network is a residual network or not.
     args:
         sess: tf.Session, tensorflow session
@@ -294,7 +295,7 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
         if not (k==0) and k < (n_depth-1):
             prev_layer_output = tf.matmul(z_temp_list[k-1],W_list[k])+b_list[k]
             if res_net and k==(n_depth-2):
-                # this expression is not compatible for Variable width nets (where each layer has a different width at 
+                # this expression is not compatible for Variable width nets (where each layer has a different width at
                 # inialization - okay with regularization and dropout afterwards though)
                 prev_layer_output += tf.matmul(z_temp_list[-1], W1)+b1
 
@@ -317,11 +318,11 @@ def network_assemble(input_var:tf.Variable, W_list:list, b_list:list,
     return y_out, z_temp_list
 
 #Train and test the network
-def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:np.array,y_feed:tf.Variable, 
+def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:np.array,y_feed:tf.Variable,
               obj_func:tf.Variable, optimizer:tf.compat.v1.train.Optimizer,
-              this_ae_loss:tf.Variable, this_embed_loss:tf.Variable, 
-              valid_error_thres=1e-2, test_error_thres=1e-2, max_iters=1e6, 
-              step_size_val=0.01, batchsize=10, samplerate=5000, good_start=1, 
+              this_ae_loss:tf.Variable, this_embed_loss:tf.Variable,
+              valid_error_thres=1e-2, test_error_thres=1e-2, max_iters=1e6,
+              step_size_val=0.01, batchsize=10, samplerate=5000, good_start=1,
               test_error=100.0, save_fig=None) -> list:
     '''Train the network using the Adam optimizer. The training is done in batches and the error is calculated for the
     training, validation and test sets. The training stops when the validation and test errors are below the threshold.
@@ -329,7 +330,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         sess: tf.Session, tensorflow session
         u_all_training: np.array, training data
         u_feed: tf.Variable, input Variable
-        y_all_training: np.array, training data from plate reader 
+        y_all_training: np.array, training data from plate reader
         y_feed: tf.Variable, the placeholder variable that will store the training data from the plate reader (slices of y_all_training)
         obj_func: tf.Variable, objective function
         optimizer: tf.Variable, optimizer
@@ -353,7 +354,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
     validation_error_history_nocovar = []
     test_error_history_nocovar = []
 
-    while (((test_error>test_error_thres) or (valid_error > valid_error_thres)) 
+    while (((test_error>test_error_thres) or (valid_error > valid_error_thres))
             and iter < max_iters):
         iter+=1
 
@@ -363,7 +364,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         except:
             print("Length of u_all_training:" +  repr(len(u_all_training)))
         valid_ind = list(all_ind -set(select_ind))[0:batchsize]
-        select_ind_test = list(all_ind - set(valid_ind) - 
+        select_ind_test = list(all_ind - set(valid_ind) -
                             set(select_ind))[0:batchsize]
         u_batch =[]
         u_valid = []
@@ -387,7 +388,7 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         valid_error = obj_func.eval(feed_dict={u_feed:u_valid,y_feed:y_valid},
                                     session=sess) # embed_feed:y_valid});
 
-        test_error = obj_func.eval(feed_dict={u_feed:u_test_train,y_feed:y_test_train}, 
+        test_error = obj_func.eval(feed_dict={u_feed:u_test_train,y_feed:y_test_train},
                                    session=sess) # embed_feed:y_test_train});
 
         if iter%samplerate==0:
@@ -396,24 +397,39 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
             validation_error_history_nocovar.append(obj_func.eval(
                 feed_dict={u_feed:u_valid, y_feed:y_valid}, session=sess));
             test_error_history_nocovar.append(obj_func.eval(
-                feed_dict={u_feed:u_test_train, y_feed:y_test_train}, 
+                feed_dict={u_feed:u_test_train, y_feed:y_test_train},
                 session=sess));
 
 
         if (iter%1000==0) or (iter==1):
-            print("\r step %d , validation error %g"%(iter, obj_func.eval(
-                    feed_dict={u_feed:u_valid, y_feed:y_batch}, session=sess)) );
-            
-            print("\r step %d , test error %g"%(iter, obj_func.eval(
-                    feed_dict={u_feed:u_test_train, y_feed:y_test_train}, session=sess)) );
-            print("\r Reconstruction Loss: " + repr(this_ae_loss.eval(
-                    feed_dict={u_feed:u_all_training, y_feed:y_all_training}, session=sess)) );
-            print("\r Embedding Loss: " + repr(this_embed_loss.eval(
-                    feed_dict={u_feed:u_all_training, y_feed:y_all_training}, session=sess)) );
-    all_histories = [training_error_history_nocovar, 
+            clear_output(wait=True)
+            display(f"Step = {iter}")
+            display(f"Training Error = {obj_func.eval(
+                                      feed_dict={u_feed:u_batch,
+                                                 y_feed:y_batch},
+                                      session=sess)}")
+            display(f"Validation Error = {obj_func.eval(
+                                             feed_dict={u_feed:u_valid,
+                                                        y_feed:y_batch},
+                                             session=sess)}")
+            display(f"Test Error = {obj_func.eval(
+                                     feed_dict={u_feed:u_test_train,
+                                                y_feed:y_test_train},
+                                     session=sess)}")
+
+           # print("\r step %d , validation error %g"%(iter, obj_func.eval(
+           #         feed_dict={u_feed:u_valid, y_feed:y_batch}, session=sess)) );
+
+           # print("\r step %d , test error %g"%(iter, obj_func.eval(
+           #         feed_dict={u_feed:u_test_train, y_feed:y_test_train}, session=sess)) );
+           # print("\r Reconstruction Loss: " + repr(this_ae_loss.eval(
+           #         feed_dict={u_feed:u_all_training, y_feed:y_all_training}, session=sess)) );
+           # print("\r Embedding Loss: " + repr(this_embed_loss.eval(
+           #         feed_dict={u_feed:u_all_training, y_feed:y_all_training}, session=sess)) );
+    all_histories = [training_error_history_nocovar,
                     validation_error_history_nocovar,
-                    test_error_history_nocovar,
-                    u_all_training]
+                    test_error_history_nocovar]#,
+                    #u_all_training]
     if save_fig is not None:
         fig, ax = plt.subplots(1,1)
         x = np.arange(0,len(validation_error_history_nocovar),1)
@@ -427,10 +443,10 @@ def train_net(sess, u_all_training:np.array, u_feed:tf.Variable, y_all_training:
         ax.spines['top'].set_visible(False)
         ax.spines['right'].set_visible(False)
         ax.set_title(f'ErrorHistory{date}_{time}')
-        
+
         plt.savefig(save_fig)
         plt.close()
-    return all_histories, good_start
+    return all_histories, good_start, fig
 SeqMap = ['A','C','G','T']
 
 def elemback2seq(this_elem):
@@ -484,11 +500,11 @@ if __name__ == "__main__":
     seqs = csv.reader(open("Data/GFP_spacers.csv"))
     allseqs = [seq for seq in seqs]
     #print(allseqs[0:10])
- 
+
     NumRowsonPlate = 8
     NumColumnsonPlate = 12
     HourHorizon = 18
-    SamplingRate = 3/60; 
+    SamplingRate = 3/60;
     data0, time0 = pr.Organize(data_0nM_fp,NumRowsonPlate,NumColumnsonPlate,HourHorizon,SamplingRate)
     data1, time1 = pr.Organize(data_10mM_fp,NumRowsonPlate,NumColumnsonPlate,HourHorizon,SamplingRate)
 
@@ -511,19 +527,19 @@ if __name__ == "__main__":
             #print(time_vec.shape)
             odnormfl_induced = induced_fl_data[row][col][StartHorizon:EndHorizon]/(induced_od_data[row][col][StartHorizon:EndHorizon]+odfloor)
             odnormfl_baseline = baseline_fl_data[row][col][StartHorizon:EndHorizon]/(baseline_od_data[row][col][StartHorizon:EndHorizon]+odfloor)
-            this_foldchange = odnormfl_induced/odnormfl_baseline  #fold change for a particular row, col combination 
+            this_foldchange = odnormfl_induced/odnormfl_baseline  #fold change for a particular row, col combination
             foldchangedata[row,col,:] = this_foldchange
 
             plt.scatter(time_vec,this_foldchange)
-            
+
     this_fig.savefig('/home/yeunglab/AlecOutputData/FoldChangeofPlateReader.eps')
 
     listed_foldchangedata = foldchangedata.reshape(int(foldchangedata.shape[0]*foldchangedata.shape[1]),foldchangedata.shape[2])
-    
-    
+
+
     print("listed fold change data shape: " + repr(listed_foldchangedata.shape))
-    
-    # Based off of the timeseries data, we can see that the greatest change in flourescence occurs at timepoint 165 
+
+    # Based off of the timeseries data, we can see that the greatest change in flourescence occurs at timepoint 165
     # (~8hours). We will use this timepoint to calculate the fold change between the 0mM and 10mM data.
     reads = list(data0.keys())
     data_pt0 = data0[reads[1]][:,:,165]
@@ -547,8 +563,8 @@ if __name__ == "__main__":
     #AE parameters
     stride_parameter = 30 #Determinded by the length of the gRNA sequence
     label_dim = EndHorizon-StartHorizon # To match the number of timepoints in the plate reader data
-    embedding_dim = 18 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction 
-    batch_size_parameter = 20 
+    embedding_dim = 18 #18 was a good dimension for embedding Alec's gRNA sequences that resulted in near perfect reconstruction
+    batch_size_parameter = 20
     '''
     20 does not seem to be a good batch size for the data. The training error is not decreasing.
     '''
@@ -585,20 +601,20 @@ if __name__ == "__main__":
     sess = tf.compat.v1.Session()
     tf.compat.v1.disable_eager_execution() # needed because of placeholder variables
     # Define the placeholders for the input sequences
-    this_u = tf.compat.v1.placeholder(tf.float32, 
+    this_u = tf.compat.v1.placeholder(tf.float32,
                                       shape=[None,stride_parameter])
     # Define placeholder for regression label (vectors made from time-series traces of plate reader data)
     this_regress_y_labels = tf.compat.v1.placeholder(tf.float32,shape=[None,outpuDim])
-    # Instantiate the autoencoder network 
+    # Instantiate the autoencoder network
     with tf.device('/cpu:0'):
         this_W_list,this_b_list = initialize_Wblist(stride_parameter,
                                                     hidden_vars_list)
         this_y_out,all_layers = network_assemble(this_u,this_W_list,this_b_list
                                                 ,keep_prob=1.0,
                                                 activation_flag=2,res_net=0)
-    # Define a handle that accesses the embedding layer 
+    # Define a handle that accesses the embedding layer
     this_embedding = all_layers[n_pre_post_layers]
-    # Define the regression network depth, width, and output dimension:     
+    # Define the regression network depth, width, and output dimension:
     regress_list = [feedforwardDim]*feedforwardDepth+[outpuDim]
     # I believe this is the regression part of the network
     with tf.device('/cpu:0'):
@@ -623,11 +639,11 @@ if __name__ == "__main__":
         if True:
             # Train the network
             train_figure_name = f"Figures/Training{embedding_dim}_{intermediate_dim}_{stride_parameter}_{n_pre_post_layers}.png"
-                
+
             train_net(sess, this_corpus_vec,this_u,listed_foldchangedata,this_regress_y_labels,HybridLoss,
                     this_optim,
                     this_ae_loss=this_ae_loss,
-                    this_embed_loss=this_embed_loss,  
+                    this_embed_loss=this_embed_loss,
                     batchsize=batch_size_parameter,
                     step_size_val=this_step_size_val,
                     max_iters=this_max_iters,
@@ -642,7 +658,7 @@ if __name__ == "__main__":
                                                             feedforwardList)
             y_out,all_layers = network_assemble(this_embedding,Wfeedforward,bfeedforward)
             this_ae_loss = ae_loss(y_out,this_embedding)
-        
+
     all_mismatches = []
     for ind in range(0,len(this_corpus_vec)):
         z_ind = this_y_out.eval(feed_dict={this_u:[this_corpus_vec[ind]]},\
@@ -688,8 +704,8 @@ if __name__ == "__main__":
     ax = fig.add_subplot(111, projection='3d')
 
     this_colors = 0*np.random.rand(len(X_transformed), 6)
-    
-    foldchange_colorscale = np.sum(np.abs(listed_foldchangedata),axis=1)  # sum over all the timepoints (area of the curve) but leave the row index as the URI for the sequence/embedding (this will give a 96 x 1 array) 
+
+    foldchange_colorscale = np.sum(np.abs(listed_foldchangedata),axis=1)  # sum over all the timepoints (area of the curve) but leave the row index as the URI for the sequence/embedding (this will give a 96 x 1 array)
     foldchange_colorscale = (foldchange_colorscale-np.min(foldchange_colorscale))/np.max(foldchange_colorscale-np.min(foldchange_colorscale))
     # For each set of style and range settings, plot n random points in the box
     # defined by x in [23, 32], y in [0, 100], z in [zlow, zhigh].
@@ -711,7 +727,7 @@ if __name__ == "__main__":
         #if 0.80>this_labels[x_ind]>0.90:
         #    this_colors[x_ind][4] = this_labels[x_ind]/np.max(this_labels)
         #if 0.90>this_labels[x_ind]>1.0:
-        #    this_colors[x_ind][5] = this_labels[x_ind]/np.max(this_labels)  
+        #    this_colors[x_ind][5] = this_labels[x_ind]/np.max(this_labels)
     ax.scatter(X_transformed[:,0], X_transformed[:,1],X_transformed[:,2],
                c=rgb_scheme, marker='o',alpha=0.25)
     ax.view_init(30, azim=240)
